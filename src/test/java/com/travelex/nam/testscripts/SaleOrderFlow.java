@@ -48,6 +48,7 @@ public class SaleOrderFlow  {
 			HomePage homePage = loginPage.clickLogin(loginId, password);
 			Log.assertThat(homePage != null, "Successful Login", "User is not logged in, Please check the credentials", driver);
 			Log.testCaseResult();
+			System.out.println("end of tc");
 		} catch (Exception exception) {			
 			Log.exception(exception, driver);
 		} finally {
