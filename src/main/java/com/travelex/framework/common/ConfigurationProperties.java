@@ -15,7 +15,7 @@ public class ConfigurationProperties {
 	private final String PROPERTY_FILENAME = "config/configuration.properties";
 	private Properties properties = new Properties();
 	private static ConfigurationProperties  configProperties;
-
+// Testing
 	public final static String Test_Data_Folder_Path = "Test_Data_File_Path";
 	public final static String REMOTE_SERVER_URL = "REMOTE_SERVER_URL";
 	public final static String APP_URL = "App_URL";
