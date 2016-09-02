@@ -31,18 +31,17 @@ public class HomePage extends LoadableComponent<HomePage> {
 	}
 	
 	public void isLoaded(){
-		boolean isPageLoaded = false;
-		if(lnkOnline.isDisplayed()){
+/*		boolean isPageLoaded = false;
+		if(lnkSearchOrder.isDisplayed()){
 			isPageLoaded = true;
 		}
 		//return isPageLoaded; 
-	}
+*/	}
 	
 	public void load(){
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

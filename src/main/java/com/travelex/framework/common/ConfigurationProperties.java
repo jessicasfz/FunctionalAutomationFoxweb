@@ -18,7 +18,7 @@ public class ConfigurationProperties {
 // Testing
 	public final static String Test_Data_Folder_Path = "Test_Data_File_Path";
 	public final static String REMOTE_SERVER_URL = "REMOTE_SERVER_URL";
-	public final static String APP_URL = "App_URL";
+	public final static String COL_APPLICATION_URL = "COL_Application_URL";
 	public final static String LOG_LEVEL = "log_level";
 	public final static String LOG_FLAG = "log_flag";
 	public final static String SCREENSHOT_FLAG = "screenshot_flag";
@@ -29,7 +29,7 @@ public class ConfigurationProperties {
 	
 	public final static String BROWSER_NAME ="browserName";
 
-	private ConfigurationProperties() {
+	public ConfigurationProperties() {
 		properties = loadProperties();
 	}
 	

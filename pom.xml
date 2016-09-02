@@ -4,8 +4,7 @@
   <artifactId>NAM-AUTOMATION</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>NAM-AUTOMATION</name>
-  
-  
+   
     <properties>
 		<jre.level>1.7</jre.level>
 		<jdk.level>1.7</jdk.level>
@@ -65,6 +64,22 @@
 			<artifactId>testng</artifactId>
 			<version>6.8.21</version>
 			<scope>test</scope>
+		</dependency>
+		
+		
+		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi</artifactId>
+		    <version>3.9</version>
+		</dependency>
+		
+		
+		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml</artifactId>
+		    <version>3.9</version>
 		</dependency>
 								 
   </dependencies> 
