@@ -1,0 +1,24 @@
+{ "capabilities": 
+	[ 
+		 
+		{ 
+		  "browserName": "chrome", 
+		  "version": "51",
+		  "platform": "WINDOWS", 
+		  "maxInstances":5,
+		  "seleniumProtocol": "WebDriver"
+		}
+		
+	], 
+  "configuration":
+		{ 
+		  
+		  "port":5555,
+		  "hubPort":4444, 
+		  "hubHost":"localhost", 
+		  "nodePolling":2000, 
+		  "registerCycle":10000,
+		  "register":true,
+		  "maxSession": 10
+		}
+} 
