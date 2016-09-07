@@ -253,7 +253,7 @@ public class EmailReport extends EmailableReporter2 {
 			}
 
 			String emailContent = content.toString();
-			File emailMsg = new File("." + "\\src\\test\\java\\AutomationTestResultsEmail.html".replace("\\", File.separator));
+			File emailMsg = new File("." + "\\test-output\\AutomationTestResultsEmail.html".replace("\\", File.separator));
 			FileUtils.writeStringToFile(emailMsg, emailContent);
 
 			br.close();
