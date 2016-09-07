@@ -38,7 +38,7 @@ public class WebDriverFactory {
 	public static ExpectedCondition<Boolean> documentLoad;
 	public static ExpectedCondition<Boolean> framesLoad;
 	public static ExpectedCondition<Boolean> imagesLoad;
-	public static int maxPageLoadWait = 30;
+	public static int maxPageLoadWait = 100;
 
 	static {
 		documentLoad = new ExpectedCondition<Boolean>() {

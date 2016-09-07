@@ -23,8 +23,9 @@ public class InputDataProvider {
     public static int dataSetCounter;
     public static int execFlagCounter;
 
-    ConfigurationProperties configurationProperties = new ConfigurationProperties();
-    String dataPath = configurationProperties.getProperty(ConfigurationProperties.Test_Data_Folder_Path);
+     ConfigurationProperties configurationProperties = new ConfigurationProperties();
+     static String workingDirectory = System.getProperty("user.dir");
+     String dataPath = workingDirectory + configurationProperties.getProperty(ConfigurationProperties.Test_Data_Folder_Path);
 
     Map<String,Integer> index = new HashMap<String,Integer>();
 
