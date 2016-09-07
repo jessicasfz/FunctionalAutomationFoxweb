@@ -5,8 +5,6 @@ public class EnvironmentParameter {
 	private String browserName;
 	private String browserVersion;
 	private String platform;
-	private String testDay;
-	public String targetLocationPath;
 
 	public String getBrowserName() {
 		return browserName;
@@ -32,29 +30,11 @@ public class EnvironmentParameter {
 		this.platform = platform;
 	}
 
-	public String getTestDay() {
-		return testDay;
-	}
-
-	public void setTestDay(String testDay) {
-		this.testDay = testDay;
-	}
-
-	public String getTargetLocationPath() {
-		return targetLocationPath;
-	}
-
-	public void setTargetLocationPath(String targetLocationPath) {
-		this.targetLocationPath = targetLocationPath;
-	}
-
 	public EnvironmentParameter clone() {
 		EnvironmentParameter returnObject = new EnvironmentParameter();
 		returnObject.browserName = this.browserName;
 		returnObject.browserVersion = this.browserVersion;
 		returnObject.platform = this.platform;
-		returnObject.testDay = this.testDay;
-		returnObject.targetLocationPath = this.targetLocationPath;
 		return returnObject;
 	}
 }

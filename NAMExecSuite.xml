@@ -1,0 +1,20 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="NAM_Project" parallel="tests" verbose = "2">      
+       <test name="Chrome">             
+              <parameter name="Browser" value="CHROME" />
+              <parameter name="Version" value="51" /> 
+              <parameter name="Platform" value="WINDOWS" />
+              <method-selectors>
+                     <method-selector>
+                           <script language="beanshell"> 
+                           <![CDATA[ 
+                                  groups.containsKey("SaleOrder") 
+                           ]]>
+                     </script>
+                     </method-selector>
+              </method-selectors>                      
+              <packages>
+                     <package name="com.travelex.nam.testscripts.*" />              
+              </packages>
+       </test>      
+</suite>

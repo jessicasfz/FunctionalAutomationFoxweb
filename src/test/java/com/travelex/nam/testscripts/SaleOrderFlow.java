@@ -1,54 +1,62 @@
 package com.travelex.nam.testscripts;
 
+import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
-import org.testng.ITestContext;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Listeners;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import com.travelex.framework.common.ConfigurationProperties;
 import com.travelex.framework.common.EmailReport;
+import com.travelex.framework.common.EnvironmentParameter;
 import com.travelex.framework.common.Log;
 import com.travelex.framework.common.WebDriverFactory;
 import com.travelex.nam.pages.HomePage;
 import com.travelex.nam.pages.LoginPage;
-
+import com.travelex.nam.utilities.InputDataProvider;
 
 @Listeners(EmailReport.class)
 public class SaleOrderFlow  {
-	
+	EnvironmentParameter environmentParameter;
 	Logger logger = Logger.getLogger(SaleOrderFlow.class);
-	String webSite;
-	String browser;
+	ConfigurationProperties configurationProperties = ConfigurationProperties.getInstance();
 	
-	@BeforeTest
-	public void init(ITestContext context) {
-		webSite = (System.getProperty("webSite") != null ? System.getProperty("webSite") : context.getCurrentXmlTest().getParameter("webSite")).toLowerCase();
-		browser = (System.getProperty("browser") != null ? System.getProperty("browser") : context.getCurrentXmlTest().getParameter("browser")).toLowerCase();
+	@Parameters({ "Browser", "Version", "Platform"})
+	@BeforeTest(alwaysRun = true)
+	public void setEnviromentParameters(String browserName,String browserVersion, String platform) {
+		environmentParameter = new EnvironmentParameter();
+		environmentParameter.setBrowserName(browserName);
+		environmentParameter.setBrowserVersion(browserVersion);
+		environmentParameter.setPlatform(platform);
 	}
 
-/*	@DataProvider(name = "CreateAndVerifySaleOrder_DP", parallel = true)
+	@DataProvider(name = "CreateAndVerifySaleOrder_DP", parallel = true)
 	public Object[][] CreateAndVerifySaleOrder_DP(){
-		Object[][] retObjArr = InputDataProvider.getTableArray("SaleOrder");
+		InputDataProvider inputDataProvider = new InputDataProvider();
+		Object[][] retObjArr = inputDataProvider.getRowDataMap("TestData","SaleOrder");
 		return(retObjArr);
-	}*/
+	}
 
-	@Test(testName = "SaleOrder", groups = { "SaleOrder","functional" })
-	public void CreateAndVerifySaleOrder_NAM()
-			throws Throwable {
+	@Test(testName = "SaleOrder", groups = { "SaleOrder","functional" }, dataProvider = "CreateAndVerifySaleOrder_DP")
+	public void CreateAndVerifySaleOrder_NAM(HashMap<String,String> saleOrderData) throws Throwable {
 		
 		WebDriver driver = null;
 		try {
-			
-			driver = WebDriverFactory.get(browser);	
+			String colWebSiteURL = configurationProperties.getProperty(ConfigurationProperties.COL_APPLICATION_URL) + saleOrderData.get("PartnerID");  
+			driver = WebDriverFactory.get(environmentParameter);			
 			Log.testCaseInfo("Sale order scenarios");
-			LoginPage loginPage = new LoginPage(driver, webSite).get();
-			String loginId = "a00010@usb";
-			String password = "Pa$$word1";
-			HomePage homePage = loginPage.clickLogin(loginId, password);
+			LoginPage loginPage = new LoginPage(driver, colWebSiteURL).get();
+			String loginId = saleOrderData.get("LoginID");
+			String password = saleOrderData.get("Password");
+			Thread.sleep(1000);
+		    HomePage homePage = loginPage.clickLogin(loginId, password);
 			Log.assertThat(homePage != null, "Successful Login", "User is not logged in, Please check the credentials", driver);
-			Log.testCaseResult();
-			System.out.println("end of tc");
+			Log.testCaseResult();			
+			System.out.println("end of tc");	
 		} catch (Exception exception) {			
 			Log.exception(exception, driver);
 		} finally {

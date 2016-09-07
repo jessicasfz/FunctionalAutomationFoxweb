@@ -1,13 +1,20 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="NAMProject" parallel="tests" verbose = "2">
-    <parameter name="deviceHost" value="localhost" />
-	<parameter name="devicePort" value="4444" />
-	<parameter name="browser" value="chrome" />
-	<parameter name="webSite" value="https://172.16.116.55/col/logon.logonView?partnerid=29116" /> 
-	
-    <test name="SaleOrder">
-		<classes>
-	    	<class name="com.Travelex.TestScripts.SaleOrderFlow"/>
-	    </classes>
-	</test>
+<suite name="NAM_Project" parallel="tests" verbose = "2">      
+       <test name="Chrome">             
+              <parameter name="Browser" value="chrome" />
+              <parameter name="Version" value="51" /> 
+              <parameter name="Platform" value="windows" />
+              <method-selectors>
+                     <method-selector>
+                           <script language="beanshell"> 
+                           <![CDATA[ 
+                                  groups.containsKey("SaleOrder") 
+                           ]]>
+                     </script>
+                     </method-selector>
+              </method-selectors>                      
+              <packages>
+                     <package name="com.Travelex.TestScripts.*" />              
+              </packages>
+       </test>      
 </suite>
