@@ -1,6 +1,7 @@
 package com.travelex.nam.pages;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
@@ -18,7 +19,7 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 	public String delimiter ="\\|";
 	Logger logger = Logger.getLogger(TransactionAndCurrencyPage.class.getName());
 	WebDriver driver;
-	
+	WebDriverWrapper wrapper ;
 	
 	@FindBy(id = "searchTerm")
 	WebElement txtBranch;
@@ -83,42 +84,26 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 	public TransactionAndCurrencyPage(WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
+		wrapper = new WebDriverWrapper(driver);
 	}
 	
 	@Override
 	public void isLoaded(){
-		
+		boolean isPageLoaded = false;
+		wrapper.waitForElementToBeDisplayed(lblHomePage, 5000);
+		if(lblHomePage.isDisplayed()){
+			isPageLoaded = true;
+		}
 	}
 	
 	@Override
 	public void load(){
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		
-	}
-	
-	public void navigateToTransactionAndCurrencyPage(String createOrderType, String configOrderLink, String branchName, String branchLocation){
-		if(txtBranch.isDisplayed()){
-			txtBranch.sendKeys(branchName);
-			btnRetrieve.click();
-			Select branchLocationList = new Select(lstBranchLocation);
-			branchLocationList.selectByVisibleText(branchLocation);
-			btnNext.click();
-		}
-		if(!configOrderLink.isEmpty())
-		switch (createOrderType.toUpperCase()) {
-		case "ONLINE":
-			lnkOnline.click();
-			break;
-		case "ONSITE":
-			lnkOnsite.click();
-			break;
-		case "WHOLESALE":
-			lnkWholeSale.click();
-			break;
-
-		default:
-			break;
-		}
-			
 	}
 	
 	public void selectBranch(String configBranchSelection, String branchName, String branchLocation) throws InterruptedException{
@@ -128,61 +113,70 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 			Select branchLocationList = new Select(lstBranchLocation);
 			branchLocationList.selectByVisibleText(branchLocation);
 			btnNext.click();
+			wrapper.waitForLoaderInvisibility();
 		}
 			
 	}
 	
 	public void submitTransactionAndCurrDetails() {
 			btnConfirm.click();
+			wrapper.waitForLoaderInvisibility();
 	}
 
 	
-	public void enterTransAndCurrDetails(String configConfirmCheckBox, String transactionType, String productType, String currency,
-			String domesticAmount,String foreignAmount) throws InterruptedException{
+	public void enterTransAndCurrDetails(HashMap<String,String> scenarioTestData) throws InterruptedException{
 		
-		switch (transactionType.toUpperCase()) {
+		switch (scenarioTestData.get("TransactionType").toUpperCase()) {
 		case "PURCHASE":
 				rbPurchase.click();
+				wrapper.waitForLoaderInvisibility();
 			break;
 			
 		case "SALE":
 				rbSale.click();
+				wrapper.waitForLoaderInvisibility();
 			break;
 
 		default:
 			break;
 		}
 		
-	 	String[] currencies= currency.split(delimiter);
-	 	String[] domesticAmountList = domesticAmount.split(delimiter);
-	 	String[] foreignAmountList= foreignAmount.split(delimiter);
+	 	String[] currencies= scenarioTestData.get("Currency").split(delimiter);
+	 	String[] domesticAmountList = scenarioTestData.get("DomesticAmount").split(delimiter);
+	 	String[] foreignAmountList= scenarioTestData.get("ForeignAmount").split(delimiter);
+	 	
+	 	if(!scenarioTestData.get("ConfigConfirmCheckBox").equalsIgnoreCase("NA")){
+ 			
+ 			chkConfirm.click();
+ 			wrapper.waitForLoaderInvisibility();
+ 		}
 	 	
 	 	for(int i=0; i<currencies.length;i++){
 	 		Select productDetailsList = new Select(lstProductDetails);
-	 		productDetailsList.selectByVisibleText(productType);
+	 		productDetailsList.selectByVisibleText(scenarioTestData.get("ProductType"));
 	 		
 	 		Select currencyList = new Select(lstCurrency);
 	 		currencyList.selectByVisibleText(currencies[i]);
 	 		
-	 		if(!configConfirmCheckBox.isEmpty()){
-	 			
-	 			chkConfirm.click();
-	 		}
-	 		
 	 		txtForeignAmount.sendKeys(foreignAmountList[i]);
 	 		btnQuote.click();
+	 		wrapper.waitForLoaderInvisibility();
 	 		btnAddToOrder.click();
-	 		
-	 		String msg = new WebDriverWrapper(driver).dismissAlert(5000);	
+	 		wrapper.waitForLoaderInvisibility();
+	 		wrapper.dismissAlert(5000);
+	 		wrapper.waitForLoaderInvisibility();
 	 	}
 		
 	}
 	
-	public void enterTransactionAndCurrDetails(String configConfirmCheckBox,String transactionType, String productType, String currency,
-			String domesticAmount, String foreignAmount, String branchName, String branchLocation) throws Throwable{
-		enterTransAndCurrDetails(configConfirmCheckBox, transactionType, productType, currency, domesticAmount, foreignAmount);
+	public void enterTransactionAndCurrDetails(HashMap<String,String> scenarioTestData) throws Throwable{
+		enterTransAndCurrDetails(scenarioTestData);
 		submitTransactionAndCurrDetails();
 		
+	}
+	
+	public CustomerDetailsPage customerDetailsPage() {
+		return new CustomerDetailsPage(driver).get();
 	}
 	
 }

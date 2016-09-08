@@ -15,8 +15,10 @@ import com.travelex.framework.common.EmailReport;
 import com.travelex.framework.common.EnvironmentParameter;
 import com.travelex.framework.common.Log;
 import com.travelex.framework.common.WebDriverFactory;
+import com.travelex.nam.pages.CustomerDetailsPage;
 import com.travelex.nam.pages.HomePage;
 import com.travelex.nam.pages.LoginPage;
+import com.travelex.nam.pages.TransactionAndCurrencyPage;
 import com.travelex.nam.utilities.InputDataProvider;
 
 @Listeners(EmailReport.class)
@@ -49,19 +51,24 @@ public class SaleOrderFlow  {
 			String colWebSiteURL = configurationProperties.getProperty(ConfigurationProperties.COL_APPLICATION_URL) + saleOrderData.get("PartnerID");  
 			driver = WebDriverFactory.get(environmentParameter);			
 			Log.testCaseInfo("Sale order scenarios");
-			LoginPage loginPage = new LoginPage(driver, colWebSiteURL).get();
-			String loginId = saleOrderData.get("LoginID");
-			String password = saleOrderData.get("Password");
-			Thread.sleep(1000);
-		    HomePage homePage = loginPage.clickLogin(loginId, password);
+			LoginPage loginPage = new LoginPage(driver, colWebSiteURL);
+		    HomePage homePage = loginPage.clickLogin(saleOrderData.get("LoginID"), saleOrderData.get("Password"));
 			Log.assertThat(homePage != null, "Successful Login", "User is not logged in, Please check the credentials", driver);
-			Log.testCaseResult();			
-			System.out.println("end of tc");	
-		} catch (Exception exception) {			
-			Log.exception(exception, driver);
+			TransactionAndCurrencyPage transCurrPage = homePage.navigateToTransactionPage(saleOrderData);
+			Log.assertThat(transCurrPage != null, "Transaction Page Loaded Successfully", "Transaction Page not Loaded", driver);
+			transCurrPage.enterTransactionAndCurrDetails(saleOrderData);
+			CustomerDetailsPage customerDetailsPage = transCurrPage.customerDetailsPage();
+			Log.assertThat(customerDetailsPage != null, "Customer Details Page Loaded Successfully", "Customer Details Page not Loaded", driver);
+			customerDetailsPage.submitCustomerAndDeliveryDetails(saleOrderData);
+			Log.testCaseResult();		
+		} catch (Exception exception) {	
+				Log.exception(exception, driver);
+			
 		} finally {
+			if(driver != null){
+				driver.quit();
+			}
 			Log.endTestCase();
-			driver.quit();
 		}
 	}
 	
