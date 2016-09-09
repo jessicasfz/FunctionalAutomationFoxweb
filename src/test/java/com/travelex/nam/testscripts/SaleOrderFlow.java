@@ -52,7 +52,7 @@ public class SaleOrderFlow  {
 			driver = WebDriverFactory.get(environmentParameter);			
 			Log.testCaseInfo("Sale order scenarios");
 			LoginPage loginPage = new LoginPage(driver, colWebSiteURL);
-		    HomePage homePage = loginPage.clickLogin(saleOrderData.get("LoginID"), saleOrderData.get("Password"));
+		    HomePage homePage = loginPage.clickLogin(saleOrderData);
 			Log.assertThat(homePage != null, "Successful Login", "User is not logged in, Please check the credentials", driver);
 			TransactionAndCurrencyPage transCurrPage = homePage.navigateToTransactionPage(saleOrderData);
 			Log.assertThat(transCurrPage != null, "Transaction Page Loaded Successfully", "Transaction Page not Loaded", driver);

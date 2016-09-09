@@ -119,7 +119,6 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -141,42 +140,60 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 		default:
 			break;
 		}
-		
-		txtFirstName.sendKeys(RandomCodeGenerator.randomNameGeneratorUsingCharacter());
-		txtLastName.sendKeys(RandomCodeGenerator.randomNameGeneratorUsingCharacter());
-		if(txtCustomerAccNumber.isDisplayed()){
-			txtCustomerAccNumber.sendKeys(RandomCodeGenerator.randomNumberGenerator(9));	
+		if(!scenarioTestData.get("FirstName").equalsIgnoreCase("NA")){
+			txtFirstName.sendKeys(scenarioTestData.get("FirstName"));
+			Log.message("Entered First Name is: "+scenarioTestData.get("FirstName"));
+		}
+		if(!scenarioTestData.get("LastName").equalsIgnoreCase("NA")){
+			txtLastName.sendKeys(scenarioTestData.get("LastName"));
+			Log.message("Entered Last Name is: "+scenarioTestData.get("LastName"));
+		}
+		if(!scenarioTestData.get("GLAccNumber").equalsIgnoreCase("NA")){
+			txtCustomerAccNumber.sendKeys(scenarioTestData.get("GLAccNumber"));
+			Log.message("Entered GL Acc Number is: "+scenarioTestData.get("GLAccNumber"));
 		}
 	}	
 	
-	public void enterDeliveryDetails(){
+	public void enterDeliveryDetails(HashMap<String,String> scenarioTestData){
 		if(chkHomeBranch.isDisplayed()){
 			chkHomeBranch.click();
+			Log.message("Clicked on Home Branch CheckBox");
 			wrapper.waitForLoaderInvisibility();
 		}
-		txtAttention.sendKeys(RandomCodeGenerator.randomNameGeneratorUsingCharacter(6));
-		txtBranchContact.sendKeys(RandomCodeGenerator.randomNumberGenerator(3));
-		txtPhoneNumber.sendKeys(RandomCodeGenerator.randomNumberGenerator(7));
+		if(!scenarioTestData.get("AttentionName").equalsIgnoreCase("NA")){
+			txtAttention.sendKeys(scenarioTestData.get("AttentionName"));
+			Log.message("Entered Attention Text Field is: "+scenarioTestData.get("AttentionName"));
+		}
+		if(!scenarioTestData.get("BranchContact").equalsIgnoreCase("NA")){
+			txtBranchContact.sendKeys(scenarioTestData.get("BranchContact"));	
+			Log.message("Entered Branch Contact is: "+scenarioTestData.get("BranchContact"));
+		}
+		if(!scenarioTestData.get("PhoneNumber").equalsIgnoreCase("NA")){
+			txtPhoneNumber.sendKeys(scenarioTestData.get("PhoneNumber"));	
+			Log.message("Entered Phone Number is: "+scenarioTestData.get("PhoneNumber"));
+		}
 	}
 	
 	public void submitCustomerDetails(HashMap<String,String> scenarioTestData) {
-		
-			btnCompleteOrder.click();
-			wrapper.waitForLoaderInvisibility();
-			String Ordertext = lblConfirmationNumber.getText();
-			String[] OrderNo = Ordertext.split(":");
-			String confirmationNumber = OrderNo[1].trim();
-			System.out.println(confirmationNumber);
-			if(confirmationNumber!="")	{
-				InputDataProvider inputDataProvider = new InputDataProvider();
-				inputDataProvider.updateData("TestData", scenarioTestData.get("AutomationID"), confirmationNumber);
-				Log.message("Confirmation Number is: "+confirmationNumber);
-			   }
+		if(!scenarioTestData.get("ConfigCompleteOrderBtn").equalsIgnoreCase("NA")){
+			btnCompleteOrder.click();	
+			Log.message("Clicked on Complete Order");
+		}
+		wrapper.waitForLoaderInvisibility();
+		String Ordertext = lblConfirmationNumber.getText();
+		String[] OrderNo = Ordertext.split(":");
+		String confirmationNumber = OrderNo[1].trim();
+		System.out.println(confirmationNumber);
+		if(confirmationNumber!="")	{
+			InputDataProvider inputDataProvider = new InputDataProvider();
+			inputDataProvider.updateData("TestData", scenarioTestData.get("AutomationID"), confirmationNumber);
+			Log.message("Confirmation Number is: "+confirmationNumber);
+		}
 	}
 	
 	public void submitCustomerAndDeliveryDetails(HashMap<String,String> scenarioTestData) throws Throwable{
 		enterCustomerDetails(scenarioTestData);
-		enterDeliveryDetails();
+		enterDeliveryDetails(scenarioTestData);
 		submitCustomerDetails(scenarioTestData);
 	}
 	

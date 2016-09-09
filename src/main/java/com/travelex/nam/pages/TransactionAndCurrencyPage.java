@@ -12,6 +12,7 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.LoadableComponent;
 import org.openqa.selenium.support.ui.Select;
 
+import com.travelex.framework.common.Log;
 import com.travelex.framework.common.WebDriverWrapper;
 
 @SuppressWarnings("unused")
@@ -102,8 +103,7 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}
-		
+		}	
 	}
 	
 	public void selectBranch(String configBranchSelection, String branchName, String branchLocation) throws InterruptedException{
@@ -114,26 +114,29 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 			branchLocationList.selectByVisibleText(branchLocation);
 			btnNext.click();
 			wrapper.waitForLoaderInvisibility();
-		}
-			
+		}			
 	}
 	
-	public void submitTransactionAndCurrDetails() {
+	public void submitTransactionAndCurrDetails(HashMap<String,String> scenarioTestData) {
+		if(!scenarioTestData.get("ConfigConfirmBtn").equalsIgnoreCase("NA")){
 			btnConfirm.click();
+			Log.message("Clicked on Confirm Button");
 			wrapper.waitForLoaderInvisibility();
+		}		
 	}
 
 	
 	public void enterTransAndCurrDetails(HashMap<String,String> scenarioTestData) throws InterruptedException{
-		
 		switch (scenarioTestData.get("TransactionType").toUpperCase()) {
 		case "PURCHASE":
 				rbPurchase.click();
+				Log.message("Clicked on PURCHASE Radio Button");
 				wrapper.waitForLoaderInvisibility();
 			break;
 			
 		case "SALE":
 				rbSale.click();
+				Log.message("Clicked on SALE Radio Button");
 				wrapper.waitForLoaderInvisibility();
 			break;
 
@@ -146,33 +149,44 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 	 	String[] foreignAmountList= scenarioTestData.get("ForeignAmount").split(delimiter);
 	 	
 	 	if(!scenarioTestData.get("ConfigConfirmCheckBox").equalsIgnoreCase("NA")){
- 			
  			chkConfirm.click();
+ 			Log.message("Clicked on Confirm CheckBox");
  			wrapper.waitForLoaderInvisibility();
  		}
 	 	
 	 	for(int i=0; i<currencies.length;i++){
 	 		Select productDetailsList = new Select(lstProductDetails);
 	 		productDetailsList.selectByVisibleText(scenarioTestData.get("ProductType"));
-	 		
+	 		Log.message("Product Selected is : "+scenarioTestData.get("ProductType"));
 	 		Select currencyList = new Select(lstCurrency);
 	 		currencyList.selectByVisibleText(currencies[i]);
-	 		
+	 		Log.message("Currency Selected is : "+currencies[i]);
 	 		txtForeignAmount.sendKeys(foreignAmountList[i]);
-	 		btnQuote.click();
+	 		Log.message("Entered Foreign Amount is : "+foreignAmountList[i]);
+	 		if(!scenarioTestData.get("ConfigQuoteAndViewBtn").equalsIgnoreCase("NA")){
+	 			btnQuote.click();
+	 			Log.message("Clicked on Quote And View Button");
+	 		}
 	 		wrapper.waitForLoaderInvisibility();
-	 		btnAddToOrder.click();
+	 		if(!scenarioTestData.get("ConfigAddToOrder").equalsIgnoreCase("NA")){
+	 			btnAddToOrder.click();
+	 			Log.message("Clicked on Add To Order Button");
+	 		}
 	 		wrapper.waitForLoaderInvisibility();
-	 		wrapper.dismissAlert(5000);
+	 		if(!scenarioTestData.get("ConfigAlert").equalsIgnoreCase("Yes")){
+	 			wrapper.dismissAlert(1000);
+	 			Log.message("Clicked on Dismiss Alert");
+	 		}else{
+	 			wrapper.acceptAlert(1000);
+	 			Log.message("Clicked on Accept Alert");
+	 		}
 	 		wrapper.waitForLoaderInvisibility();
 	 	}
-		
 	}
 	
 	public void enterTransactionAndCurrDetails(HashMap<String,String> scenarioTestData) throws Throwable{
 		enterTransAndCurrDetails(scenarioTestData);
-		submitTransactionAndCurrDetails();
-		
+		submitTransactionAndCurrDetails(scenarioTestData);
 	}
 	
 	public CustomerDetailsPage customerDetailsPage() {
