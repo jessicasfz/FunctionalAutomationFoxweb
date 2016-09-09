@@ -1,6 +1,7 @@
 package com.travelex.nam.pages;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
@@ -10,7 +11,10 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.LoadableComponent;
 
+import com.travelex.framework.common.Log;
+import com.travelex.framework.common.WebDriverWrapper;
 import com.travelex.framework.utilities.RandomCodeGenerator;
+import com.travelex.nam.utilities.InputDataProvider;
 
 @SuppressWarnings("unused")
 public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
@@ -18,6 +22,7 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 	Logger logger = Logger.getLogger(CustomerDetailsPage.class.getName());
 	
 	WebDriver driver;
+	WebDriverWrapper wrapper ;
 	
 	@FindBy(xpath = "//input[@value='Mr.  'or @value='M.  ']")
 	WebElement rbMr;
@@ -91,18 +96,22 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 	@FindBy(css = "tr:nth-child(2) > td.medBold")
 	WebElement lblConfirmationNumber;
 	
+	@FindBy(xpath = "//input[@name='areaCode']")
+	WebElement txtBranchContact;
+	
 	public CustomerDetailsPage(WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
+		wrapper = new WebDriverWrapper(driver);
 	}
 	
 	@Override
 	public void isLoaded(){
 		boolean isPageLoaded = false;
+		wrapper.waitForElementToBeDisplayed(lblDeliveryDetails, 5000);
 		if(lblDeliveryDetails.isDisplayed()){
 			isPageLoaded = true;
 		}
-		//return isPageLoaded;
 	}
 	
 	@Override
@@ -110,58 +119,82 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public void enterCustomerDetails(String customerType) throws InterruptedException{
-		switch (customerType.toUpperCase()) {
+	public void enterCustomerDetails(HashMap<String,String> scenarioTestData) throws InterruptedException{
+		switch (scenarioTestData.get("CustomerRadioBtn").toUpperCase()) {
 		case "MR":
 			rbMr.click();
+			wrapper.waitForLoaderInvisibility();
 			break;
 		case "MS":
 			rbMs.click();
+			wrapper.waitForLoaderInvisibility();
 			break;
 		case "MRS":
 			rbMrs.click();
+			wrapper.waitForLoaderInvisibility();
 			break;
 		default:
 			break;
 		}
-		
-		txtFirstName.sendKeys(RandomCodeGenerator.randomNameGeneratorUsingCharacter());
-		txtLastName.sendKeys(RandomCodeGenerator.randomNameGeneratorUsingCharacter());
-		if(txtCustomerAccNumber.isDisplayed()){
-			txtCustomerAccNumber.sendKeys(RandomCodeGenerator.randomNumberGenerator(9));	
+		if(!scenarioTestData.get("FirstName").equalsIgnoreCase("NA")){
+			txtFirstName.sendKeys(scenarioTestData.get("FirstName"));
+			Log.message("Entered First Name is: "+scenarioTestData.get("FirstName"));
+		}
+		if(!scenarioTestData.get("LastName").equalsIgnoreCase("NA")){
+			txtLastName.sendKeys(scenarioTestData.get("LastName"));
+			Log.message("Entered Last Name is: "+scenarioTestData.get("LastName"));
+		}
+		if(!scenarioTestData.get("GLAccNumber").equalsIgnoreCase("NA")){
+			txtCustomerAccNumber.sendKeys(scenarioTestData.get("GLAccNumber"));
+			Log.message("Entered GL Acc Number is: "+scenarioTestData.get("GLAccNumber"));
 		}
 	}	
 	
-	public void enterDeliveryDetails(){
+	public void enterDeliveryDetails(HashMap<String,String> scenarioTestData){
 		if(chkHomeBranch.isDisplayed()){
 			chkHomeBranch.click();
+			Log.message("Clicked on Home Branch CheckBox");
+			wrapper.waitForLoaderInvisibility();
 		}
-		txtAttention.sendKeys(RandomCodeGenerator.randomNameGeneratorUsingCharacter(6));
-	//	txtBranchContact.sendKeys(RandomCodeGenerator.randomNumberGenerator(3));
-		txtPhoneNumber.sendKeys(RandomCodeGenerator.randomNumberGenerator(7));
+		if(!scenarioTestData.get("AttentionName").equalsIgnoreCase("NA")){
+			txtAttention.sendKeys(scenarioTestData.get("AttentionName"));
+			Log.message("Entered Attention Text Field is: "+scenarioTestData.get("AttentionName"));
+		}
+		if(!scenarioTestData.get("BranchContact").equalsIgnoreCase("NA")){
+			txtBranchContact.sendKeys(scenarioTestData.get("BranchContact"));	
+			Log.message("Entered Branch Contact is: "+scenarioTestData.get("BranchContact"));
+		}
+		if(!scenarioTestData.get("PhoneNumber").equalsIgnoreCase("NA")){
+			txtPhoneNumber.sendKeys(scenarioTestData.get("PhoneNumber"));	
+			Log.message("Entered Phone Number is: "+scenarioTestData.get("PhoneNumber"));
+		}
 	}
 	
-	public void submitCustomerAndDeliveryDetails(String automationId) {
-		
-			btnCompleteOrder.click();
-			String Ordertext = lblConfirmationNumber.getText();
-			String[] OrderNo = Ordertext.split(":");
-			String confirmationNumber = OrderNo[1].trim();
-			System.out.println(confirmationNumber);
-			if(confirmationNumber!="")	{
-				   //FileUtils.writeFile("fileName", "columnname", automationId, confirmationNumber);
-			   }
+	public void submitCustomerDetails(HashMap<String,String> scenarioTestData) {
+		if(!scenarioTestData.get("ConfigCompleteOrderBtn").equalsIgnoreCase("NA")){
+			btnCompleteOrder.click();	
+			Log.message("Clicked on Complete Order");
+		}
+		wrapper.waitForLoaderInvisibility();
+		String Ordertext = lblConfirmationNumber.getText();
+		String[] OrderNo = Ordertext.split(":");
+		String confirmationNumber = OrderNo[1].trim();
+		System.out.println(confirmationNumber);
+		if(confirmationNumber!="")	{
+			InputDataProvider inputDataProvider = new InputDataProvider();
+			inputDataProvider.updateData("TestData", scenarioTestData.get("AutomationID"), confirmationNumber);
+			Log.message("Confirmation Number is: "+confirmationNumber);
+		}
 	}
 	
-	public void submitCustomerAndDeliveryDetails(String customerType,String automationId) throws Throwable{
-		enterCustomerDetails(customerType);
-		enterDeliveryDetails();
-		submitCustomerAndDeliveryDetails(automationId);
+	public void submitCustomerAndDeliveryDetails(HashMap<String,String> scenarioTestData) throws Throwable{
+		enterCustomerDetails(scenarioTestData);
+		enterDeliveryDetails(scenarioTestData);
+		submitCustomerDetails(scenarioTestData);
 	}
 	
 }

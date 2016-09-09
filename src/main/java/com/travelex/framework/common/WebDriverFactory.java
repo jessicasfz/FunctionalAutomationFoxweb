@@ -168,10 +168,10 @@ public class WebDriverFactory {
 			URL gridURL = new URL(configurationProperties.getProperty(ConfigurationProperties.REMOTE_SERVER_URL));
 			driver = new RemoteWebDriver(gridURL, capability);
 		} catch (Exception e) {
-			Reporter.log("Unable to launch browser instance due to following error : "+ e.getMessage());
+			Log.message("Unable to launch browser instance due to following error : "+ e.getMessage());
 		} catch (Error err) {
 			err.printStackTrace();
-			Reporter.log("Unable to launch browser instance due to following error : "+ err.getMessage());
+			Log.message("Unable to launch browser instance due to following error : "+ err.getMessage());
 		} finally {
 			try {
 				Field f = Reporter.getCurrentTestResult().getClass().getDeclaredField("m_startMillis");
@@ -181,10 +181,10 @@ public class WebDriverFactory {
 				e.printStackTrace();
 			}
 		}
-		
+		Assert.assertNotNull(driver, "Driver did not intialize...\n Please check if hub is running / configuration settings are corect.");
 		driver.manage().timeouts().pageLoadTimeout(maxPageLoadWait, TimeUnit.SECONDS);
 		driver.manage().deleteAllCookies();
-		Assert.assertNotNull(driver, "Driver did not intialize...\n Please check if hub is running / configuration settings are corect.");		
+				
 		return driver;
 	}
 	

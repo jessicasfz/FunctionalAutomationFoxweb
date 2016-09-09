@@ -441,7 +441,6 @@ public class Log {
 	 * @throws Exception
 	 */
 	public static void exception(Exception e, WebDriver driver) throws Exception {
-
 		String inputFile = takeScreenShot(driver);
 		String eMessage = e.getMessage();
 		if (eMessage != null && eMessage.contains("\n")) {

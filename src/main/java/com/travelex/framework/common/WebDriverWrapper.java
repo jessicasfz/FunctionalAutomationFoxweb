@@ -492,5 +492,19 @@ public class WebDriverWrapper {
 
 		}
 	}
+	
+	public void waitForLoaderInvisibility()
+	{
+		try {
+			WebDriverWait webDriverWait=new WebDriverWait(driver, 300);
+			WebElement element = driver.findElement(By.xpath("//div[contains(@class,'ajaxbg')]"));
+			for (int counter = 0; counter < 3; counter++) {
+				webDriverWait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//div[contains(@class,'ajaxbg')]")));
+				if (!element.isDisplayed()) break;
+			}
+		}
+		catch(Exception exception) {
+		}
+	}
 
 }

@@ -1,6 +1,7 @@
 package com.travelex.nam.pages;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
@@ -67,13 +68,12 @@ public class LoginPage extends LoadableComponent<LoginPage>  {
 	}
 	
 		
-	public HomePage clickLogin(String loginId, String password ) throws WebDriverException{
-		txtUserId.sendKeys(loginId);
-		Log.message("UserId entered");
-		txtPassword.sendKeys(password);
-		Log.message("Password entered");
+	public HomePage clickLogin(HashMap<String,String> saleOrderData) throws WebDriverException{
+		txtUserId.sendKeys(saleOrderData.get("LoginID"));
+		Log.message("UserId entered is: "+saleOrderData.get("LoginID"));
+		txtPassword.sendKeys(saleOrderData.get("Password"));
+		Log.message("Password entered is: "+saleOrderData.get("Password"));
 		btnEnter.click();
-		
 		Log.event("Clicked on login button");
 		return new HomePage(driver).get();
 		
