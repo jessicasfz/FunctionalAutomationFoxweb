@@ -3,7 +3,7 @@
 		 
 		{ 
 		  "browserName": "chrome", 
-		  "version": "51",
+		  "version": "54",
 		  "platform": "WINDOWS", 
 		  "maxInstances":5,
 		  "seleniumProtocol": "WebDriver"

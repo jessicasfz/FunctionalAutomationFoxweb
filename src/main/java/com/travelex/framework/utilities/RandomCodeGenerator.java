@@ -9,9 +9,7 @@ public class RandomCodeGenerator {
 	public static String randomNameGenerator() {
 		Date date = new Date();
 		SimpleDateFormat f = new SimpleDateFormat("dd/MMM/YYYY hh:mm:ss:ms");
-		String newRandomString = f.format(date).replace("/", "")
-				.replace(" ", "").replace(":", "");
-
+		String newRandomString = f.format(date).replace("/", "").replace(" ", "").replace(":", "");
 		String lastChars = "0123456789";
 		Random random = new Random();
 		StringBuilder randomNumber = new StringBuilder();
@@ -21,14 +19,13 @@ public class RandomCodeGenerator {
 		}
 		randomNumber.append(newRandomString);
 		randomNumber.append(sb1);
-
 		return randomNumber.toString();
 	}
-	
-	public static String getTimeStamp(){
+
+	public static String getTimeStamp() {
 		Date date = new Date();
 		SimpleDateFormat f = new SimpleDateFormat("dd/MMM/YYYY hh:mm:ss:ms");
-		return  f.format(date).replace("/", "").replace(" ", "").replace(":", "");
+		return f.format(date).replace("/", "").replace(" ", "").replace(":", "");
 	}
 
 	public static String randomNumberGenerator(int length) {
@@ -43,36 +40,27 @@ public class RandomCodeGenerator {
 		return randomNumber.toString();
 	}
 
+	public static String randomNameGeneratorUsingCharacter() {
+		String firstFourChars = "AUTO";
+		String secondSevenChars = "abcdefghijklmnopqrstuvwxyz";
+		Random random = new Random();
+		StringBuilder sb1 = new StringBuilder();
+		sb1.append(firstFourChars);
+		for (int i = 0; i < 5; i++) {
+			sb1.append(secondSevenChars.charAt(random.nextInt(secondSevenChars.length())));
+		}
+		return sb1.toString();
 
-public static String randomNameGeneratorUsingCharacter()
-{
-	String firstFourChars="AUTO";
-	String secondSevenChars="abcdefghijklmnopqrstuvwxyz";
-	Random random=new Random();
-	StringBuilder sb1=new StringBuilder();
-	sb1.append(firstFourChars);
-	for(int i=0;i<5;i++)
-	{
-		
-		sb1.append(secondSevenChars.charAt(random.nextInt(secondSevenChars.length())));
 	}
-	return sb1.toString();
-			
-}
 
-public static String randomNameGeneratorUsingCharacter(int numOfChars)
-{
-	String allChars="abcdefghijklmnopqrstuvwxyz";
-	Random random=new Random();
-	StringBuilder sb1=new StringBuilder();
-	for(int i=1;i<=numOfChars;i++)
-	{
-		sb1.append(allChars.charAt(random.nextInt(allChars.length())));
+	public static String randomNameGeneratorUsingCharacter(int numOfChars) {
+		String allChars = "abcdefghijklmnopqrstuvwxyz";
+		Random random = new Random();
+		StringBuilder sb1 = new StringBuilder();
+		for (int i = 1; i <= numOfChars; i++) {
+			sb1.append(allChars.charAt(random.nextInt(allChars.length())));
+		}
+		return sb1.toString();
 	}
-	return sb1.toString();
-}
-
-
-
 
 }

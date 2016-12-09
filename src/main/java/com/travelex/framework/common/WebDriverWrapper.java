@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
@@ -32,65 +31,77 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.google.common.base.Predicate;
 
 public class WebDriverWrapper {
-	static Logger logger = Logger.getLogger(WebDriverWrapper.class.getName());
+	//static Logger logger = Logger.getLogger(WebDriverWrapper.class.getName());
 	WebDriver driver;
 
 	public WebDriverWrapper(WebDriver driver) {
 		this.driver = driver;
-
 	}
 
 	public static String getCurrentBrowserName(WebDriver driver) {
 		Capabilities cp = ((RemoteWebDriver) driver).getCapabilities();
 		return cp.getBrowserName();
-
 	}
-
-	public String captureScreenShot(File destinationFilePathLocation,
-			String snapShotName) throws IOException {
+	
+	public String getCurrentBrowserName() {
+		Capabilities cp = ((RemoteWebDriver) driver).getCapabilities();
+		return cp.getBrowserName();
+	}
+	
+	public Capabilities getCurrentCapability() {
+		Capabilities cp = ((RemoteWebDriver) driver).getCapabilities();
+		return cp;
+	}
+	
+	/**
+	 * it will capture screenshot and place into the specified destination in PNG format
+	 * 
+	 * @param destinationFilePathLocation
+	 * @param snapShotName
+	 * @return fileName
+	 * @throws IOException
+	 */
+	
+	public String captureScreenShot(File destinationFilePathLocation, String snapShotName) throws IOException {
 		String fileName = new String();
 		if (isAlertPresentForScreenshot()) {
-			String message = dismissAlert(2);
-			Log.message("Found alert with mesage: " + message);
+			dismissAlert(2);
 		}
 		WebDriver augmentedDriver = driver;
 		if (!(driver instanceof InternetExplorerDriver))
 			augmentedDriver = new Augmenter().augment(driver);
-
-		File screenshot = ((TakesScreenshot) augmentedDriver)
-				.getScreenshotAs(OutputType.FILE);
+		File screenshot = ((TakesScreenshot) augmentedDriver).getScreenshotAs(OutputType.FILE);
 		fileName = snapShotName + ".png";
-		File destinationFilePath = new File((destinationFilePathLocation
-				+ File.separator + fileName));
+		File destinationFilePath = new File((destinationFilePathLocation + File.separator + fileName));
 		FileUtils.copyFile(screenshot, destinationFilePath);
 		return fileName;
-
 	}
 
+	
+	/**
+	 * it returns Unique Time Stamp HH-MM-SSAADD-MMM-YYYY
+	 * 
+	 * @return String TimeStamp
+	 */
+	
 	public String getUniqueTimeStamp() {
-
 		DateFormat dateFormat = new SimpleDateFormat("hh_mm_ssaadd_MMM_yyyy");
 		Date date = new Date();
 		return (dateFormat.format(date));
 	}
 
-	public String getCurrentBrowserName() {
-		Capabilities cp = ((RemoteWebDriver) driver).getCapabilities();
-		return cp.getBrowserName();
 
-	}
-
-	public Capabilities getCurrentCapability() {
-		Capabilities cp = ((RemoteWebDriver) driver).getCapabilities();
-		return cp;
-
-	}
-
-	public WebElement waitForElementToBeDisplayed(final WebElement element,
-			int timeOutPeriod) {
+	/**
+	 * it will wait and verify WebElement is displayed or not in Specified Time Period
+	 * 
+	 * @param element
+	 * @param timeOutPeriod
+	 * @return WebElement
+	 */
+	
+	public WebElement waitForElementToBeDisplayed(final WebElement element, int timeOutPeriod) {
 		WebDriverWait webDriverWait = new WebDriverWait(driver, timeOutPeriod);
 		webDriverWait.pollingEvery(10, TimeUnit.MICROSECONDS);
-
 		return webDriverWait.until(new ExpectedCondition<WebElement>() {
 
 			public WebElement apply(WebDriver driver) {
@@ -104,16 +115,22 @@ public class WebDriverWrapper {
 				} catch (StaleElementReferenceException ex) {
 					return null;
 				} catch (NullPointerException ex) {
-
 					return null;
 				}
 			}
 
 		});
 	}
+	
+	/**
+	 * it will wait and verify WebElement is displayed or not in Specified Time Period
+	 * 
+	 * @param by
+	 * @param timeOutPeriod
+	 * @return WebElement
+	 */
 
 	public WebElement waitForElementToBeDisplayed(final By by, int timeOutPeriod) {
-		// try{
 		WebDriverWait webDriverWait = new WebDriverWait(driver, timeOutPeriod);
 		webDriverWait.pollingEvery(10, TimeUnit.MICROSECONDS);
 		return webDriverWait.until(new ExpectedCondition<WebElement>() {
@@ -136,6 +153,16 @@ public class WebDriverWrapper {
 
 		});
 	}
+
+	
+	/**
+	 * it will wait and verify either WebElement is Clickable or not in Specified Time Period
+	 * 
+	 * @param by
+	 * @param timeOutPeriod
+	 * @return WebElement
+	 */
+	
 
 	public WebElement waitForElementToBeClickable(final By by, int timeOutPeriod) {
 
@@ -161,18 +188,22 @@ public class WebDriverWrapper {
 		});
 
 	}
+	
+	/**
+	 * it will wait and verify either WebElement is Clickable or not in Specified Time Period
+	 * 
+	 * @param element
+	 * @param timeOutPeriod
+	 * @return WebElement
+	 */
 
-	public WebElement waitForElementToBeClickable(final WebElement element,
-			int timeOutPeriod) {
-
+	public WebElement waitForElementToBeClickable(final WebElement element,int timeOutPeriod) {
 		WebDriverWait webDriverWait = new WebDriverWait(driver, timeOutPeriod);
 		webDriverWait.pollingEvery(10, TimeUnit.MICROSECONDS);
 
 		return webDriverWait.until(new ExpectedCondition<WebElement>() {
-
 			public WebElement apply(WebDriver driver) {
 				try {
-
 					if (element.isEnabled() && element.isDisplayed())
 						return element;
 					else
@@ -190,17 +221,21 @@ public class WebDriverWrapper {
 
 	}
 
-	public WebElement waitForElementToBeEnabled(final WebElement element,
-			int timeOutPeriod) {
-
+	/**
+	 * it will wait and verify either WebElement is Enabled or not in Specified Time Period 
+	 * 
+	 * @param element
+	 * @param timeOutPeriod
+	 * @return WebElement
+	 */
+	
+	public WebElement waitForElementToBeEnabled(final WebElement element,int timeOutPeriod) {
 		WebDriverWait webDriverWait = new WebDriverWait(driver, timeOutPeriod);
 		webDriverWait.pollingEvery(10, TimeUnit.MICROSECONDS);
 
 		return webDriverWait.until(new ExpectedCondition<WebElement>() {
-
 			public WebElement apply(WebDriver driver) {
 				try {
-
 					if (element.isEnabled())
 						return element;
 					else
@@ -217,6 +252,14 @@ public class WebDriverWrapper {
 		});
 
 	}
+	
+	/**
+	 * it will wait and verify either WebElement is Enabled or not in Specified Time Period
+	 * 
+	 * @param by
+	 * @param timeOutPeriod
+	 * @return WebElement
+	 */
 
 	public WebElement waitForElementToBeEnabled(final By by, int timeOutPeriod) {
 		WebDriverWait webDriverWait = new WebDriverWait(driver, timeOutPeriod);
@@ -243,9 +286,15 @@ public class WebDriverWrapper {
 
 	}
 	
-	public WebElement waitForOptionToBePopulatedInList(
-			final WebElement dropdownList, int timeOutPeriod) {
-
+	/**
+	 * it will wait and Select the list item in specified Time Period
+	 * 
+	 * @param dropdownList
+	 * @param timeOutPeriod
+	 * @return WebElement
+	 */
+	
+	public WebElement waitForOptionToBePopulatedInList(final WebElement dropdownList, int timeOutPeriod) {
 		WebDriverWait webDriverWait = new WebDriverWait(driver, timeOutPeriod);
 		webDriverWait.pollingEvery(10, TimeUnit.MICROSECONDS);
 		return webDriverWait.until(new ExpectedCondition<WebElement>() {
@@ -272,9 +321,16 @@ public class WebDriverWrapper {
 
 	}
 
-	public WebElement waitForTextToAppearInTextField(
-			final WebElement webElement, int timeOutPeriod) {
-
+	
+	/**
+	 * it will check Presence of Text In the TextField in specified Time Period
+	 * 
+	 * @param webElement
+	 * @param timeOutPeriod
+	 * @return WebElement
+	 */
+	
+	public WebElement waitForTextToAppearInTextField(final WebElement webElement, int timeOutPeriod) {
 		WebDriverWait webDriverWait = new WebDriverWait(driver, timeOutPeriod);
 		webDriverWait.pollingEvery(10, TimeUnit.MICROSECONDS);
 		return webDriverWait.until(new ExpectedCondition<WebElement>() {
@@ -300,9 +356,16 @@ public class WebDriverWrapper {
 
 	}
 
-	public boolean waitForOptionToBePresentInList(final By by, String value,
-			int timeOutPeriod) {
-
+	/**
+	 * it will wait and check the DropdownList item present or not in Specified Time Period
+	 * 
+	 * @param by
+	 * @param value
+	 * @param timeOutPeriod
+	 * @return boolean 
+	 */
+	
+	public boolean waitForOptionToBePresentInList(final By by, String value,int timeOutPeriod) {
 		WebDriverWait webDriverWait = new WebDriverWait(driver, timeOutPeriod);
 		webDriverWait.pollingEvery(10, TimeUnit.MICROSECONDS);
 		try {
@@ -314,8 +377,14 @@ public class WebDriverWrapper {
 		}
 	}
 
+	/**
+	 * it will wait WebElement to be disappear in specified Time Period
+	 * 
+	 * @param by
+	 * @param timeOutPeriod
+	 */
+	
 	public void waitForElementToDisapper(final By by, int timeOutPeriod) {
-
 		FluentWait<By> fluentWait = new FluentWait<By>(by);
 		fluentWait.pollingEvery(10, TimeUnit.MICROSECONDS);
 		fluentWait.withTimeout(timeOutPeriod, TimeUnit.SECONDS);
@@ -333,16 +402,25 @@ public class WebDriverWrapper {
 		});
 
 	}
-
+	
+	/**
+	 * brings Web Element In View Mode
+	 * @param element
+	 */
+	
 	public void bringElementInView(WebElement element) {
-		((JavascriptExecutor) driver).executeScript(
-				"arguments[0].scrollIntoView(true);", element);
-
+		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
 	}
 
-	public void waitForElementToDisapper(final WebElement element,
-			int timeOutPeriod) {
-
+	
+	/**
+	 * it will wait For WebElement to be disappear in specified Time Period
+	 * 
+	 * @param element
+	 * @param timeOutPeriod
+	 */
+	
+	public void waitForElementToDisapper(final WebElement element,int timeOutPeriod) {
 		FluentWait<WebElement> fluentWait = new FluentWait<WebElement>(element);
 		fluentWait.pollingEvery(10, TimeUnit.MICROSECONDS);
 		fluentWait.withTimeout(timeOutPeriod, TimeUnit.SECONDS);
@@ -358,40 +436,52 @@ public class WebDriverWrapper {
 			}
 		});
 	}
+	
+	/**
+	 * it will wait For Alert To be Present In The Specified Time Period
+	 * @param timeOutPeriod
+	 */
 
 	public void waitForAlert(int timeOutPeriod) {
 		WebDriverWait webDriverWait = new WebDriverWait(driver, timeOutPeriod);
-		webDriverWait
-				.ignoring(NoSuchElementException.class,
-						StaleElementReferenceException.class)
-				.pollingEvery(10, TimeUnit.MILLISECONDS)
-				.until(ExpectedConditions.alertIsPresent());
+		webDriverWait.ignoring(NoSuchElementException.class,StaleElementReferenceException.class)
+				.pollingEvery(10, TimeUnit.MILLISECONDS).until(ExpectedConditions.alertIsPresent());
 	}
 
+	/**
+	 * it will wait For Alert To be Present In The Specified Time Period
+	 * @param timeOutPeriod
+	 * @param pollingTime
+	 */
+	
 	public void waitForAlert(int timeOutPeriod, int pollingTime) {
 		WebDriverWait webDriverWait = new WebDriverWait(driver, timeOutPeriod);
-		webDriverWait
-				.ignoring(NoSuchElementException.class,
-						StaleElementReferenceException.class)
-				.pollingEvery(pollingTime, TimeUnit.MILLISECONDS)
-				.until(ExpectedConditions.alertIsPresent());
+		webDriverWait.ignoring(NoSuchElementException.class,StaleElementReferenceException.class)
+				.pollingEvery(pollingTime, TimeUnit.MILLISECONDS).until(ExpectedConditions.alertIsPresent());
 	}
-
-	public String getAlertMessage(int timeOutPeriod) {
-		waitForAlert(timeOutPeriod);
-		Alert alert = driver.switchTo().alert();
-		String AlertMessage = alert.getText();
-		return AlertMessage;
-	}
+	
+	/**
+	 * accept alert based on Expected message and return alert message
+	 * 
+	 * @param timeOutPeriod
+	 * @param alertMessage
+	 * @return String alertMessage
+	 */
 
 	public String acceptAlert(int timeOutPeriod, String alertMessage) {
 		waitForAlert(timeOutPeriod);
 		Alert alert = driver.switchTo().alert();
-		Log.message(alertMessage);
 		alert.accept();
 		return alertMessage;
 	}
-
+	
+	/**
+	 * accept alert and return alert message
+	 * 
+	 * @param timeOutPeriod
+	 * @return String alertMessage
+	 */
+	
 	public String acceptAlert(int timeOutPeriod) {
 		for (int checkAttempts = 1; checkAttempts <= 3; checkAttempts++) {
 			waitForAlert(timeOutPeriod);
@@ -401,43 +491,45 @@ public class WebDriverWrapper {
 		}
 		Alert alert = driver.switchTo().alert();
 		String alertMessage = alert.getText();
-		Log.message(alertMessage);
 		alert.accept();
 		return alertMessage;
 	}
 
+	/**
+	 *dismiss alert and return alert message
+	 * 
+	 * @param timeOutPeriod
+	 * @return String alertMessage
+	 */
+	
 	public String dismissAlert(int timeOutPeriod) {
 		waitForAlert(timeOutPeriod);
 		Alert alert = driver.switchTo().alert();
 		String alertMessage = alert.getText();
-		Log.message(alertMessage);
 		alert.dismiss();
 		return alertMessage;
 	}
 
-	public void acceptAlertForFirefox() {
-		if (getCurrentBrowserName().equalsIgnoreCase("firefox")) {
-			try {
-				waitForAlert(20);
-				driver.switchTo().alert().accept();
-			} catch (Exception e) {
-
-			}
-		}
-	}
-
+	/**
+	 * switch to Alert and get the Alert Message 
+	 * @return String alertMessage
+	 */
+	
 	public String getAlertMessage() {
 		String alertMessage = new String("");
 		try {
 			waitForAlert(5);
 			alertMessage = driver.switchTo().alert().getText();
-			Log.message("fetched text: " + alertMessage + " from alert box.");
 		} catch (Exception e) {
-
 		}
 		return alertMessage;
 	}
-
+	
+	/**
+	 * it will check Either Alert is Present Or Not if it present return True else it returns False 
+	 * @return boolean isAlertPresent
+	 */
+	
 	public boolean isAlertPresentForScreenshot() {
 		boolean isAlertPresent = false;
 		try {
@@ -448,6 +540,11 @@ public class WebDriverWrapper {
 		}
 		return isAlertPresent;
 	}
+	
+	/**
+	 * it will check Either Alert is Present Or Not if it present return True else it returns False
+	 * @return boolean isAlertPresent
+	 */
 
 	public boolean isAlertPresent() {
 		boolean isAlertPresent = false;
@@ -456,22 +553,16 @@ public class WebDriverWrapper {
 			driver.switchTo().alert();
 			isAlertPresent = true;
 		} catch (Exception e) {
-
+			isAlertPresent = false;
 		}
 		return isAlertPresent;
 	}
 
-	public boolean isAlertWithSpecifiedMessagePresent(String errorMessage) {
-		boolean isAlertPresent = false;
-		try {
-			
-			isAlertPresent = driver.switchTo().alert().getText()
-					.contains(errorMessage);
-		} catch (Exception e) {
 
-		}
-		return isAlertPresent;
-	}
+	/**
+	 * it will check Either Alert is Present Or Not if it present return False else it returns True
+	 * @return boolean isAlertPresent
+	 */
 
 	public boolean isAlertNotPresent() {
 		boolean isAlertNotPresent = false;
@@ -483,24 +574,21 @@ public class WebDriverWrapper {
 		}
 		return isAlertNotPresent;
 	}
-
-	public void explicitWait(int waitTime) {
-
-		try {
-			Thread.sleep(waitTime * 1000);
-		} catch (InterruptedException e) {
-
-		}
-	}
 	
-	public void waitForLoaderInvisibility()
+	/**
+	 * it will check For Loader invisibility in specified Time Period
+	 * @param waitTime
+	 */
+	
+	public void waitForLoaderInvisibility(int waitTime)
 	{
 		try {
-			WebDriverWait webDriverWait=new WebDriverWait(driver, 300);
+			WebDriverWait webDriverWait=new WebDriverWait(driver, waitTime);
 			WebElement element = driver.findElement(By.xpath("//div[contains(@class,'ajaxbg')]"));
 			for (int counter = 0; counter < 3; counter++) {
 				webDriverWait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//div[contains(@class,'ajaxbg')]")));
-				if (!element.isDisplayed()) break;
+				if (!element.isDisplayed()) 
+					break;
 			}
 		}
 		catch(Exception exception) {

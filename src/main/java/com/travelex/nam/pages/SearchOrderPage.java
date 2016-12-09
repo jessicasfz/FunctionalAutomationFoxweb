@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -17,11 +16,16 @@ import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 import org.testng.Reporter;
 
+import com.travelex.framework.common.WebDriverWrapper;
+
 @SuppressWarnings("unused")
 public class SearchOrderPage extends LoadableComponent<SearchOrderPage> {
 	
-	static Logger logger = Logger.getLogger(SearchOrderPage.class.getName());
+	//static Logger logger = Logger.getLogger(SearchOrderPage.class.getName());
 	WebDriver driver;
+	WebDriverWrapper wrapper ;
+	private int timeOutPeriod = 3000;
+	private int waitTime=300;
 	
 	@FindBy(name = "confirmationNumber" )
 	WebElement txtConfirmationNumber;
@@ -62,31 +66,71 @@ public class SearchOrderPage extends LoadableComponent<SearchOrderPage> {
 	@FindBy(xpath = "//td[contains(text(),'Search Order Result')]")
 	WebElement tblSearchOrderResult;
 	
+	//RK
+	@FindBy(xpath = "//form/a")
+	WebElement lnkConfirmNumber;
+	
+	@FindBy(xpath = "//td[contains(text(),'Order Summary')]")
+	WebElement orderSummaryPageTitle;
+	
+	@FindBy(xpath = "//input[@value='Previous Page']")
+	WebElement previousPageBtn;
+	
+	@FindBy(xpath = "//td[contains(text(),'Search Order Results')]")
+	WebElement searchOrderResultPage;
+	
+	@FindBy(xpath = "//input[@value='Export To Excel']")
+	WebElement exportToExcelBtn;
+	
+	@FindBy(xpath = "//a[contains(text(),'Next Page')]")
+	WebElement lnkNext;
+	
 	public SearchOrderPage(WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
+		wrapper = new WebDriverWrapper(driver);
 	}
 	
 	@Override
 	public void isLoaded(){
-		
+		boolean isPageLoaded = false;
+		wrapper.waitForElementToBeDisplayed(rbOrderType, timeOutPeriod);
+		if(rbOrderType.isDisplayed()){
+			isPageLoaded = true;
+		}
 	}
 	
 	@Override
 	public void load(){
 		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
+			wrapper.waitForElementToBeDisplayed(rbOrderType, timeOutPeriod);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Search Using ConfirmationNumber
+	 * @param confirmationNumber
+	 */
+	
 	public void searchWithConfirmationNumber(String confirmationNumber) {
-		confirmationNumber = "USD8C975BB";
 		btnClearTop.click();
 		txtConfirmationNumber.sendKeys(confirmationNumber);
 		btnSearchTop.click();
 	}
+	
+	/**
+	 * Search Criteria Using All the Fields   
+	 * 
+	 * @param orderType
+	 * @param fromDate
+	 * @param toDate
+	 * @param tellerLastName
+	 * @param firstName
+	 * @param customerLastName
+	 * @param orderStatus
+	 */
 	
 	public void searchWithFromAndTodDate(String orderType,String fromDate, String toDate, String tellerLastName,
 			String firstName, String customerLastName, String orderStatus ) {
@@ -106,9 +150,15 @@ public class SearchOrderPage extends LoadableComponent<SearchOrderPage> {
 	
 		btnSearchBottom.click();
 	}
-
-	public void searchOrderResultsPage(String ConfirmationNumber) {
-		ConfirmationNumber = "USD8C975BB";				
+	
+	/**
+	 * Verifies Expected Confirmation Number Is Present Or not Search Result
+	 * If its Present then read and store the required info into HashMap
+	 * 
+	 * @param ConfirmationNumber
+	 */
+	
+	public void searchOrderResultsPage(String ConfirmationNumber) {				
 		List<WebElement> headerValues =driver.findElements(By.cssSelector(".normal tbody  tr[class='tableHeader'] td"));
 		List<WebElement> rowsValues =driver.findElements(By.cssSelector(".normal tbody  tr[class='medBold'] td"));
 		List<WebElement> rowsCount =driver.findElements(By.cssSelector(".normal tbody  tr[class='medBold']"));
@@ -129,4 +179,90 @@ public class SearchOrderPage extends LoadableComponent<SearchOrderPage> {
 			Assert.fail("Search Order Records Are Not Matched");
 		}			
 	}		
+	
+	//RK
+	public boolean isSearchOrderPageLoaded(){
+		boolean isSearchOrderPageLoaded = false;
+		if(txtConfirmationNumber.isDisplayed()){
+			isSearchOrderPageLoaded = true;
+		}
+		return isSearchOrderPageLoaded;
+
+	}
+	
+	public void selectOrderStatus(String orderStatus){
+		Select orderStatusList = new Select(lstOrderStatus);
+		orderStatusList.selectByVisibleText(orderStatus);
+	}
+	
+	public void searchButtonClick(){
+		btnSearchBottom.click();
+		wrapper.waitForLoaderInvisibility(waitTime);
+	}
+	
+	public void enterConfirmOrderNumber(String confirmationNumber){
+		txtConfirmationNumber.sendKeys(confirmationNumber);
+	}
+	
+	public void orderNumberLinkClick(){
+		lnkConfirmNumber.click();
+		wrapper.waitForLoaderInvisibility(waitTime);
+	}
+	
+	public boolean isOrderSummaryPageLoaded(){
+		boolean isOrderSummaryPageLoaded = false;
+		if(orderSummaryPageTitle.isDisplayed()){
+			isOrderSummaryPageLoaded = true;
+		}
+		return isOrderSummaryPageLoaded;
+
+	}
+	
+	public void previousOrderSumPageBtn(){
+		previousPageBtn.click();
+		wrapper.waitForLoaderInvisibility(waitTime);
+	}
+	
+	public boolean isSearchOrderResultPageLoaded(){
+		boolean isSearchOrderResultPageLoaded = false;
+		if(searchOrderResultPage.isDisplayed()){
+			isSearchOrderResultPageLoaded = true;
+		}
+		return isSearchOrderResultPageLoaded;
+
+	}
+	
+	public void exportToExcelClick(){
+		exportToExcelBtn.click();
+		wrapper.waitForLoaderInvisibility(waitTime);
+	}
+	
+	public void enterTellerName(String tellerName){
+		txtTellerLastName.sendKeys(tellerName);
+	}
+	
+	public void enterCustomerName(String customerName){
+		txtCustomerLastName.sendKeys(customerName);
+	}
+	
+	public void enterValidDate(String fromDate, String toDate){
+		dtFrom.sendKeys(fromDate);
+		dtTo.sendKeys(toDate);
+	}
+	
+	public String switchtoPopUpAndGetMessage(){
+		String popupMessage = null;
+		popupMessage =driver.switchTo().alert().getText();
+		return popupMessage;
+	}
+	
+	public void acceptAlert(){
+		wrapper.acceptAlert(timeOutPeriod);
+		wrapper.waitForLoaderInvisibility(waitTime);
+	}
+	
+	public void nextLinkClick(){
+		lnkNext.click();
+		wrapper.waitForLoaderInvisibility(waitTime);
+	}
 }

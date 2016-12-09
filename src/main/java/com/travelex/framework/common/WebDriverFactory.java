@@ -1,31 +1,24 @@
 package com.travelex.framework.common;
 
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.Calendar;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
+
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.testng.Assert;
 import org.testng.Reporter;
 
 import com.travelex.framework.common.EnvironmentParameter;
-import com.travelex.framework.exceptions.IllegalEnvironmentValueException;
-
-
+import com.travelex.framework.exception.IllegalEnvironmentValueException;
 
 /**
  * WebdriverFactory class used to get a web driver instance. 
@@ -33,91 +26,24 @@ import com.travelex.framework.exceptions.IllegalEnvironmentValueException;
  */
 
 public class WebDriverFactory {
+	@SuppressWarnings("unused")
 	private static ConfigurationProperties configProperty = ConfigurationProperties.getInstance();
 
-	public static ExpectedCondition<Boolean> documentLoad;
-	public static ExpectedCondition<Boolean> framesLoad;
-	public static ExpectedCondition<Boolean> imagesLoad;
 	public static int maxPageLoadWait = 100;
 
-	static {
-		documentLoad = new ExpectedCondition<Boolean>() {
-			public final Boolean apply(final WebDriver driver) {
-				final JavascriptExecutor js = (JavascriptExecutor) driver;
-				boolean docReadyState = false;
-				try {
-					docReadyState = (Boolean) js.executeScript("return (function() { if (document.readyState != 'complete') {  return false; } if (window.jQuery != null && window.jQuery != undefined && window.jQuery.active) { return false;} if (window.jQuery != null && window.jQuery != undefined && window.jQuery.ajax != null && window.jQuery.ajax != undefined && window.jQuery.ajax.active) {return false;}  if (window.angular != null && angular.element(document).injector() != null && angular.element(document).injector().get('$http').pendingRequests.length) return false; return true;})();");
-				} catch (WebDriverException e) {
-					docReadyState = true;
-				}
-				return docReadyState;
-			}
-		};
-
-		imagesLoad = new ExpectedCondition<Boolean>() {
-			public final Boolean apply(final WebDriver driver) {
-				boolean docReadyState = true;
-				try {
-					JavascriptExecutor js;
-					List<WebElement> images = driver.findElements(By.cssSelector("img[src]"));
-					for (int i = 0; i < images.size(); i++) {
-						try {
-							js = (JavascriptExecutor) driver;
-							docReadyState = docReadyState && (Boolean) js.executeScript("return arguments[0].complete && typeof arguments[0].naturalWidth != \"undefined\" && arguments[0].naturalWidth > 0", images.get(i));
-							if (!docReadyState) {
-								break;
-							}
-						} catch (StaleElementReferenceException e) {
-							images = driver.findElements(By.cssSelector("img[src]"));
-							i--;
-							continue;
-						} catch (WebDriverException e) {
-							docReadyState = true;
-						}
-					}
-				} catch (WebDriverException e) {
-					docReadyState = true;
-				}
-				return docReadyState;
-			}
-		};
-
-		framesLoad = new ExpectedCondition<Boolean>() {
-			public final Boolean apply(final WebDriver driver) {
-				boolean docReadyState = true;
-				try {
-					JavascriptExecutor js;
-					List<WebElement> frames = driver.findElements(By.cssSelector("iframe[style*='hidden']"));
-					for (WebElement frame : frames) {
-						try {
-							driver.switchTo().defaultContent();
-							driver.switchTo().frame(frame);
-							js = (JavascriptExecutor) driver;
-							docReadyState = docReadyState && (Boolean) js.executeScript("return (document.readyState==\"complete\")");
-							driver.switchTo().defaultContent();
-							if (!docReadyState) {
-								break;
-							}
-						} catch (WebDriverException e) {
-							docReadyState = true;
-						}
-					}
-				} catch (WebDriverException e) {
-					docReadyState = true;
-				} finally {
-					driver.switchTo().defaultContent();
-				}
-				return docReadyState;
-			}
-		};
-		maxPageLoadWait = configProperty.getProperty("maxPageLoadWait") != null ? Integer.valueOf(configProperty.getProperty("maxPageLoadWait")) : maxPageLoadWait;
-	}
-
+	/**
+	 * Launches remote web driver with specified browser, version, platform, and desired capabilities
+	 * 
+	 * @param environmentParameter
+	 * @return driver
+	 * @throws Throwable
+	 */
 	
 	public static WebDriver get(EnvironmentParameter environmentParameter) throws Throwable {		
 		DesiredCapabilities capability = new DesiredCapabilities();
 		ConfigurationProperties configurationProperties = ConfigurationProperties.getInstance();
 		String browser = environmentParameter.getBrowserName();
+		String absolutePath=new File("").getAbsolutePath();
 		
 		if (browser.equalsIgnoreCase("IE")) {
 			capability = DesiredCapabilities.internetExplorer();
@@ -128,7 +54,9 @@ public class WebDriverFactory {
 			capability.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
 			capability.setCapability(InternetExplorerDriver.ENABLE_PERSISTENT_HOVERING, false);
 			capability.setCapability(InternetExplorerDriver.REQUIRE_WINDOW_FOCUS, true);
-			capability.setJavascriptEnabled(true);			
+			capability.setJavascriptEnabled(true);
+			capability.setVersion(environmentParameter.getBrowserVersion());
+			Runtime.getRuntime().exec("wscript "+absolutePath+"/gridConfig/protectedmodeon.vbs");
 		}else if (browser.equalsIgnoreCase("FIREFOX")) {
 			capability = DesiredCapabilities.firefox();			
 		}else if (browser.equalsIgnoreCase("PHANTOM")) {
@@ -168,10 +96,8 @@ public class WebDriverFactory {
 			URL gridURL = new URL(configurationProperties.getProperty(ConfigurationProperties.REMOTE_SERVER_URL));
 			driver = new RemoteWebDriver(gridURL, capability);
 		} catch (Exception e) {
-			Log.message("Unable to launch browser instance due to following error : "+ e.getMessage());
 		} catch (Error err) {
 			err.printStackTrace();
-			Log.message("Unable to launch browser instance due to following error : "+ err.getMessage());
 		} finally {
 			try {
 				Field f = Reporter.getCurrentTestResult().getClass().getDeclaredField("m_startMillis");
@@ -187,5 +113,4 @@ public class WebDriverFactory {
 				
 		return driver;
 	}
-	
 }

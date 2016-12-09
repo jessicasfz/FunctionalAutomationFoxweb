@@ -1,0 +1,17 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="MAVEN - CUCUMBER - TESTNG" parallel="classes" thread-count="1">
+    <test name="Cucumber Execution Result">             
+       <method-selectors>
+              <method-selector>
+                    <script language="beanshell"> 
+                    <![CDATA[ 
+                           groups.containsKey("Smoke") 
+                    ]]>
+              </script>
+              </method-selector>
+       </method-selectors>                      
+       <packages>
+              <package name="com.travelex.runnerClasses.*" />              
+       </packages>
+	</test>      
+</suite>
