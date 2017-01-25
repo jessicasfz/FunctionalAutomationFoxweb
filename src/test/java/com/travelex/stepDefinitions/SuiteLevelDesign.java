@@ -29,7 +29,7 @@ public class SuiteLevelDesign extends AbstractTestNGCucumberTests{
 			directory.mkdir();		
 		}
 		
-/*		String webGridHubpath="cmd /c start/min " + System.getProperty("user.dir") +"/gridConfig/StartHub.bat";
+		/*String webGridHubpath="cmd /c start/min " + System.getProperty("user.dir") +"/gridConfig/StartHub.bat";
     	Runtime rn=Runtime.getRuntime();
     	rn.exec(webGridHubpath);
     	Thread.sleep(1000);
@@ -40,11 +40,11 @@ public class SuiteLevelDesign extends AbstractTestNGCucumberTests{
     		 webGridNodepath="cmd /c start/min " + System.getProperty("user.dir") +"/gridConfig/StartNode_IE.bat";    		
     	}else if(browserName.equalsIgnoreCase("CHROME")){    		
     		 webGridNodepath="cmd /c start/min " + System.getProperty("user.dir") +"/gridConfig/StartNode.bat";
+    		System.out.println("Node started ");
     	}
     	
     	rn.exec(webGridNodepath);
     	Thread.sleep(1000);
-  	   	
     	String windowsGridNodepath="cmd /c start/min " + System.getProperty("user.dir") +"/gridConfig/Winium.Desktop.Driver.exe";
     	rn.exec(windowsGridNodepath);
     	Thread.sleep(1000);*/
@@ -76,12 +76,12 @@ public class SuiteLevelDesign extends AbstractTestNGCucumberTests{
 		SendReport se = new SendReport();
 		se.sendMail();
 		
-/*		try {
+		/*try {
 			String killTask = "cmd /c start/min " + System.getProperty("user.dir") +"/gridConfig/killtaskJavaProcess.bat";
 			Runtime rn=Runtime.getRuntime();
 			rn.exec(killTask);          
 	    } catch (Exception ex) {
 	        ex.printStackTrace();
-	    }*/		
+	    }	*/
 	}
 }

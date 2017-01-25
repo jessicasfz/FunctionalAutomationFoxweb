@@ -13,7 +13,7 @@ import org.openqa.selenium.support.ui.LoadableComponent;
 import org.testng.Assert;
 
 import com.travelex.framework.common.WebDriverWrapper;
-import com.travelex.stepDefinitions.StepDefinitions;
+//import com.travelex.stepDefinitions.StepDefinitions;
 
 public class PrinterFriendlyPage extends LoadableComponent<PrinterFriendlyPage>{
 	
@@ -68,6 +68,12 @@ public class PrinterFriendlyPage extends LoadableComponent<PrinterFriendlyPage>{
 	
 	@FindBy(xpath = "//span[contains(text(),'Shipping Charge')]/../following-sibling::td[4]")
 	WebElement shippingCharge;
+	
+	@FindBy(xpath = "//input[@value='Next Order']")
+	WebElement btnNextOrder;
+	
+	@FindBy(xpath = "//a[contains(text(),'Change Branch')]")
+	WebElement lnkChangeBranch;
 
 	@SuppressWarnings("unused")
 	@Override
@@ -95,6 +101,18 @@ public class PrinterFriendlyPage extends LoadableComponent<PrinterFriendlyPage>{
 		wrapper = new WebDriverWrapper(driver);
 	}
 	
+	public void nextOrderButtonClick(String configNextBtn){
+		if(WebDriverWrapper.isConfigTrue(configNextBtn)){
+		btnNextOrder.click();
+		wrapper.waitForLoaderInvisibility(waitTime);
+		}
+	}
+	
+	public void changeBranchLink(String configChangeBranchLink){
+		lnkChangeBranch.click();
+		wrapper.waitForLoaderInvisibility(waitTime);
+	}
+	
 	@SuppressWarnings("unused")
 	public void verifyOrderDetails(ArrayList<HashMap<String,String>> ordDetails,HashMap<String,String> custDetails){
 		double expectedTotal = TransactionAndCurrencyPage.transactionTotal;
@@ -104,18 +122,18 @@ public class PrinterFriendlyPage extends LoadableComponent<PrinterFriendlyPage>{
 		String[] custNam = custName.split(":");
 		String customerName = custNam[1].trim();
 		
-		String fullName = StepDefinitions.hashmap.get("radioBtn")+"."+" "+StepDefinitions.hashmap.get("fName")+" "+StepDefinitions.hashmap.get("lName");
-		if(customerName.equalsIgnoreCase(fullName)){
+		//String fullName = StepDefinitions.hashmap.get("radioBtn")+"."+" "+StepDefinitions.hashmap.get("fName")+" "+StepDefinitions.hashmap.get("lName");
+		/*if(customerName.equalsIgnoreCase(fullName)){
 			System.out.println("Name validation is successful");
 		}else{
 			System.out.println("Name validation failed");
-		}
+		}*/
 		//Assert.assertEquals(customerName, fullName);
 		
 		String custAccNo = CustomerAccNumber.getText();
 		String[] custAcc = custAccNo.split(":");
 		String customerAccNumber = custAcc[1].trim();
-		Assert.assertEquals(customerAccNumber, StepDefinitions.hashmap.get("GLNo"));
+		//Assert.assertEquals(customerAccNumber, StepDefinitions.hashmap.get("GLNo"));
 		
 		String address1 = CustomerAddress.getText();
 		String[] add = address1.split("\n");

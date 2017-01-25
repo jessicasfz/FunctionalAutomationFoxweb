@@ -1,6 +1,5 @@
 Feature: Sale order for canada non-Stockist branch(Login Functionality)
 
-  @PraveenTest
   Scenario Outline: This feature will test Login functionality of COL with Valid credentials for Canada partners
     Given I Login to COL with username "<UserName>" and password "<Password>" for Partner "<PartnerID>"
     Then I navigate to Home Page
@@ -12,6 +11,18 @@ Feature: Sale order for canada non-Stockist branch(Login Functionality)
       | UserName   | Password  | PartnerID |
       | a00010@usb | Pa$$word1 |     29116 |
 
+  @TestHa
+  Scenario Outline: RAP test feature2
+    Given I Login to COL with username "<AutomationID>" and password for Partner
+    Then I navigate to Home Page
+    And I close the browser
+
+    Examples: 
+      | AutomationID |
+      | AUTO01       |
+      | AUTO02       |
+
+  @PraveenTest
   Scenario Outline: This feature will test Login functionality of COL with invalid username for Canada partners
     Given I Login to COL with incorrect credetials username "<UserName>" and password "<Password>" for Partner "<PartnerID>"
     Then I should see error message "<ErrorMessage>"

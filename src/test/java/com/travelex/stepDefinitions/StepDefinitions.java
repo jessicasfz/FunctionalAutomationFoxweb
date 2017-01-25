@@ -1,4 +1,4 @@
-package com.travelex.stepDefinitions;
+/*package com.travelex.stepDefinitions;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -15,6 +15,7 @@ import com.travelex.framework.common.ConfigurationProperties;
 import com.travelex.framework.common.EnvironmentParameter;
 import com.travelex.framework.common.WebDriverFactory;
 import com.travelex.framework.common.WebDriverWrapper;
+import com.travelex.framework.common.readExcelData;
 import com.travelex.nam.pages.CustomerDetailsPage;
 import com.travelex.nam.pages.HomePage;
 import com.travelex.nam.pages.LoginPage;
@@ -48,12 +49,15 @@ public class StepDefinitions {
 
 	ConfigurationProperties configurationProperties = ConfigurationProperties.getInstance();
 	static EnvironmentParameter environmentParameter;
-	public static HashMap<String,String> hashmap;	
+	public static HashMap<String,String> hashmap;
+	
+	private readExcelData rData;
+	public static HashMap<String,String> dataMap;
       
-    /**
+    *//**
      * Delete all cookies at the start of each scenario to avoid
      * shared state between tests
-     */
+     *//*
     
     @Before
     public void openBrowser(Scenario scenario) throws MalformedURLException,Throwable {    	
@@ -69,9 +73,9 @@ public class StepDefinitions {
 		StepDefinitions.scenario = scenario;
     }
    
-    /**
+    *//**
      * Embed a screenshot in test report if test is marked as failed
-     */
+     *//*
     
     @After
     public void embedScreenshot(Scenario scenario) {
@@ -85,6 +89,16 @@ public class StepDefinitions {
         }
         driver.quit();
     }
+    
+    @Given("^I Login to COL with username \"([^\"]*)\" and password for Partner")
+	public void i_Login_to_COL_with_username_and_password_for_Partner(String AutoID) throws Throwable {
+		rData = new readExcelData();
+		dataMap = rData.getAllColumnFromRow(AutoID);		
+		String colWebSiteURL = configurationProperties.getProperty(ConfigurationProperties.COL_APPLICATION_URL) + dataMap.get("branch");
+		String browserName = configurationProperties.getProperty(ConfigurationProperties.BROWSER_NAME);
+		loginPage = new LoginPage(driver, colWebSiteURL, browserName).get();
+		homePage = loginPage.clickLogin(dataMap.get("username"),dataMap.get("password"));		
+	}
 					
 	@Given("^I Login to COL with username \"([^\"]*)\" and password \"([^\"]*)\" for Partner \"([^\"]*)\"$")
 	public void i_Login_to_COL_with_username_and_password_for_Partner(String username, String password, String partnerid) throws Throwable {
@@ -136,7 +150,7 @@ public class StepDefinitions {
 
 	@When("^I select transaction type \"([^\"]*)\", product type \"([^\"]*)\" and currency \"([^\"]*)\"$")
 	public void i_select_transaction_type_product_type_and_currency(String transactionType, String productType, String currency) throws Throwable {
-		transactionAndCurrencyPage.transactionDetails(transactionType,productType,currency);
+		//transactionAndCurrencyPage.transactionDetails(transactionType,productType,currency);
 	}
 
 	@When("^I enter amount \"([^\"]*)\"$")
@@ -206,25 +220,25 @@ public class StepDefinitions {
 	@When("^I enter Customer details customerRadioBtn \"([^\"]*)\", firstName \"([^\"]*)\", lastName \"([^\"]*)\" and GLNo \"([^\"]*)\"$")
 	public void i_enter_Customer_details_customerRadioBtn_firstName_lastName_and_GLNo(String customerRadio, String firstName, String lastName, String glNo) throws Throwable {
 		customerDetailsPage.enterCustomerDetails(customerRadio,firstName,lastName,glNo);
-		/*hashmap = new HashMap<String,String>();
+		hashmap = new HashMap<String,String>();
 		hashmap.put("radioBtn", customerRadio);
 		hashmap.put("fName", firstName);
 		hashmap.put("lName", lastName);
-		hashmap.put("GLNo", glNo);*/
+		hashmap.put("GLNo", glNo);
 	}
 
 	@When("^I enter Delivery details attention \"([^\"]*)\" branchContact \"([^\"]*)\" phoneNumber \"([^\"]*)\"$")
 	public void i_enter_Delivery_details_attention_branchContact_phoneNumber(String attention, String branchContact, String phoneNumber) throws Throwable {
 		customerDetailsPage.enterDeliveryDetails(attention,branchContact,phoneNumber);
-		/*hashmap.put("atten", attention);
+		hashmap.put("atten", attention);
 		hashmap.put("contact", branchContact);
-		hashmap.put("phone", phoneNumber);*/
+		hashmap.put("phone", phoneNumber);
 
 	}
 
 	@When("^I click Complete Order button on Customer Details Page$")
 	public void i_click_completeOrder_button_on_Customer_Details_Page() throws Throwable {
-		/*addDetails = customerDetailsPage.fetchAddressDetails();*/
+		addDetails = customerDetailsPage.fetchAddressDetails();
 		customerDetailsPage.submitCustomerDetails();
 	}
 	
@@ -249,9 +263,9 @@ public class StepDefinitions {
 		transactionAndCurrencyPage.switchToWindow(printWindow,driver);	
 		transactionAndCurrencyPage.closeWindow(printWindow,driver);
 		transactionAndCurrencyPage.switchToWindow(confirmWindow,driver);
-		/*printerFriendlyPage = new PrinterFriendlyPage(driver);
+		printerFriendlyPage = new PrinterFriendlyPage(driver);
 		printerFriendlyPage.verifyOrderDetails(orderDetails,addDetails);
-		scenario.write("Order Validation is successful");*/
+		scenario.write("Order Validation is successful");
 	}
 
 	@Then("^I should see amountMessage \"([^\"]*)\"$")
@@ -391,12 +405,12 @@ public class StepDefinitions {
         
     @When("^I select transaction type \"([^\"]*)\", product type \"([^\"]*)\"$")
     public void i_select_transaction_type_product_type(String transactionType, String productType) throws Throwable {
-    	transactionAndCurrencyPage.transactionDetails(transactionType,productType);        
+    //	transactionAndCurrencyPage.transactionDetails(transactionType,productType);        
     }
 
     @When("^I  Select currency \"([^\"]*)\"$")
     public void i_Select_currency(String currency) throws Throwable {
-    	transactionAndCurrencyPage.transactionDetails(currency);
+    //	transactionAndCurrencyPage.transactionDetails(currency);
     }
     
     @Then("^I should see ErrorMeassage  \"([^\"]*)\"$")
@@ -654,4 +668,17 @@ public class StepDefinitions {
     public void i_quit_My_Browser() throws Throwable {
     	driver.quit();
     }
+    
+    @Then("^I close the browser$")
+	public void i_close_the_browser() throws Throwable {
+		
+		homePage.closeBrowser();
+		HashMap<String,String> test = new HashMap<String,String>();
+		test.put("refNum","newref2");
+		test.put("CustName","newcust2");
+		test.put("Phone","newphone2");
+		rData.updateData("Sheet1", dataMap.get("AutomationID"),test);
+		
+	}
 }
+*/

@@ -101,29 +101,5 @@ public class LoginPage extends LoadableComponent<LoginPage>  {
 		btnEnter.click();
 		return new HomePage(driver).get();
 		
-	}
-	
-	/**
-	 * Enters Login Details and Click on Submit Button(for incorrect credentials)
-	 *  	
-	 * @param loginID
-	 * @param password
-	 * @return HomePage
-	 * @throws WebDriverException
-	 */
-	
-	public LoginPage clickInvalidLogin(String loginID, String password) throws WebDriverException{
-		txtUserId.sendKeys(loginID);
-		txtPassword.sendKeys(password);
-		btnEnter.click();
-		return new LoginPage(driver).get();
-	}
-	
-	public String errorMessagePoPupValidation(){
-		String actualMessage = "";
-		actualMessage = errorMsg.getText();
-		return actualMessage;
-	}
-
-	
+	}	
 }

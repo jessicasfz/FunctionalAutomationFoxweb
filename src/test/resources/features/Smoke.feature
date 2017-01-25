@@ -1,6 +1,6 @@
 Feature: Smoke Feature File
 
-  @Smokes
+  @Smokesss
   Scenario Outline: Place Sale to customer order of foreign currency without clicking quote and view button
     Given I Login to COL with username "<UserName>" and password "<Password>" for Partner "<PartnerID>"
     Then I navigate to Home Page

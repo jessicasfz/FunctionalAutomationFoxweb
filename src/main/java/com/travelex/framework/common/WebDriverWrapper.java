@@ -41,16 +41,19 @@ public class WebDriverWrapper {
 	public static String getCurrentBrowserName(WebDriver driver) {
 		Capabilities cp = ((RemoteWebDriver) driver).getCapabilities();
 		return cp.getBrowserName();
+
 	}
 	
 	public String getCurrentBrowserName() {
 		Capabilities cp = ((RemoteWebDriver) driver).getCapabilities();
 		return cp.getBrowserName();
+
 	}
 	
 	public Capabilities getCurrentCapability() {
 		Capabilities cp = ((RemoteWebDriver) driver).getCapabilities();
 		return cp;
+
 	}
 	
 	/**
@@ -594,5 +597,17 @@ public class WebDriverWrapper {
 		catch(Exception exception) {
 		}
 	}
+	
+	//-----------------------------------------------------New methods----------------------------------
+	
+	public static boolean isConfigTrue(String config) {
+
+		if(config!=null && config.toLowerCase().contains("y"))
+			return true;
+		else
+			return false;
+	}
+
+
 
 }

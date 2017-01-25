@@ -16,11 +16,14 @@ import org.openqa.selenium.support.ui.LoadableComponent;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 
+import com.travelex.framework.Dataset.SharedData;
+import com.travelex.framework.common.ConfigurationProperties;
 import com.travelex.framework.common.WebDriverWrapper;
+import com.travelex.framework.utilities.WebdriverWrapper;
+import com.travelex.stepDefinitions.MasterDataReader;
 
 public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAndCurrencyPage>{
 	public String delimiter ="\\|";
-	//Logger logger = Logger.getLogger(TransactionAndCurrencyPage.class.getName());
 	WebDriver driver;
 	WebDriverWrapper wrapper ;
 	private int timeOutPeriod = 3000;
@@ -28,6 +31,12 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 	public WebElement ele = null;
 	public static double transactionTotal,serviceCharge,accountFee,deleiveryCharge;
 	public static int noOfrows;
+	public static List<SharedData> ordDetails = new ArrayList<SharedData>();
+	public static SharedData data = new SharedData();
+	public static int counter = 1;
+	
+	private ConfigurationProperties configurationProperties = new ConfigurationProperties();
+	String browserName = configurationProperties.getProperty(ConfigurationProperties.BROWSER_NAME);
 
 	@FindBy(id = "searchTerm")
 	WebElement txtBranch;
@@ -40,9 +49,6 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 
 	@FindBy(xpath = "//input[@value='  NEXT  ']")
 	WebElement btnNext;
-
-	@FindBy(xpath = "//input[@value='Next Order']")
-	WebElement btnNextOrder;
 
 	@FindBy(xpath = "//td/a[contains(text(),'Logout')]")
 	WebElement lblHomePage;
@@ -201,6 +207,24 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 	@FindBy(xpath = "//td[contains(text(),'No search results found')]")
 	WebElement exportExcellocator;
 	
+	//Pravin addition
+	
+	@FindBy(id = "reasons")
+	WebElement lstReason;
+
+	@FindBy(id = "paymentMethod")
+	WebElement lstPaymentMethod;
+	
+	@FindBy(xpath = "//*[@id='quoteMessage']//span[contains(text(),'rate is:')]/../../following-sibling::tr[2]/td/span")
+	WebElement lblUpAmt;
+	
+	@FindBy(xpath = "//*[@id='quoteMessage']//span[contains(text(),'rate is:')]/../../following-sibling::tr[4]/td/span")
+	WebElement lblUpAmt2;
+
+	@FindBy(id = "quoteChoice")
+	WebElement rdbtnUpAmt;
+	
+	
 	
 	public TransactionAndCurrencyPage(WebDriver driver) {
 		this.driver = driver;
@@ -239,25 +263,30 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 		branchLocationList.selectByVisibleText(branchLocation);			
 	}
 
-	public void orderTypeSelection(String orderType){
-		switch (orderType.toUpperCase()) {
-		case "ONLINE":
-			lnkOnline.click();
-			break;
-		case "ONSITE":
-			lnkOnsite.click();
-			break;
-		case "WHOLESALE":
-			lnkWholeSale.click();
-			break;
+	public void orderTypeSelection(String orderType,String orderConfig){
+		if(WebDriverWrapper.isConfigTrue(orderConfig)){
+			switch (orderType.toUpperCase()) {
+			case "ONLINE":
+				lnkOnline.click();
+				break;
+			case "ONSITE":
+				lnkOnsite.click();
+				break;
+			case "WHOLESALE":
+				lnkWholeSale.click();
+				break;
 
-		default:
-			break;
+			default:
+				break;
+			}
+			wrapper.waitForLoaderInvisibility(waitTime);
 		}
-		wrapper.waitForLoaderInvisibility(waitTime);
 	}
-
-	public void transactionDetails(String transactionType, String productType, String currency){
+	
+	public void transactionDetails(String transactionType, String productType, String currency,
+			String accountHolderType,String foreignAmount,String configConfirmChkBox) throws Throwable{
+		
+		if(counter==1){
 		switch (transactionType.toUpperCase()) {
 		case "PURCHASE":
 			rbPurchase.click();
@@ -273,57 +302,113 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 			break;
 		}
 
-		Select productDetailsList = new Select(lstProductDetails);
-		productDetailsList.selectByVisibleText(productType);
-		Select currencyList = new Select(lstCurrency);
-		currencyList.selectByVisibleText(currency);
-	}
+		if(accountHolderType != "NA"){
+			switch (accountHolderType.toUpperCase()) {
+			case "ACCOUNTHOLDER":
+				accountHolderRdoBtn.click();
+				wrapper.waitForLoaderInvisibility(waitTime);
+				break;
 
-	public void transactionDetails(String transactionType, String productType){
-		switch (transactionType.toUpperCase()) {
-		case "PURCHASE":
-			rbPurchase.click();
-			wrapper.waitForLoaderInvisibility(waitTime);
-			break;
+			case "NONACCOUNTHOLDER":
+				nonAccountHolderRdoBtn.click();
+				wrapper.waitForLoaderInvisibility(waitTime);
+				break;
 
-		case "SALE":
-			rbSale.click();
-			wrapper.waitForLoaderInvisibility(waitTime);
-			break;
-
-		default:
-			break;
+			default:
+				break;
+			}
 		}
 
+		checkBoxClick(browserName,configConfirmChkBox);
+		
 		Select productDetailsList = new Select(lstProductDetails);
 		productDetailsList.selectByVisibleText(productType);
-
-	}
-
-	public void transactionDetails(String currency){
+		}
+		
 		Select currencyList = new Select(lstCurrency);
 		currencyList.selectByVisibleText(currency);
 
-	}
-
-
-	public void enterForeignAmount(String foreignAmount){
-		txtForeignAmount.clear();
-		txtForeignAmount.sendKeys(foreignAmount);
-		if(wrapper.isAlertPresent()){
-			wrapper.acceptAlert(timeOutPeriod);
+		if(!(foreignAmount.equalsIgnoreCase("NA"))){
 			txtForeignAmount.clear();
 			txtForeignAmount.sendKeys(foreignAmount);
+			if(wrapper.isAlertPresent()){
+				wrapper.acceptAlert(timeOutPeriod);
+				txtForeignAmount.clear();
+				txtForeignAmount.sendKeys(foreignAmount);
+			}
 		}
+		counter++;
+		
 	}
+	
+	public void transDetailsQuoteView(String transactionType, String productType, String currency,String accountHolderType,String foreignAmount,String configConfirmChkBox,String amtMsg,String configQuote) throws Throwable{
+		
+		switch (transactionType.toUpperCase()) {
+		case "PURCHASE":
+			rbPurchase.click();
+			wrapper.waitForLoaderInvisibility(waitTime);
+			break;
+
+		case "SALE":
+			rbSale.click();
+			wrapper.waitForLoaderInvisibility(waitTime);
+			break;
+
+		default:
+			break;
+		}
+
+		if(accountHolderType != "NA"){
+			switch (accountHolderType.toUpperCase()) {
+			case "ACCOUNTHOLDER":
+				accountHolderRdoBtn.click();
+				wrapper.waitForLoaderInvisibility(waitTime);
+				break;
+
+			case "NONACCOUNTHOLDER":
+				nonAccountHolderRdoBtn.click();
+				wrapper.waitForLoaderInvisibility(waitTime);
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		Select productDetailsList = new Select(lstProductDetails);
+		productDetailsList.selectByVisibleText(productType);
+		Select currencyList = new Select(lstCurrency);
+		currencyList.selectByVisibleText(currency);
+		
+		if(WebDriverWrapper.isConfigTrue(configQuote)){
+			quoteAndViewButton();
+			Assert.assertEquals(amountHolderMessage(), amtMsg);
+			acceptAlert();
+		}
+
+		if(!(foreignAmount.equalsIgnoreCase("NA"))){
+			txtForeignAmount.clear();
+			txtForeignAmount.sendKeys(foreignAmount);
+			if(wrapper.isAlertPresent()){
+				wrapper.acceptAlert(timeOutPeriod);
+				txtForeignAmount.clear();
+				txtForeignAmount.sendKeys(foreignAmount);
+			}
+		}
+		quoteAndViewButton();
+	}
+
+
+
 	
 	public void checkForeignAmount(String foreignAmount){
 		String newAmount = txtForeignAmount.getText();
 		Assert.assertEquals(newAmount, foreignAmount);
 	}
 
-	public void deliveryTypeBtn(String deliveryType){
+	public void deliveryTypeBtn(String configDeliveryType, String deliveryType){
 		wrapper.waitForLoaderInvisibility(waitTime);
+		if(WebDriverWrapper.isConfigTrue(configDeliveryType)){
 		if(deliveryType.equalsIgnoreCase("Next Day Delivery")){
 			if(!rbNextDeliveryBtn.isSelected()){
 				rbNextDeliveryBtn.click();
@@ -335,6 +420,7 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 			}
 		}
 		wrapper.waitForLoaderInvisibility(waitTime);
+		}
 
 	}
 
@@ -344,11 +430,61 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 	}
 
 	//Code modified for IE :RD
-	public void addOrderBtnClick() throws InterruptedException{
+	public void addOrderBtnClick(String addToOrderconfig,String denomMsg,String configDenomAlert,String denomQty,String warningMsg) throws InterruptedException{
+		if(WebDriverWrapper.isConfigTrue(addToOrderconfig)){
 		wrapper.waitForElementToBeClickable(btnAddToOrder, 3000000);
 		btnAddToOrder.click();
 		//wrapper.waitForLoaderInvisibility(waitTime);
 		Thread.sleep(3000);
+		}
+		
+		if(!(denomMsg.equalsIgnoreCase("NA"))){
+			Assert.assertEquals(accountHolderMessagePoPupValidation(), denomMsg);
+			if(WebDriverWrapper.isConfigTrue(configDenomAlert)){
+				acceptAlert();
+				fillDenomQuantity(denomQty,warningMsg);
+			}else{
+				dismissAlert();
+			}
+		}
+	}
+	
+	public void addOrderBtnClickQuoteView(String addToOrderconfig,String denomMsg,String configDenomAlert,
+			String denomQty,String accMsg, String confirmChkBox,String warningMsg) throws InterruptedException{
+				
+		if(WebDriverWrapper.isConfigTrue(addToOrderconfig)){
+		wrapper.waitForElementToBeClickable(btnAddToOrder, 3000000);
+		btnAddToOrder.click();
+		//wrapper.waitForLoaderInvisibility(waitTime);
+		Thread.sleep(3000);
+		}
+		
+		if(!(accMsg.equalsIgnoreCase("NA"))){
+			
+			String actualMsg = accountHolderMessagePoPupValidation();
+			Assert.assertEquals(accountHolderMessagePoPupValidation(), accMsg);
+			MasterDataReader.scenario.write("<B><font size='3 color='Black'>Assert passed.</font></B> Actual Output :"+actualMsg+System.lineSeparator()+"Expected Output : "+accMsg);
+			acceptAlert();
+		}
+		
+		checkBoxClick(browserName,confirmChkBox);
+		
+		if(WebDriverWrapper.isConfigTrue(addToOrderconfig)){
+			btnAddToOrder.click();
+			Thread.sleep(3000);
+		}
+		
+		if(!(denomMsg.equalsIgnoreCase("NA"))){
+			String actMsg = denominationMessagePoPupValidation();
+			Assert.assertEquals(denominationMessagePoPupValidation(), denomMsg);
+			MasterDataReader.scenario.write("<B><font size='3 color='Black'>Assert passed.</font></B> Actual Output :"+actMsg+System.lineSeparator()+"Expected Output : "+denomMsg);
+			if(WebDriverWrapper.isConfigTrue(configDenomAlert)){
+				acceptAlert();
+				fillDenomQuantity(denomQty,warningMsg);
+			}else{
+				dismissAlert();
+			}
+		}
 	}
 
 	public void confirmOrderBtn(){
@@ -356,16 +492,14 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 		wrapper.waitForLoaderInvisibility(waitTime);
 	}
 
-	public CustomerDetailsPage customerDetailsPage() {
+	public void buttonClick(String configConfirmBtn) {
+		if(WebDriverWrapper.isConfigTrue(configConfirmBtn)){
 		btnConfirm.click();
 		wrapper.waitForLoaderInvisibility(waitTime);
-		return new CustomerDetailsPage(driver).get();
+		}
+		
 	}
 
-	public void clickOnConfirmButtion(){
-		btnConfirm.click();
-		wrapper.waitForLoaderInvisibility(waitTime);
-	}
 
 	public String accountHolderMessagePoPupValidation(){
 		String actualMessage = "";
@@ -387,27 +521,20 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 
 	}
 
-	public void checkBoxClick(String browser) throws InterruptedException{
-		if(browser.equalsIgnoreCase("IE")){
-			chkConfirm.click();
-			mainPage.click();
-			Thread.sleep(2000);
-			wrapper.waitForLoaderInvisibility(waitTime);
-		}else{
-			chkConfirm.click();
-			wrapper.waitForLoaderInvisibility(waitTime);
+	public void checkBoxClick(String browser,String configConfirmChkBox) throws InterruptedException{
+		if(WebDriverWrapper.isConfigTrue(configConfirmChkBox)){
+			if(browser.equalsIgnoreCase("IE")){
+				chkConfirm.click();
+				mainPage.click();
+				Thread.sleep(2000);
+				wrapper.waitForLoaderInvisibility(waitTime);
+			}else{
+				chkConfirm.click();
+				wrapper.waitForLoaderInvisibility(waitTime);
+			}
 		}
-
 	}
 
-	public boolean isTransactionPageLoaded(){
-		boolean isTransactionPageLoaded = false;
-		if(lblHomePage.isDisplayed()){
-			isTransactionPageLoaded = true;
-		}
-		return isTransactionPageLoaded;
-
-	}
 	//   Code modified for IE
 	public void dismissAlert() throws InterruptedException{
 		wrapper.dismissAlert(timeOutPeriod);
@@ -418,9 +545,9 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 		btnNext.click();
 		wrapper.waitForLoaderInvisibility(waitTime);
 	}
-
-	public void nextOrderButtonClick(){
-		btnNextOrder.click();
+	
+	public void logoutlink(){
+		lblHomePage.click();
 		wrapper.waitForLoaderInvisibility(waitTime);
 	}
 
@@ -451,18 +578,6 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 		}
 	}
 
-	/**
-	 *  Submit Transaction Details 
-	 * @param configConfirmBtn
-	 */
-
-	public void submitTransactionAndCurrDetails(String configConfirmBtn) {
-		if(!configConfirmBtn.equalsIgnoreCase("NA")){
-			btnConfirm.click();
-			wrapper.waitForLoaderInvisibility(waitTime);
-		}		
-	}
-
 	public void btnRetrive(){
 		btnRetrieve.click();
 		wrapper.waitForLoaderInvisibility(waitTime);
@@ -474,74 +589,40 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 		//wrapper.waitForLoaderInvisibility(waitTime); Code modified for IE
 	}
 
-	public void transactionDetailsAndcustomerType(String transactionType,String accountHolderType){
-		switch (transactionType.toUpperCase()) {
-		case "PURCHASE":
-			rbPurchase.click();
-			wrapper.waitForLoaderInvisibility(waitTime);
-			break;
 
-		case "SALE":
-			rbSale.click();
-			wrapper.waitForLoaderInvisibility(waitTime);
-			break;
-
-		default:
-			break;
-		}
-
-		if(accountHolderType != "NA"){
-			switch (accountHolderType.toUpperCase()) {
-			case "ACCOUNTHOLDER":
-				accountHolderRdoBtn.click();
-				wrapper.waitForLoaderInvisibility(waitTime);
-				break;
-
-			case "NONACCOUNTHOLDER":
-				nonAccountHolderRdoBtn.click();
-				wrapper.waitForLoaderInvisibility(waitTime);
-				break;
-
-			default:
-				break;
-
-			}
-		}
-	}
-
-	public void productTypeAndcurrencySelection(String productType,String currency){
-		Select productDetailsList = new Select(lstProductDetails);
-		productDetailsList.selectByVisibleText(productType);
-		Select currencyList = new Select(lstCurrency);
-		currencyList.selectByVisibleText(currency);
-	}
-
-	public void enterBeneficiaryDetails(String beneficiary,String add,String city,String state,String zipcode){
+	public void enterBeneficiaryDetails(String beneficiary,String add,String add1,String city,String state,String zipcode,String country,String comment){
+		if(!(beneficiary.equalsIgnoreCase("NA"))){
 		txtBeneficiary.sendKeys(beneficiary);
 		txtAddress1.sendKeys(add);
+		txtAddress2.sendKeys(add1);
 		txtCity.sendKeys(city);
 		txtState.sendKeys(state);
 		txtZipCode.sendKeys(zipcode);
-	}
-
-	public void selectCountry(String country){
 		Select countryList = new Select(lstCountry);
 		countryList.selectByVisibleText(country);
-	}
-
-	public void enterComments(String comment){
 		txtComments.sendKeys(comment);
+		}
 	}
 
-	public String switchtoPopUpAndGetMessage(){
-		String popupMessage = null;
-		popupMessage =driver.switchTo().alert().getText();
+	public String switchtoPopUpAndGetMessage(String errorMessage){
+		String popupMessage = "";
+		if(!errorMessage.equalsIgnoreCase("NA")){
+			popupMessage =driver.switchTo().alert().getText();
+		}
+		MasterDataReader.scenario.write("<B><font size='3 color='Black'>Assert passed.</font></B> Actual Output :"+popupMessage+System.lineSeparator()+"Expected Output : "+errorMessage);
 		return popupMessage;
 	}
 
-	public void clickShowCurrencyButton(){
-		btnShowCurrency.click();
-		wrapper.waitForLoaderInvisibility(waitTime);
+	public void clickShowCurrencyButton(String configShowCurrency){
+		if(WebDriverWrapper.isConfigTrue(configShowCurrency)){
+			btnShowCurrency.click();
+			wrapper.waitForLoaderInvisibility(waitTime);
+			switchTolatestWindow();
+			boolean actualMsg = validateCurrencywindowVisibility();
+			Assert.assertEquals(validateCurrencywindowVisibility(), true);
+			MasterDataReader.scenario.write("<B><font size='3 color='Black'>Assert passed.</font></B> Actual Output :"+actualMsg+System.lineSeparator()+"Expected Output : "+true);
+			closeCurrencyWindowAndSwitchBackMainWindow();
+		}
 	}
 
 
@@ -588,14 +669,6 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 		}	
 	}
 
-
-	@FindBy(id = "reasons")
-	WebElement lstReason;
-
-	@FindBy(id = "paymentMethod")
-	WebElement lstPaymentMethod;	
-
-
 	public void selectReasonForwaiver(String waiveReason){
 		Select reasonWaiverList = new Select(lstReason);
 		reasonWaiverList.selectByVisibleText(waiveReason);
@@ -638,51 +711,54 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 
 	}
 
-	public void clearButtonClick(){
-		btnClearFields.click();
-		wrapper.waitForLoaderInvisibility(waitTime);
+	public void clearButtonClick(String configClearButton){
+		if(WebDriverWrapper.isConfigTrue(configClearButton)){
+			btnClearFields.click();
+			wrapper.waitForLoaderInvisibility(waitTime);
+		}
 	}
 
-	public void deleteButtonClick(){
-		btndeleteOrder.click();
-		wrapper.waitForLoaderInvisibility(waitTime);
+	public void deleteButtonClick(String configDeleteButton){
+		if(WebDriverWrapper.isConfigTrue(configDeleteButton)){
+			btndeleteOrder.click();
+			wrapper.waitForLoaderInvisibility(waitTime);
+		}
 	}
 
 	//New Addition RD
 
-	@SuppressWarnings("unused")
-	public ArrayList<HashMap<String, String>> fetchOrderDetails(String Currency){
-		String[] curr = Currency.split(",");
-		ArrayList<HashMap<String,String>> ordDe = new ArrayList<HashMap<String,String>>();
-
-		for(int i=0;i<curr.length;i++){
-			HashMap<String,String> ordDet = new HashMap<String,String>();
-			int row=1;
-			row = row+i;
-			String Currdesc = "CurrDesc"+i;
-			String Units = "CurrDesc"+i;
-			String keyCurrency= curr[i]+i;
-			ele = driver.findElement(By.xpath("//td[contains(text(),'Item')]/../following-sibling::tr["+row+"]/td[3]"));
+	public List<SharedData> fetchOrderDetails(String Currency,String configFetchorderDetails){
+		
+		if(WebDriverWrapper.isConfigTrue(configFetchorderDetails)){
+		String[] curr = Currency.split("\\|");
+		
+		for(int i=1;i<=curr.length;i++){
+			
+			ele = driver.findElement(By.xpath("//td[contains(text(),'Item')]/../following-sibling::tr["+i+"]/td[3]"));
 			String currDesc = ele.getText();
 
-			ele = driver.findElement(By.xpath("//td[contains(text(),'Item')]/../following-sibling::tr["+row+"]/td[5]"));
+			ele = driver.findElement(By.xpath("//td[contains(text(),'Item')]/../following-sibling::tr["+i+"]/td[5]"));
 			String units = ele.getText();
 
-			ele = driver.findElement(By.xpath("//td[contains(text(),'Item')]/../following-sibling::tr["+row+"]/td[7]"));
+			ele = driver.findElement(By.xpath("//td[contains(text(),'Item')]/../following-sibling::tr["+i+"]/td[7]"));
 			String rate = ele.getText();
 
-			ele = driver.findElement(By.xpath("//td[contains(text(),'Item')]/../following-sibling::tr["+row+"]/td[9]"));
+			ele = driver.findElement(By.xpath("//td[contains(text(),'Item')]/../following-sibling::tr["+i+"]/td[9]"));
 			String USDValue = ele.getText();
-
-			ordDet.put("Desc", currDesc);
-			ordDet.put("Units", units);
-			ordDet.put("Rate", rate);
-			ordDet.put("USDAmount", USDValue);
-			ordDe.add(ordDet);
+			
+			data.setDescription(currDesc);
+			data.setUnits(units);
+			data.setRate(rate);
+			data.setUSD(USDValue);
+			
+			ordDetails.add(data);
 		}
 		
+		String OrderTotal = orderTotal.getText();
+		data.setOrdTotal(OrderTotal);
 		
-		return ordDe;
+		}
+		return ordDetails;
 	}
 		
 	@SuppressWarnings("unused")
@@ -761,17 +837,30 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 		
 	}
 
-	public void fillDenomQuantity(String denomQuantity){
+	public void fillDenomQuantity(String denomQuantity,String warningMsg) throws InterruptedException{
 		txtDenomQty.sendKeys(denomQuantity);
-	}
-
-	public boolean isDenomInfoLoaded(){
-		boolean isDenomInfoLoaded = false;
-		if(txtDenomQty.isDisplayed()){
-			isDenomInfoLoaded = true;
+		wrapper.waitForElementToBeClickable(btnAddToOrder, 3000000);
+		boolean isExists = driver.findElement(By.id("quoteChoice")).isDisplayed();
+		String accWarningMsg = null;
+		String arrMsg = null;
+		if(isExists){
+			String warning = lblUpAmt2.getText();
+			String[] arrWarn = warning.split("=");
+			arrMsg = arrWarn[0].trim();
+			accWarningMsg = "The total of your requested denominations does not equal the originally-entered Foreign Amount of "+arrMsg+".  Please click Ok to continue and add the new amount to your order.  Click Cancel to modify the denomination request.";
+		}else{
+			String warning = lblUpAmt.getText();
+			String[] arrWarn = warning.split("=");
+			arrMsg = arrWarn[0].trim();
+			accWarningMsg = "The total of your requested denominations does not equal the originally-entered Foreign Amount of "+arrMsg+".  Please click Ok to continue and add the new amount to your order.  Click Cancel to modify the denomination request.";
 		}
-		return isDenomInfoLoaded;
-
+		btnAddToOrder.click();
+		Thread.sleep(3000);
+		if(!warningMsg.equalsIgnoreCase("NA")){
+			 String actualMsg = denominationMessagePoPupValidation();
+			 Assert.assertEquals(actualMsg, accWarningMsg);
+			 MasterDataReader.scenario.write("<B><font size='3 color='Black'>Assert passed.</font></B> Actual Output :"+actualMsg+System.lineSeparator()+"Expected Output : "+accWarningMsg);
+		}
 	}
 
 	public void changeOrderButtonClick(){
@@ -780,36 +869,56 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 
 	}
 
-	public void editButtonClick(){
-		editButtonImg.click();
-		wrapper.waitForLoaderInvisibility(waitTime);
-
+	public void editButtonClick(String configEditButton,String foreignAmount,
+			String addToOrderconfig,String denomMsg,String configDenomAlert,String warningMsg,String denomQty,String specifyDenom) throws InterruptedException{
+		if(WebDriverWrapper.isConfigTrue(configEditButton)){
+			editButtonImg.click();
+			wrapper.waitForLoaderInvisibility(waitTime);
+			txtForeignAmount.clear();
+			String amount = "100";
+			txtForeignAmount.sendKeys(amount);
+			
+			if(WebDriverWrapper.isConfigTrue(addToOrderconfig)){
+				wrapper.waitForElementToBeClickable(btnAddToOrder, 3000000);
+				btnAddToOrder.click();
+				//wrapper.waitForLoaderInvisibility(waitTime);
+				Thread.sleep(3000);
+			}
+			
+			if(!(denomMsg.equalsIgnoreCase("NA"))){
+				String actMsg = denominationMessagePoPupValidation();
+				Assert.assertEquals(denominationMessagePoPupValidation(), denomMsg);
+				MasterDataReader.scenario.write("<B><font size='3 color='Black'>Assert passed.</font></B> Actual Output :"+actMsg+System.lineSeparator()+"Expected Output : "+denomMsg);
+				if(WebDriverWrapper.isConfigTrue(configDenomAlert)){
+					acceptAlert();
+					fillDenomQuantity(denomQty,warningMsg);
+				}else{
+					dismissAlert();
+				}
+			}
+			
+		}
+		
+		specifyDenom(specifyDenom, addToOrderconfig);
+	
+	}
+	
+	public void specifyDenom(String specifyDenom, String addToOrderconfig) throws InterruptedException{
+		if(WebDriverWrapper.isConfigTrue(specifyDenom)){
+			editButtonImg.click();
+			wrapper.waitForLoaderInvisibility(waitTime);
+			if(WebDriverWrapper.isConfigTrue(addToOrderconfig)){
+				wrapper.waitForElementToBeClickable(btnAddToOrder, 3000000);
+				btnAddToOrder.click();
+				//wrapper.waitForLoaderInvisibility(waitTime);
+				Thread.sleep(3000);
+			}
+		}
 	}
 
 	public void changeBranchLink(){
 		lnkChangeBranch.click();
 		wrapper.waitForLoaderInvisibility(waitTime);
-	}
-
-	public boolean isBranchSelectionPageLoaded(){
-		boolean isBranchSelectionPageLoaded = false;
-		if(txtBranchSearch.isDisplayed()){
-			isBranchSelectionPageLoaded = true;
-		}
-		return isBranchSelectionPageLoaded;
-	}
-
-	public boolean isBranchDropDownDisplayed(){
-		boolean isBranchDropDownDisplayed = false;
-		if(lstBranchID.isDisplayed()){
-			isBranchDropDownDisplayed = true;
-		}
-		return isBranchDropDownDisplayed;
-	}
-	
-	public void selectCurrency(String currency){
-        Select currencyList = new Select(lstCurrency);
-        currencyList.selectByVisibleText(currency);
 	}
 
 	public void rateSheetClick(){

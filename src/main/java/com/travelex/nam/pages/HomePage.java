@@ -19,7 +19,6 @@ import com.travelex.framework.common.WebDriverWrapper;
 @SuppressWarnings("unused")
 public class HomePage extends LoadableComponent<HomePage> {
 	
-	//static Logger logger = Logger.getLogger(HomePage.class.getName());
 	WebDriver driver;
 	
 	WebDriverWrapper wrapper ;
@@ -94,6 +93,8 @@ public class HomePage extends LoadableComponent<HomePage> {
 		return new SearchOrderPage(driver).get();
 	}
 	
-	
+	public void closeBrowser(){
+		driver.close();
+	}
 
 }

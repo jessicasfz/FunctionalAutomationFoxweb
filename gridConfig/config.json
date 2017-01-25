@@ -3,9 +3,9 @@
 		 
 		{ 
 		  "browserName": "chrome", 
-		  "version": "54",
+		  "version": "55",
 		  "platform": "WINDOWS", 
-		  "maxInstances":5,
+		  "maxInstances":2,
 		  "seleniumProtocol": "WebDriver"
 		}
 		

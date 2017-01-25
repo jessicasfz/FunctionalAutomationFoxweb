@@ -16,11 +16,16 @@ import org.testng.Assert;
 
 import com.travelex.framework.common.WebDriverWrapper;
 import com.travelex.framework.utilities.RandomCodeGenerator;
+import com.travelex.stepDefinitions.MasterDataReader;
 
 @SuppressWarnings("unused")
 public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{	
-	//Logger logger = Logger.getLogger(CustomerDetailsPage.class.getName());	
+
 	private WebDriver driver;
+	
+	private WebDriverWrapper wrapper ;
+	private int timeOutPeriod = 3000;
+	private int waitTime=300;
 
 	public WebDriver getDriver() {
 		return driver;
@@ -30,10 +35,6 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 		this.driver = driver;
 	}
 
-	private WebDriverWrapper wrapper ;
-	private int timeOutPeriod = 3000;
-	private int waitTime=300;
-	
 	@FindBy(xpath = "//input[@value='Mr.  'or @value='M.  ']")
 	WebElement rbMr;
 	
@@ -115,7 +116,6 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 	
 	@FindBy(xpath = "//input[@value='Printer Friendly']") 
 	WebElement btnPrinterFriendly;
-	
 	
 	@FindBy(id = "customerDOB")
 	WebElement txtDateOfBirth;
@@ -204,15 +204,7 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 			e.printStackTrace();
 		}
 	}
-	
-	public boolean isCustomerDetailsPageLoaded(){
-		boolean isCustomerDetailsPageLoaded = false;
-		if(lblCustomerDetails.isDisplayed()){
-			isCustomerDetailsPageLoaded = true;
-		}
-		return isCustomerDetailsPageLoaded;
-		
-	}
+
 	
 	/**
 	 * It will Enter Customer details [firstName, lastName, GL Account]
@@ -224,7 +216,10 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 	 * @throws InterruptedException
 	 */
 	
-	public void enterCustomerDetails(String customerRadioBtn, String firstName, String lastName, String glAccountNumber) throws Exception{
+	public void enterCustomerDetails(String customerRadioBtn, String firstName, 
+			String lastName, String glAccountNumber,String bankID,String dateOfBirth) throws Exception{
+		
+		if(!customerRadioBtn.equalsIgnoreCase("NA")){
 		switch (customerRadioBtn.toUpperCase()) {
 		case "MR":
 			rbMr.click();
@@ -241,14 +236,26 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 		default:
 			break;
 		}
+		}
 		if(!firstName.equalsIgnoreCase("NA")){
 			txtFirstName.sendKeys(firstName);
 		}
 		if(!lastName.equalsIgnoreCase("NA")){
 			txtLastName.sendKeys(lastName);
 		}
+
+		if(!bankID.equalsIgnoreCase("NA")){
+			Select bankIdList = new Select(lstBankID);
+			bankIdList.selectByVisibleText(bankID);			
+		}
+		
 		if(!glAccountNumber.equalsIgnoreCase("NA")){
 			txtCustomerAccNumber.sendKeys(glAccountNumber);
+		}
+		
+		
+		if(!dateOfBirth.equalsIgnoreCase("NA")){
+			txtDateOfBirth.sendKeys(dateOfBirth);
 		}
 	}	
 	
@@ -284,19 +291,22 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 	 * @param automationID
 	 */
 	
-	public void submitCustomerDetails() throws Exception{
-		btnCompleteOrder.click();	
-		wrapper.waitForLoaderInvisibility(waitTime);
+	public String submitCustomerDetails(String completeOrderButton) throws Exception{
+		String confirmationNumber = "";
+		if(WebDriverWrapper.isConfigTrue(completeOrderButton)){
+			btnCompleteOrder.click();	
+			wrapper.waitForLoaderInvisibility(waitTime);
+			String Ordertext = lblConfirmationNumber.getText();
+			String[] OrderNo = Ordertext.split(":");
+			confirmationNumber = OrderNo[1].trim();
+			System.out.println(confirmationNumber);
+			MasterDataReader.scenario.write("<B><font size='3' color='Magenta'>Confirmation Number is : " +confirmationNumber+"</font></B>");
+			
+		}
+		return confirmationNumber;
 		
 	}
 	
-	public String fetchConfirmationNumber() throws Exception{
-		String Ordertext = lblConfirmationNumber.getText();
-		String[] OrderNo = Ordertext.split(":");
-		String confirmationNumber = OrderNo[1].trim();
-		System.out.println(confirmationNumber);
-		return confirmationNumber;
-	}
 	
 	//Modified code for IE compatibility & WindowHandling in IE
 	public void printerFriendlyBtn(String browser,String windowTitle) throws InterruptedException{
@@ -315,51 +325,6 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 		}
 	}
 		
-	public void enterCustomerDetails(String customerRadioBtn,String firstName,String lastName,String initial,String customerAccountNo,String bankID,String dateOfBirth) throws Exception{
-		
-		switch (customerRadioBtn.toUpperCase()) {
-			case "MR":
-				rbMr.click();
-				wrapper.waitForLoaderInvisibility(waitTime);
-				break;
-			case "MS":
-				rbMs.click();
-				wrapper.waitForLoaderInvisibility(waitTime);
-				break;
-			case "MRS":
-				rbMrs.click();
-				wrapper.waitForLoaderInvisibility(waitTime);
-				break;
-			default:
-				break;
-		}
-		
-		if(!firstName.equalsIgnoreCase("NA")){
-			txtFirstName.sendKeys(firstName);
-		}
-		
-		if(!initial.equalsIgnoreCase("NA")){
-			txtInitial.sendKeys(initial);
-		}
-		
-		if(!lastName.equalsIgnoreCase("NA")){
-			txtLastName.sendKeys(lastName);
-		}
-				
-		if(!bankID.equalsIgnoreCase("NA")){
-			Select bankIdList = new Select(lstBankID);
-			bankIdList.selectByVisibleText(bankID);			
-		}
-		
-		if(!customerAccountNo.equalsIgnoreCase("NA")){
-			txtCustomerAccNumber.sendKeys(customerAccountNo);
-		}
-		
-		if(!dateOfBirth.equalsIgnoreCase("NA")){
-			txtDateOfBirth.sendKeys(dateOfBirth);
-		}
-		
-	}
 	
 	public void enterCustomerAddress(String customerAddressOne,String customerAddressTwo,String city,String state,String zipCode,String country) throws Exception{
 		
@@ -446,15 +411,22 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 	
 	}
 	
-	public void clickOnChangeOrderButton(){
-		btnChangeOrder.click();
-		wrapper.waitForLoaderInvisibility(waitTime);
+	public void clickOnChangeOrderButton(String changeOrderButton){
+		if(WebDriverWrapper.isConfigTrue(changeOrderButton)){
+			btnChangeOrder.click();
+			wrapper.waitForLoaderInvisibility(waitTime);
+		}
+		
 	}
 	
-	public void clickOnCancelOrderButton(){
-		btnCancelOrder.click();
-		wrapper.waitForLoaderInvisibility(waitTime);
+	public void clickOnCancelOrderButton(String configCancelOrderBtn){
+		if(WebDriverWrapper.isConfigTrue(configCancelOrderBtn)){
+			btnCancelOrder.click();
+			wrapper.waitForLoaderInvisibility(waitTime);
+		}
 	}
+	
+	
 	
 	//RK
 	
@@ -469,7 +441,7 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 		wrapper.waitForLoaderInvisibility(waitTime);
 	}
 	
-	public HashMap<String, String> fetchAddressDetails(){
+	/*public HashMap<String, String> fetchAddressDetails(){
 		HashMap<String, String> addValues = new HashMap<String, String>();
 		String address1 = addressField1.getText().trim();
 		String address2 = addressField2.getText().trim();
@@ -485,5 +457,5 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 		
 		return addValues;
 	}
-	
+	*/
 }
