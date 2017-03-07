@@ -471,9 +471,9 @@ public class WebDriverWrapper {
 	 * @return String alertMessage
 	 */
 
-	public String acceptAlert(int timeOutPeriod, String alertMessage) {
-		waitForAlert(timeOutPeriod);
+	public String acceptAlert() {
 		Alert alert = driver.switchTo().alert();
+		String alertMessage = alert.getText();
 		alert.accept();
 		return alertMessage;
 	}
@@ -561,7 +561,6 @@ public class WebDriverWrapper {
 		return isAlertPresent;
 	}
 
-
 	/**
 	 * it will check Either Alert is Present Or Not if it present return False else it returns True
 	 * @return boolean isAlertPresent
@@ -601,7 +600,6 @@ public class WebDriverWrapper {
 	//-----------------------------------------------------New methods----------------------------------
 	
 	public static boolean isConfigTrue(String config) {
-
 		if(config!=null && config.toLowerCase().contains("y"))
 			return true;
 		else

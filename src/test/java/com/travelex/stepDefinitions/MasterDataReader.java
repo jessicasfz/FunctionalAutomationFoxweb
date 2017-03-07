@@ -1,27 +1,25 @@
 package com.travelex.stepDefinitions;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 
-import com.travelex.framework.Dataset.CustomerDetailsDataSet;
-import com.travelex.framework.Dataset.OrderDetailsDataSet;
 import com.travelex.framework.common.ConfigurationProperties;
 import com.travelex.framework.common.EnvironmentParameter;
 import com.travelex.framework.common.WebDriverFactory;
-import com.travelex.framework.common.readFileUsingPOI;
+import com.travelex.framework.common.ExcelFileReader;
 
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
 
 public class MasterDataReader {
 	
@@ -29,11 +27,11 @@ public class MasterDataReader {
 	static EnvironmentParameter environmentParameter;
 	public static WebDriver driver;
 	public static Scenario scenario;
-	
-	public static int index;
-	public static List<OrderDetailsDataSet> orderDataset;
-	public static List<CustomerDetailsDataSet> custDataset;
-
+		
+	public static Map<String,String> orderDetails;
+	public static Map<String,String> customerDetails;
+	public static Map<String,Object> pageDetails;
+	public static ArrayList<HashMap<String,String>> txnDetails;
 	
 	 @Before
 	    public void openBrowser(Scenario scenario) throws MalformedURLException,Throwable {    	
@@ -43,9 +41,11 @@ public class MasterDataReader {
 			environmentParameter = new EnvironmentParameter();
 			environmentParameter.setBrowserName(browserName);
 			environmentParameter.setBrowserVersion(browserVersion);
-			environmentParameter.setPlatform(platform);		 		
-			driver = WebDriverFactory.get(environmentParameter);
+			environmentParameter.setPlatform(platform);	
+			WebDriverFactory factory = new WebDriverFactory();
+			driver = factory.get(environmentParameter);
 			MasterDataReader.scenario = scenario;
+			pageDetails = new HashMap<String, Object>();
 	    }
 	   
 	    /**
@@ -63,16 +63,15 @@ public class MasterDataReader {
 	        }        
 	        }
 	        driver.quit();
+	        pageDetails.clear();
 	    }
-	
-	@Given("^I read Excel data with AutomationID \"([^\"]*)\" for iteration \"([^\"]*)\"$")
-	public void i_read_Excel_data_with_AutomationID_for_iteration(String arg1, String rowIndex) throws Throwable {
 		
-		index = Integer.parseInt(rowIndex)-1;
-		orderDataset = readFileUsingPOI.readOrderDetailsFile(scenario.getName(), "OrderDetails");
-		custDataset = readFileUsingPOI.readCustDetailsFile(scenario.getName(), "CustomerDetails");
-
+	@Given("^I read Excel data with AutomationID \"([^\"]*)\"$")
+	public void i_read_Excel_data_with_AutomationID(String automationID) throws IOException{
+		orderDetails = ExcelFileReader.readDataForAutomationID("OrderDetails",automationID);
+		customerDetails = ExcelFileReader.readDataForAutomationID("CustomerDetails",automationID);
+		MasterDataReader.scenario.write("Order Details Data "+ MasterDataReader.orderDetails);
+		MasterDataReader.scenario.write("Customer Details Data "+ MasterDataReader.customerDetails);
 	}
-
 
 }

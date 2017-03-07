@@ -1,50 +1,42 @@
 package com.travelex.stepDefinitions;
 
-import java.util.List;
-
-import org.openqa.selenium.WebDriver;
-
-import com.travelex.framework.Dataset.CustomerDetailsDataSet;
 import com.travelex.framework.common.UpdateDataInExcel;
 import com.travelex.nam.pages.CustomerDetailsPage;
+import com.travelex.nam.pages.PrinterFriendlyPage;
 
-import cucumber.api.Scenario;
+import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
 public class CustomerDetailsPageStepDefinition {
 	
-	public WebDriver driver;
-	public int index;
-	public Scenario scenario;
-	private CustomerDetailsPage customerDetailsPage;
-	private List<CustomerDetailsDataSet> custDataset;
-	
-	public CustomerDetailsPageStepDefinition(){
-		driver = MasterDataReader.driver;
-		scenario = MasterDataReader.scenario;
-		custDataset = MasterDataReader.custDataset;
-		index = MasterDataReader.index;
-	}
 	
 	@When("^I enter customer details$")
 	public void i_enter_customer_details() throws Throwable {
-		customerDetailsPage = new CustomerDetailsPage(driver).get();
+		CustomerDetailsPage customerDetailsPage = (CustomerDetailsPage)MasterDataReader.pageDetails.get("CustomerDetailsPage");
+		customerDetailsPage.enterCustomerDetails(MasterDataReader.customerDetails.get("CustomerSalutation"), MasterDataReader.customerDetails.get("FirstName"), MasterDataReader.customerDetails.get("LastName"), MasterDataReader.customerDetails.get("GLAccNumber"),MasterDataReader.customerDetails.get("BankID"), MasterDataReader.customerDetails.get("DOB"));
+		customerDetailsPage.enterCustomerAddress(MasterDataReader.customerDetails.get("AddressLine1"), MasterDataReader.customerDetails.get("AddressLine2"), MasterDataReader.customerDetails.get("City"), MasterDataReader.customerDetails.get("State"), MasterDataReader.customerDetails.get("ZipCode"), MasterDataReader.customerDetails.get("CountryOfIssue"));
+		customerDetailsPage.enterDeliveryDetails(MasterDataReader.customerDetails.get("AttentionName"), MasterDataReader.customerDetails.get("BranchContact"), MasterDataReader.customerDetails.get("PhoneNumber"), MasterDataReader.orderDetails.get("PartnerID"));
+		customerDetailsPage.enterCustomerSecurityInformation(MasterDataReader.customerDetails.get("PrimaryID"), MasterDataReader.customerDetails.get("IDNumber"), MasterDataReader.customerDetails.get("CountryOfIssue"), MasterDataReader.customerDetails.get("IDState"), MasterDataReader.customerDetails.get("IssueDate"), MasterDataReader.customerDetails.get("ExpiryDate"));	
+	}
+	
+	@When("^I change branch details$")
+	public void i_change_branch_details() throws Throwable {
+		CustomerDetailsPage customerDetailsPage = (CustomerDetailsPage)MasterDataReader.pageDetails.get("CustomerDetailsPage");
+		customerDetailsPage.enterBranchDetails(MasterDataReader.customerDetails.get("ConfigChangeBranchLink"), MasterDataReader.customerDetails.get("CompanyDetails"),MasterDataReader.orderDetails.get("PartnerID"));
+	}
 		
-		customerDetailsPage.enterCustomerDetails(custDataset.get(index).getCustomerSalutation(),
-				custDataset.get(index).getFirstName(),
-				custDataset.get(index).getLastName(),
-				custDataset.get(index).getGLAccNumber(),
-				custDataset.get(index).getBankID(),
-				custDataset.get(index).getDOB());
-		customerDetailsPage.enterDeliveryDetails(custDataset.get(index).getAttentionName(),
-				custDataset.get(index).getBranchContact(),
-				custDataset.get(index).getPhoneNumber());
-		customerDetailsPage.clickOnChangeOrderButton(custDataset.get(index).getConfigChangeOrderBtn());
-		customerDetailsPage.clickOnCancelOrderButton(custDataset.get(index).getConfigCancelOrderBtn());
-		
-		String orderConfNumber = customerDetailsPage.submitCustomerDetails(custDataset.get(index).getConfigCompleteOrderBtn());
+	@When("^I complete the order$")
+	public void i_complete_the_order() throws Throwable {
+		CustomerDetailsPage customerDetailsPage = (CustomerDetailsPage)MasterDataReader.pageDetails.get("CustomerDetailsPage");
+		PrinterFriendlyPage printerFriendlyPage = customerDetailsPage.submitCustomerDetails();
+		MasterDataReader.pageDetails.put("PrinterPage", printerFriendlyPage);
+	}
+	
+	@Then("^I get order confirmation no$")
+	public void i_get_order_confirmation_no() throws Throwable {
+		CustomerDetailsPage customerDetailsPage = (CustomerDetailsPage)MasterDataReader.pageDetails.get("CustomerDetailsPage");
+		String orderConfNumber = customerDetailsPage.getConfirmationNumber();
 		UpdateDataInExcel up = new UpdateDataInExcel();
-		up.updateDataInExcel("CustomerDetails", "ConfirmationNumber", orderConfNumber, custDataset.get(index).getAutomationID());
-		
+		up.updateDataInExcel("CustomerDetails", "ConfirmationNumber", orderConfNumber, MasterDataReader.customerDetails.get("AutomationID"));
 	}
 }

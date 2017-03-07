@@ -30,6 +30,7 @@ public class WebDriverFactory {
 	private static ConfigurationProperties configProperty = ConfigurationProperties.getInstance();
 
 	public static int maxPageLoadWait = 100;
+	public WebDriver driver = null;
 
 	/**
 	 * Launches remote web driver with specified browser, version, platform, and desired capabilities
@@ -39,7 +40,8 @@ public class WebDriverFactory {
 	 * @throws Throwable
 	 */
 	
-	public static WebDriver get(EnvironmentParameter environmentParameter) throws Throwable {		
+	public WebDriver get(EnvironmentParameter environmentParameter) throws Throwable {
+		if(driver == null){
 		DesiredCapabilities capability = new DesiredCapabilities();
 		ConfigurationProperties configurationProperties = ConfigurationProperties.getInstance();
 		String browser = environmentParameter.getBrowserName();
@@ -82,7 +84,7 @@ public class WebDriverFactory {
 		} 
 		else throw new IllegalEnvironmentValueException("Browser Name: "+ browser	+ " is not valid. Try any one of following \n1 IE, \n2 FIREFOX, \n3 CHROME ");		
 		
-		WebDriver driver = null;
+		//WebDriver driver = null;
 		String platform = environmentParameter.getPlatform();
 		
 		if (platform.equalsIgnoreCase("WINDOWS")) {
@@ -110,7 +112,11 @@ public class WebDriverFactory {
 		Assert.assertNotNull(driver, "Driver did not intialize...\n Please check if hub is running / configuration settings are corect.");
 		driver.manage().timeouts().pageLoadTimeout(maxPageLoadWait, TimeUnit.SECONDS);
 		driver.manage().deleteAllCookies();
-				
 		return driver;
+		}
+		else{
+			return driver;
+		}
+		
 	}
 }

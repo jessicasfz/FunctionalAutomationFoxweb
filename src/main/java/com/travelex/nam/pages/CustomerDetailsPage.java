@@ -81,6 +81,9 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 	@FindBy(xpath = "//input[@name='region']")
 	WebElement lstState;
 	
+	@FindBy(id = "region")
+	WebElement lstBranchState;
+	
 	@FindBy(xpath = "//input[@name='postalCode']")
 	WebElement txtZipCode;
 	
@@ -180,6 +183,9 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 	@FindBy(xpath = "//form[@id='settlementInformationForm']/table[7]/tbody/tr[7]/td")
 	WebElement addressField5;
 	
+	@FindBy(id = "resetDelivDetails")
+	WebElement chkChangeBranch;
+	
 
 	public CustomerDetailsPage(WebDriver driver) {
 		this.driver = driver;
@@ -216,8 +222,7 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 	 * @throws InterruptedException
 	 */
 	
-	public void enterCustomerDetails(String customerRadioBtn, String firstName, 
-			String lastName, String glAccountNumber,String bankID,String dateOfBirth) throws Exception{
+	public void enterCustomerDetails(String customerRadioBtn, String firstName,String lastName, String glAccountNumber,String bankID,String dateOfBirth) throws Exception{
 		
 		if(!customerRadioBtn.equalsIgnoreCase("NA")){
 		switch (customerRadioBtn.toUpperCase()) {
@@ -267,11 +272,13 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 	 * @param phoneNumber
 	 */
 	
-	public void enterDeliveryDetails(String attentionName, String branchContact, String phoneNumber) throws Exception{
-		if(chkHomeBranch.isDisplayed()){
-			chkHomeBranch.click();
-			wrapper.waitForLoaderInvisibility(waitTime);
-		}
+	public void enterDeliveryDetails(String attentionName, String branchContact, String phoneNumber,String partnerID) throws Exception{
+/*		if(!partnerID.equalsIgnoreCase("19333") || !partnerID.equalsIgnoreCase("119982")){
+			if(chkHomeBranch.isDisplayed()){
+				chkHomeBranch.click();
+				wrapper.waitForLoaderInvisibility(waitTime);
+			}
+		}*/
 		if(!attentionName.equalsIgnoreCase("NA")){
 			txtAttention.clear();
 			txtAttention.sendKeys(attentionName);
@@ -291,20 +298,20 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 	 * @param automationID
 	 */
 	
-	public String submitCustomerDetails(String completeOrderButton) throws Exception{
-		String confirmationNumber = "";
-		if(WebDriverWrapper.isConfigTrue(completeOrderButton)){
+	public PrinterFriendlyPage submitCustomerDetails() throws Exception{		
 			btnCompleteOrder.click();	
 			wrapper.waitForLoaderInvisibility(waitTime);
-			String Ordertext = lblConfirmationNumber.getText();
-			String[] OrderNo = Ordertext.split(":");
-			confirmationNumber = OrderNo[1].trim();
-			System.out.println(confirmationNumber);
-			MasterDataReader.scenario.write("<B><font size='3' color='Magenta'>Confirmation Number is : " +confirmationNumber+"</font></B>");
-			
-		}
-		return confirmationNumber;
-		
+			return new PrinterFriendlyPage(driver).get();
+	}
+	
+	public String getConfirmationNumber(){
+		String confirmationNumber = "";
+		String Ordertext = lblConfirmationNumber.getText();
+		String[] OrderNo = Ordertext.split(":");
+		confirmationNumber = OrderNo[1].trim();
+		System.out.println(confirmationNumber);
+		MasterDataReader.scenario.write("<B><font size='3' color='Magenta'>Confirmation Number is : " +confirmationNumber+"</font></B>");
+	return confirmationNumber;
 	}
 	
 	
@@ -361,8 +368,7 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 		if(!idNumber.equalsIgnoreCase("NA")){
 			txtIDNumber.sendKeys(idNumber);
 		}
-		
-		
+				
 		if(!countryOfIssuance.equalsIgnoreCase("NA")){
 			Select countryOfIssuanceList = new Select(lstCountryOfIssueance);
 			countryOfIssuanceList.selectByVisibleText(countryOfIssuance);
@@ -370,18 +376,28 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 		
 		switch (primaryID.toUpperCase()) {
 			case "DRIVING LICENSE NUMBER":
-			case "MILITARY ID":
-			case "STATE ID":
+				Select stateListD = new Select(lsttxtCustomerState);
+				stateListD.selectByVisibleText(state);
+				break;
 				
+			case "MILITARY ID":
+				Select stateListM = new Select(lsttxtCustomerState);
+				stateListM.selectByVisibleText(state);			
+				break;
+				
+			case "STATE ID":				
 				Select stateList = new Select(lsttxtCustomerState);
 				stateList.selectByVisibleText(state);			
 				break;
 				
 			case "PASSPORT NUMBER":
+				lsttxtCustomerState.sendKeys(state);			
+				break;
 			case "MEXICAN CONSULATE CARD":
 				
 				lsttxtCustomerState.sendKeys(state);			
 				break;
+				
 			default:
 				break;
 		}
@@ -411,25 +427,16 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 	
 	}
 	
-	public void clickOnChangeOrderButton(String changeOrderButton){
-		if(WebDriverWrapper.isConfigTrue(changeOrderButton)){
+	public void clickOnChangeOrderButton(){
 			btnChangeOrder.click();
-			wrapper.waitForLoaderInvisibility(waitTime);
-		}
-		
+			wrapper.waitForLoaderInvisibility(waitTime);		
 	}
 	
-	public void clickOnCancelOrderButton(String configCancelOrderBtn){
-		if(WebDriverWrapper.isConfigTrue(configCancelOrderBtn)){
+	public void clickOnCancelOrderButton(){
 			btnCancelOrder.click();
 			wrapper.waitForLoaderInvisibility(waitTime);
-		}
 	}
-	
-	
-	
-	//RK
-	
+		
 	public String switchtoPopUpAndGetMessage(){
 		String popupMessage = null;
 		popupMessage =driver.switchTo().alert().getText();
@@ -441,21 +448,64 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 		wrapper.waitForLoaderInvisibility(waitTime);
 	}
 	
-	/*public HashMap<String, String> fetchAddressDetails(){
-		HashMap<String, String> addValues = new HashMap<String, String>();
-		String address1 = addressField1.getText().trim();
-		String address2 = addressField2.getText().trim();
-		String address3 = addressField3.getText().trim();
-		String address4 = addressField4.getText().trim();
-		String address5 = addressField5.getText().trim();
-		
-		addValues.put("addString1", address1);
-		addValues.put("addString2", address2);
-		addValues.put("addString3", address3);
-		addValues.put("addString4", address4);
-		addValues.put("addString5", address5);
-		
-		return addValues;
+	public HomePage verifyCancelOrderBtn(){
+		return new HomePage(driver).get();
 	}
-	*/
+	
+	
+	public void enterBranchDetails(String configChangeBranch,String branchDetails,String partner){
+		if(!(configChangeBranch.equalsIgnoreCase("NA"))){
+			
+			String[] allDetails = branchDetails.split("\\#");
+			String attentionName = allDetails[0].trim();
+			String companyName = allDetails[1].trim();
+			String add1 = allDetails[2].trim();
+			String add2 = allDetails[3].trim();
+			String city = allDetails[4].trim();
+			String state = allDetails[5].trim();
+			String zipcode = allDetails[6].trim();
+			
+			boolean isChecked = false;
+			if(partner.equalsIgnoreCase("119982")){
+				isChecked = chkHomeBranch.isSelected();
+				if(isChecked){
+					chkHomeBranch.click();
+				}
+			}else if(partner.equalsIgnoreCase("19333")){
+				isChecked = chkChangeBranch.isSelected();
+				if(isChecked){
+					chkChangeBranch.click();
+				}
+			}
+			
+			if(!attentionName.equalsIgnoreCase("NA")){
+				txtAttention.clear();
+				txtAttention.sendKeys(attentionName);
+			}
+			if(!companyName.equalsIgnoreCase("NA")){
+				txtCompanyName.clear();
+				txtCompanyName.sendKeys(companyName);
+			}
+			
+			if(!add1.equalsIgnoreCase("NA")){
+				txtAddress1.clear();
+				txtAddress1.sendKeys(add1);
+				txtAddress2.clear();
+				txtAddress2.sendKeys(add2);
+			}
+			
+			if(!city.equalsIgnoreCase("NA")){
+				txtCity.clear();
+				txtCity.sendKeys(city);
+			}
+			
+			Select stateList = new Select(lstBranchState);
+			stateList.selectByValue(state);
+			
+			if(!zipcode.equalsIgnoreCase("NA")){
+				txtZipCode.clear();
+				txtZipCode.sendKeys(zipcode);
+			}
+		}
+	}
 }

@@ -2,9 +2,6 @@ package com.travelex.rap.pages;
 
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -14,6 +11,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.Reporter;
+
 
 
 import com.travelex.framework.utilities.DriverFactory;
@@ -163,6 +161,7 @@ public class RAPSaleModuleLocator extends WebdriverWrapper {
 				if (vault2.equals("johor")) {
 					vault2 = "johur";
 				}
+				@SuppressWarnings("unused")
 				String voltaDB = "volta_" + vault2;
 				//upDateQueryForExtractOrd(voltaDB);
 

@@ -2,6 +2,7 @@ package com.travelex.nam.pages;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -46,11 +47,12 @@ public class HomePage extends LoadableComponent<HomePage> {
 	@FindBy(xpath = "//*[contains(text(),'Onsite') or contains(text(),'En stock')]")
 	WebElement lnkOnsite;
 	
-	@FindBy(xpath = "//*contains(text(),'Wholesale') or contains(text(),'En gros')]")
+	@FindBy(xpath = "//*[contains(text(),'Wholesale') or contains(text(),'En gros')]")
 	WebElement lnkWholeSale;
 	
-	@FindBy(xpath = "//td/a[contains(text(),'Logout')]")
-	WebElement homePage;
+	@FindBy(css = "a#nav_off[href*='Logout']")
+	WebElement lnkLogout;
+	
 	
 	public HomePage(WebDriver driver) {
 		this.driver = driver;
@@ -60,15 +62,15 @@ public class HomePage extends LoadableComponent<HomePage> {
 	
 	public void isLoaded(){
 		boolean isPageLoaded = false;
-		wrapper.waitForElementToBeDisplayed(homePage, timeOutPeriod);
-		if(homePage.isDisplayed()){
+		wrapper.waitForElementToBeDisplayed(lnkLogout, timeOutPeriod);
+		if(lnkLogout.isDisplayed()){
 			isPageLoaded = true;
 		}
 	}
 	
 	public void load(){
 		try {
-			wrapper.waitForElementToBeDisplayed(homePage, timeOutPeriod);
+			wrapper.waitForElementToBeDisplayed(lnkLogout, timeOutPeriod);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -76,7 +78,7 @@ public class HomePage extends LoadableComponent<HomePage> {
 	
 	public boolean isHomePageLoaded(){
 		boolean isHomePageLoaded = false;
-		if(homePage.isDisplayed()){
+		if(lnkLogout.isDisplayed()){
 			isHomePageLoaded = true;
 		}
 		return isHomePageLoaded;
@@ -93,8 +95,47 @@ public class HomePage extends LoadableComponent<HomePage> {
 		return new SearchOrderPage(driver).get();
 	}
 	
-	public void closeBrowser(){
-		driver.close();
-	}
+	public TransactionAndCurrencyPage selectOrderType(String orderType){
+		
+		switch (orderType.toUpperCase()) {
+			case "ONLINE":
+				lnkOnline.click();
+				break;
+			case "ONSITE":
+				lnkOnsite.click();
+				break;
+			case "WHOLESALE":
+				lnkWholeSale.click();
+				break;
 
+			default:
+				break;
+			}
+			wrapper.waitForLoaderInvisibility(waitTime);
+			return new TransactionAndCurrencyPage(driver).get();
+		}
+	
+	public void selectBranchLocation(String branchLocation){		
+		if(!branchLocation.equalsIgnoreCase("NA")){
+			btnRetrive();
+			wrapper.waitForLoaderInvisibility(waitTime);
+			Select branchLocationList = new Select(lstBranchLocation);
+			branchLocationList.selectByVisibleText(branchLocation);
+			wrapper.waitForLoaderInvisibility(waitTime);
+			nextButtonClick();
+		}		
+		wrapper.waitForLoaderInvisibility(waitTime);		
+	}
+	
+	public void btnRetrive(){
+		btnRetrieve.click();
+		wrapper.waitForLoaderInvisibility(waitTime);
+	}
+	
+	public void nextButtonClick() {
+		btnNext.click();
+		wrapper.waitForLoaderInvisibility(waitTime);
+	}
+	
+	
 }

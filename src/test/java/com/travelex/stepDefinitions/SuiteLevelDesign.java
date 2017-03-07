@@ -73,8 +73,8 @@ public class SuiteLevelDesign extends AbstractTestNGCucumberTests{
 		configuration.setBuildNumber(buildNumber);
 		ReportBuilder reportBuilder = new ReportBuilder(jsonFiles, configuration);
 		reportBuilder.generateReports();
-		SendReport se = new SendReport();
-		se.sendMail();
+		/*SendReport se = new SendReport();
+		se.sendMail();*/
 		
 		/*try {
 			String killTask = "cmd /c start/min " + System.getProperty("user.dir") +"/gridConfig/killtaskJavaProcess.bat";

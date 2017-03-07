@@ -63,23 +63,19 @@ public class SearchOrderPage extends LoadableComponent<SearchOrderPage> {
 	@FindBy(css = "input[tabindex='10']")
 	WebElement btnSearchBottom;
 	
-	@FindBy(xpath = "//td[contains(text(),'Search Order Result')]")
-	WebElement tblSearchOrderResult;
-	
-	//RK
 	@FindBy(xpath = "//form/a")
 	WebElement lnkConfirmNumber;
 	
 	@FindBy(xpath = "//td[contains(text(),'Order Summary')]")
 	WebElement orderSummaryPageTitle;
 	
-	@FindBy(xpath = "//input[@value='Previous Page']")
+	@FindBy(css = "form[name='searchOrder']>input.Button")
 	WebElement previousPageBtn;
 	
-	@FindBy(xpath = "//td[contains(text(),'Search Order Results')]")
+	@FindBy(xpath = "tr.sectionHeading>td")
 	WebElement searchOrderResultPage;
 	
-	@FindBy(xpath = "//input[@value='Export To Excel']")
+	@FindBy(xpath = "form[name='exportToExcel']>input.Button")
 	WebElement exportToExcelBtn;
 	
 	@FindBy(xpath = "//a[contains(text(),'Next Page')]")

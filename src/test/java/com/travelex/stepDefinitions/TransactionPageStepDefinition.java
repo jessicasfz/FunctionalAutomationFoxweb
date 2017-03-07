@@ -1,118 +1,303 @@
 package com.travelex.stepDefinitions;
 
-import java.util.List;
+import org.testng.Assert;
 
-import org.openqa.selenium.WebDriver;
-import org.testng.Reporter;
-
-import com.travelex.framework.Dataset.CustomerDetailsDataSet;
-import com.travelex.framework.Dataset.OrderDetailsDataSet;
-import com.travelex.framework.common.ConfigurationProperties;
 import com.travelex.framework.common.WebDriverWrapper;
+import com.travelex.nam.pages.CustomerDetailsPage;
+import com.travelex.nam.pages.HomePage;
+import com.travelex.nam.pages.PrinterFriendlyPage;
 import com.travelex.nam.pages.TransactionAndCurrencyPage;
 
-import cucumber.api.Scenario;
+import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
 public class TransactionPageStepDefinition {
-
-	public WebDriver driver;
-	private TransactionAndCurrencyPage transactionAndCurrencyPage;
-	public int index;
-	public Scenario scenario;
-	private List<OrderDetailsDataSet> ordDataset;
-	private List<CustomerDetailsDataSet> custDataset;
-
-	public TransactionPageStepDefinition(){
-		driver = MasterDataReader.driver;
-		scenario = MasterDataReader.scenario;
-		ordDataset = MasterDataReader.orderDataset;
-		custDataset = MasterDataReader.custDataset;
-		index = MasterDataReader.index;
+	WebDriverWrapper wrapper ;
+	
+	@When("^I create order of transaction for customer$")
+	public void i_create_order_of_transaction_for_customer() throws Throwable {		
+		HomePage homePage = (HomePage)MasterDataReader.pageDetails.get("HomePage");
+		String orderType = MasterDataReader.orderDetails.get("OrderType");
+		TransactionAndCurrencyPage transactionAndCurrencyPage = homePage.selectOrderType(orderType);
+		transactionAndCurrencyPage.selectTransactionTypeDetails(MasterDataReader.orderDetails.get("TransactionType"), MasterDataReader.orderDetails.get("CustomerType"));
+		MasterDataReader.pageDetails.put("TransactionAndCurrencyPage", transactionAndCurrencyPage);
 	}
-
-	@When("^I Place Sale order$")
-	public void i_Place_Sale_order() throws Throwable {
-		transactionAndCurrencyPage = new TransactionAndCurrencyPage(driver).get();
-		transactionAndCurrencyPage.orderTypeSelection(ordDataset.get(index).getOrderType(),
-				ordDataset.get(index).getConfigOrderLink());
 		
-		String currency = ordDataset.get(index).getCurrency();
-		String[] arrcurr = currency.split("\\|");
-		String amount = ordDataset.get(index).getForeignAmount();
-		String[] arrAmt = amount.split("\\|");
-		String qty = ordDataset.get(index).getQuantity();
-		String[] arrQty = qty.split("\\|");
+	@When("^I select currency of product$")
+	public void i_select_currency_of_product() throws Throwable {
+		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+		transactionAndCurrencyPage.selectProductAndCurrency(MasterDataReader.orderDetails.get("Currency"),MasterDataReader.orderDetails.get("ProductType"));
+	}
 		
-		for(int i=0;i<arrcurr.length;i++){
-		transactionAndCurrencyPage.transactionDetails(ordDataset.get(index).getTransactionType(),
-				ordDataset.get(index).getProductType(),
-				arrcurr[i].trim(),
-				ordDataset.get(index).getCustomerType(),
-				arrAmt[i].trim(),
-				ordDataset.get(index).getConfigConfirmChkBox());
-		transactionAndCurrencyPage.enterBeneficiaryDetails(custDataset.get(index).getBeneficiary(),
-				custDataset.get(index).getAddressLine1(),
-				custDataset.get(index).getAddressLine2(),
-				custDataset.get(index).getCity(),
-				custDataset.get(index).getState(),
-				custDataset.get(index).getZipCode(),
-				custDataset.get(index).getDepositCountry(),
-				custDataset.get(index).getComments());
-		String text = "Transaction Type : "+ ordDataset.get(index).getTransactionType()+System.lineSeparator()+"Product Type : "+ ordDataset.get(index).getProductType()+System.lineSeparator()+
-				"Currency : "+arrcurr[i]+System.lineSeparator()+"Account Holder Type : "+
-				ordDataset.get(index).getCustomerType();
-		scenario.write(text);
-
-		transactionAndCurrencyPage.addOrderBtnClick(ordDataset.get(index).getConfigAddToOrder(),
-				ordDataset.get(index).getDenomMessage(),
-				ordDataset.get(index).getConfigDenomAlert(),
-				arrQty[i].trim(),ordDataset.get(index).getWarningMessage());
+	@When("^I (do not click|click) on Quote and view (after|before) entering amount$")
+	public void i_do_not_click_on_Quote_and_view_after_entering_amount(String clickStr, String beforeAfter) throws Throwable {
+		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");		
+		
+		if(clickStr.equalsIgnoreCase("click")){
+			if(beforeAfter.equalsIgnoreCase("after")){
+				transactionAndCurrencyPage.clearAndEnterForeignAmount(MasterDataReader.orderDetails.get("ForeignAmount"));
+				transactionAndCurrencyPage.clickQuoteAndViewButton();
+			}else{
+				transactionAndCurrencyPage.clickQuoteAndViewButton();
+				boolean alertExist = transactionAndCurrencyPage.isAlertPresent();
+				if(alertExist){
+					String actualErrorMessgae = transactionAndCurrencyPage.acceptAlerts();
+					String expectedErrorMessage = "Please enter an amount.";
+					Assert.assertEquals(actualErrorMessgae, expectedErrorMessage);
+				}else{
+					Assert.fail("Expected Error Message Not Exist In The System ::: Please Enter Amount. ");
+				}
+			}
+		}else{
+			transactionAndCurrencyPage.clearAndEnterForeignAmount(MasterDataReader.orderDetails.get("ForeignAmount"));
+		}	
+	}
+	
+	@When("^I enter beneficiary details$")
+	public void i_enter_beneficiary_details() throws Throwable {
+		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");	
+		transactionAndCurrencyPage.enterBeneficiaryDetails(MasterDataReader.orderDetails.get("DraftBeneficiary"), MasterDataReader.orderDetails.get("DraftAddressLine1"), MasterDataReader.orderDetails.get("DraftAddressLine2"), MasterDataReader.orderDetails.get("DraftCity"), MasterDataReader.orderDetails.get("DraftState"), MasterDataReader.orderDetails.get("DraftZipCode"), MasterDataReader.orderDetails.get("DraftDepositCountry"), MasterDataReader.orderDetails.get("DraftComments"));
+	}
+	
+	@When("^I click on AddToOrder$")
+	public void i_click_on_AddToOrder() throws Throwable {
+		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+		transactionAndCurrencyPage.addtoOrderAndViewCurrencyWindow(MasterDataReader.orderDetails.get("ConfigCurrencyView"),MasterDataReader.orderDetails.get("ConfigErrMsg"));
+	}
+	
+	@When("^I (do not add|add) denomination on add order$")
+	public void i_do_not_add_denomination_on_add_order(String addDenomination) throws Throwable {
+		if(!MasterDataReader.orderDetails.get("TransactionType").equalsIgnoreCase("Purchase") || (MasterDataReader.orderDetails.get("TransactionType").equalsIgnoreCase("Purchase") && MasterDataReader.orderDetails.get("OrderType").equalsIgnoreCase("WholeSale"))){
+			TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+			if(addDenomination.equalsIgnoreCase("do not add")){
+				transactionAndCurrencyPage.driver.switchTo().alert().dismiss();			
+			}else if(addDenomination.equalsIgnoreCase("add")){
+				transactionAndCurrencyPage.driver.switchTo().alert().accept();
+				transactionAndCurrencyPage.denomSelection(MasterDataReader.orderDetails.get("Quantity"), MasterDataReader.orderDetails.get("Denomination"));
+			}			
 		}
+	}
+	
+	@When("^I (waive|do not waive) fee$")
+	public void i_waive_fee(String waiveFee) throws Throwable {
+		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+		if(waiveFee.equalsIgnoreCase("waive")){
+			transactionAndCurrencyPage.checkwaiveFeeCheck(MasterDataReader.orderDetails.get("WaiveReason"));
+		}else{
+			transactionAndCurrencyPage.uncheckwaiveFeeCheck();
+		}
+	}
 		
+	@When("^I select (payment method|delivery time|without payment method) to confirm order$")
+	public void i_select_payment_method_to_confirm_order(String confirmBeforeCondition) throws Throwable {
+		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+		CustomerDetailsPage customerDetailsPage = null;
+		boolean pageStatus = false;
+		if(MasterDataReader.orderDetails.get("ProductType").equalsIgnoreCase("Pre-Paid Cards")){
+			pageStatus = transactionAndCurrencyPage.selectPaymentMethodAndConfirmOrderForPPC(MasterDataReader.orderDetails.get("PaymentMethod"));
+			if(pageStatus){
+				Assert.assertTrue(pageStatus, "PPC page succesfully loaded");
+			}else{
+				Assert.fail("Unable to load PPC page");
+			}
+		}else{
+			customerDetailsPage = transactionAndCurrencyPage.selectPaymentMethodAndCinfirmOrder(MasterDataReader.orderDetails.get("PaymentMethod"));
+			MasterDataReader.pageDetails.put("CustomerDetailsPage", customerDetailsPage);
+		}
+	}
 		
-		transactionAndCurrencyPage.editButtonClick(ordDataset.get(index).getConfigEditButton(), ordDataset.get(index).getForeignAmount(), 
-				ordDataset.get(index).getConfigAddToOrder(), ordDataset.get(index).getDenomMessage(), ordDataset.get(index).getConfigDenomAlert(), 
-				ordDataset.get(index).getWarningMessage(), ordDataset.get(index).getQuantity(),ordDataset.get(index).getConfigSpecifyDenom());
-		transactionAndCurrencyPage.clickShowCurrencyButton(ordDataset.get(index).getConfigShowCurrency());
-		transactionAndCurrencyPage.clearButtonClick(ordDataset.get(index).getConfigClearFields());
-		transactionAndCurrencyPage.deleteButtonClick(ordDataset.get(index).getConfigDeleteBtn());
-		transactionAndCurrencyPage.deliveryTypeBtn(ordDataset.get(index).getConfigDeliveryType(),
-				ordDataset.get(index).getDeliveryType());
-		
-		transactionAndCurrencyPage.fetchOrderDetails(ordDataset.get(index).getCurrency(),
-				ordDataset.get(index).getConfigFetchOrderDetails());
-		
-		transactionAndCurrencyPage.buttonClick(ordDataset.get(index).getConfigConfirmBtn());	
-		transactionAndCurrencyPage.switchtoPopUpAndGetMessage(ordDataset.get(index).getErrorMessage());
+	@When("^I add more currency (do not add|add) denomination on add order (do not click|click) On currency view$")
+	public void i_add_more_currency_do_not_add_denomination_on_add_order_do_not_click_On_currency_view(String addDenomination,String clickCurrencyView) throws Throwable {
+		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");	
+		String configaddMoreCurrencies = MasterDataReader.orderDetails.get("ConfigAddMoreCurrencies");
+		String listOfcurrenciesInDetail = MasterDataReader.orderDetails.get("MultiCurrencyDetails");
+
+		if(WebDriverWrapper.isConfigTrue(configaddMoreCurrencies)){
+			String[] listOfProductsInDetailDenoms = listOfcurrenciesInDetail.split("\\|");
+			int noOfProducts = listOfProductsInDetailDenoms.length;
+
+			for(int i=0;i<=noOfProducts-1;i++){
+				String listOfProductDetails = listOfProductsInDetailDenoms[i];
+				String[] eachProductDetails = listOfProductDetails.split("\\#");
+
+				if(eachProductDetails[0].equalsIgnoreCase("Foreign Currencies")){
+					String product = eachProductDetails[0].trim();
+					String currency = eachProductDetails[1].trim();
+					String foreignAmount = eachProductDetails[2].trim();
+
+					transactionAndCurrencyPage.selectProductAndCurrency(currency,product);
+					transactionAndCurrencyPage.clickingOrNotClickingOnQuoteAndViewBeforeAndAfterEnteringAmount("click", "after", foreignAmount);				
+					transactionAndCurrencyPage.addtoOrderAndViewCurrencyWindow(MasterDataReader.orderDetails.get("ConfigCurrencyView"),MasterDataReader.orderDetails.get("ConfigErrMsg"));
+
+					if(!MasterDataReader.orderDetails.get("TransactionType").equalsIgnoreCase("Purchase") || (MasterDataReader.orderDetails.get("TransactionType").equalsIgnoreCase("Purchase") && MasterDataReader.orderDetails.get("OrderType").equalsIgnoreCase("WholeSale"))){
+						if(addDenomination.equalsIgnoreCase("do not add")){
+							if(!(MasterDataReader.orderDetails.get("TransactionType").equalsIgnoreCase("Sale") && MasterDataReader.orderDetails.get("OrderType").equalsIgnoreCase("WholeSale"))){
+								transactionAndCurrencyPage.dismissAlert();
+							}
+						}else if(addDenomination.equalsIgnoreCase("add")){
+							transactionAndCurrencyPage.acceptAlert();
+							String quantity = eachProductDetails[3].trim();
+							String denom = eachProductDetails[4].trim();
+
+							if(quantity.equalsIgnoreCase("NA")){
+								String[] quantityList = quantity.split("\\,");
+								String[] denomList = denom.split("\\,");
+
+								for(int j=0;i<=quantityList.length-1;j++){
+									transactionAndCurrencyPage.denomSelection(quantityList[j], denomList[j]);
+								}								
+							}							
+						}			
+					}
+				}
+
+				else if(eachProductDetails[0].equalsIgnoreCase("Foreign Check")){
+					String product = eachProductDetails[0].trim();
+					String currency = eachProductDetails[1].trim();
+					String foreignAmount = eachProductDetails[2].trim();
+					String countryOfIssue = eachProductDetails[3].trim();
+					String checkDate = eachProductDetails[4].trim();
+					String issuerEndorsed = eachProductDetails[5].trim();
+					String payeeEndorsed = eachProductDetails[6].trim();
+
+					transactionAndCurrencyPage.selectProductAndCurrency(currency,product);
+					transactionAndCurrencyPage.clickingOrNotClickingOnQuoteAndViewBeforeAndAfterEnteringAmount("click", "after", foreignAmount);				
+					transactionAndCurrencyPage.updateCheckDetails(countryOfIssue,checkDate,issuerEndorsed,payeeEndorsed);
+					transactionAndCurrencyPage.addtoOrderAndViewCurrencyWindow(MasterDataReader.orderDetails.get("ConfigCurrencyView"),MasterDataReader.orderDetails.get("ConfigErrMsg"));																		
+				}
+
+				else if(eachProductDetails[0].equalsIgnoreCase("Foreign Drafts")){
+					String product = eachProductDetails[0].trim();
+					String currency = eachProductDetails[1].trim();
+					String foreignAmount = eachProductDetails[2].trim();
+					String beneficiary = eachProductDetails[3].trim();
+					String addressLine1 = eachProductDetails[4].trim();
+					String addressLine2 = eachProductDetails[5].trim();
+					String city = eachProductDetails[6].trim();
+					String state = eachProductDetails[7].trim();
+					String zipCode = eachProductDetails[8].trim();
+					String country = eachProductDetails[9].trim();
+					String comments = eachProductDetails[10].trim();
+					
+					transactionAndCurrencyPage.selectProductAndCurrency(currency,product);
+					transactionAndCurrencyPage.clickingOrNotClickingOnQuoteAndViewBeforeAndAfterEnteringAmount("click", "after", foreignAmount);
+					transactionAndCurrencyPage.enterBeneficiaryDetails(beneficiary, addressLine1, addressLine2, city, state, zipCode, country, comments);
+					transactionAndCurrencyPage.addtoOrderAndViewCurrencyWindow(MasterDataReader.orderDetails.get("ConfigCurrencyView"),MasterDataReader.orderDetails.get("ConfigErrMsg"));
+				}
+				
+				else if(eachProductDetails[0].equalsIgnoreCase("Pre-Paid Cards")){
+					
+					String product = eachProductDetails[0].trim();
+					String currency = eachProductDetails[1].trim();
+					String foreignAmount = eachProductDetails[2].trim();
+					
+					transactionAndCurrencyPage.selectProductAndCurrency(currency,product);
+					transactionAndCurrencyPage.clickingOrNotClickingOnQuoteAndViewBeforeAndAfterEnteringAmount("do not click", "after", foreignAmount);
+					transactionAndCurrencyPage.addtoOrderAndViewCurrencyWindow(MasterDataReader.orderDetails.get("ConfigCurrencyView"),MasterDataReader.orderDetails.get("ConfigErrMsg"));
+				}
+			}						
+		}	
+	}
+	
+	@Then("^I verify order details$")
+	public void i_verify_order_details() throws Throwable {
+	    
+	}
+	
+	@When("^I update check details$")
+	public void i_update_check_details() throws Throwable {
+		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+		transactionAndCurrencyPage.updateCheckDetails(MasterDataReader.orderDetails.get("CountryOfIssue"),MasterDataReader.orderDetails.get("CheckDate"),MasterDataReader.orderDetails.get("IssuerEndorsed"),MasterDataReader.orderDetails.get("PayeeEndorsed"));	    
+	}
+	
+	@Then("^I click on (Cancel Order|Clear Fields|Delete order|Change order|Next order|Edit Order) button$")
+	public void i_click_on_Cancel_Order_button(String button) throws Throwable {
+		if(button.equalsIgnoreCase("Cancel Order")){
+			CustomerDetailsPage customerDetailsPage = (CustomerDetailsPage)MasterDataReader.pageDetails.get("CustomerDetailsPage");
+			customerDetailsPage.clickOnCancelOrderButton();
+			
+		}else if(button.equalsIgnoreCase("Clear Fields")){
+			TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+			transactionAndCurrencyPage.clickOnclearFieldsButton();
+			
+		}else if(button.equalsIgnoreCase("Delete order")){
+			TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+			transactionAndCurrencyPage.clickOnDeleteOrderButton();
+			
+		}else if(button.equalsIgnoreCase("Change order")){
+			CustomerDetailsPage customerDetailsPage = (CustomerDetailsPage)MasterDataReader.pageDetails.get("CustomerDetailsPage");
+			customerDetailsPage.clickOnChangeOrderButton();
+			
+		}else if(button.equalsIgnoreCase("Next order")){
+			PrinterFriendlyPage printerFriendlyPage = (PrinterFriendlyPage)MasterDataReader.pageDetails.get("PrinterPage");
+			printerFriendlyPage.nextOrderButtonClick();
+			
+		}else if(button.equalsIgnoreCase("Edit Order")){
+			TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+			transactionAndCurrencyPage.editOrderButtonClick();
+			
+		}
+	}
+	
+	@Then("^I verify page for (Cancel Order|Clear Fields|Delete Order|Change Order|Next Order|Edit Order)$")
+	public void i_verify_page(String page) throws Throwable {
+		if(page.equalsIgnoreCase("Cancel Order")){
+			CustomerDetailsPage customerDetailsPage = (CustomerDetailsPage)MasterDataReader.pageDetails.get("CustomerDetailsPage");
+			HomePage homepage = (HomePage) customerDetailsPage.verifyCancelOrderBtn();
+			if(homepage!=null){
+				MasterDataReader.scenario.write("Page loaded successfully. Cancel order Verification is passed");
+			}else{
+				MasterDataReader.scenario.write("Cancel order Verification is Failed");
+			}
+		}else if(page.equalsIgnoreCase("Clear Fields")){
+			TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+			transactionAndCurrencyPage.verifyClearFieldsPage();
+		}else if(page.equalsIgnoreCase("Delete order")){
+			TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+			transactionAndCurrencyPage.verifyDeleteOrderPage();
+		}else if(page.equalsIgnoreCase("Change order")){
+			TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+			transactionAndCurrencyPage.verifyChangeOrderPage(MasterDataReader.orderDetails.get("Currency"));
+			MasterDataReader.scenario.write("Page loaded successfully. Change order Verification is passed");
+		}else if(page.equalsIgnoreCase("Next order")){
+			PrinterFriendlyPage printerFriendlyPage = (PrinterFriendlyPage)MasterDataReader.pageDetails.get("PrinterPage");
+			TransactionAndCurrencyPage transactionAndCurrencyPage = printerFriendlyPage.verifyNextOrderBtn();
+			if(transactionAndCurrencyPage!=null){
+				MasterDataReader.scenario.write("Page loaded successfully. Next order Verification is passed");
+			}else{
+				MasterDataReader.scenario.write("Next order Verification is Failed");
+			}
+		}else if(page.equalsIgnoreCase("Edit Order")){
+			TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+			transactionAndCurrencyPage.verifyEditOrderPage();
+		}
+	}
+	
+	@Then("^I get (maximumAmt|minimumAmt) error message$")
+	public void i_get_maximumAmt_error_message(String msg) throws Throwable {
+	    if(msg.equalsIgnoreCase("minimumAmt")){
+	    	
+	    }else if(msg.equalsIgnoreCase("maximumAmt")){
+	    	TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+	    	transactionAndCurrencyPage.verifyAmtAlert(MasterDataReader.orderDetails.get("ErrMsg"));
+	    }
+	}
+	
+	@When("^I select checkbox for secondary card$")
+	public void i_select_checkbox_for_secondary_card(String selection) throws Throwable {
+		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
 		
 	}
-
-
-	@When("^I Place Sale order using QuoteAndView button$")
-	public void i_Place_Sale_order_using_QuoteAndView_button() throws Throwable {
-		transactionAndCurrencyPage = new TransactionAndCurrencyPage(driver).get();
-		transactionAndCurrencyPage.transDetailsQuoteView(ordDataset.get(index).getTransactionType(),
-				ordDataset.get(index).getProductType(),
-				ordDataset.get(index).getCurrency(),
-				ordDataset.get(index).getCustomerType(),
-				ordDataset.get(index).getForeignAmount(),
-				ordDataset.get(index).getConfigConfirmChkBox(),
-				ordDataset.get(index).getAmountMsg(),
-				ordDataset.get(index).getConfigQuoteAndViewBtn());
-		
-		transactionAndCurrencyPage.addOrderBtnClickQuoteView(ordDataset.get(index).getConfigAddToOrder(),
-				ordDataset.get(index).getDenomMessage(),
-				ordDataset.get(index).getConfigDenomAlert(),
-				ordDataset.get(index).getQuantity(),
-				custDataset.get(index).getAccountHolderMessage(),
-				ordDataset.get(index).getConfigConfirmChkBox(),ordDataset.get(index).getWarningMessage());
-		transactionAndCurrencyPage.deliveryTypeBtn(ordDataset.get(index).getConfigDeliveryType(),
-				ordDataset.get(index).getDeliveryType());
-		transactionAndCurrencyPage.clearButtonClick(ordDataset.get(index).getConfigClearFields());
-		transactionAndCurrencyPage.clickShowCurrencyButton(ordDataset.get(index).getConfigShowCurrency());
-		transactionAndCurrencyPage.fetchOrderDetails(ordDataset.get(index).getCurrency(),
-				ordDataset.get(index).getConfigFetchOrderDetails());
-		transactionAndCurrencyPage.buttonClick(ordDataset.get(index).getConfigConfirmBtn());		
+	
+	@When("^I enter valid Primary cardholder details$")
+	public void i_enter_valid_primary_cardholder_details() throws Throwable {
+		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+		transactionAndCurrencyPage.enterKYCDetails(MasterDataReader.customerDetails.get("PPCDetails"));
+	}
+	
+	@When("^I get KYC success message on submitting the details$")
+	public void i_get_kyc_success_message_on_submitting_the_details() throws Throwable {
+		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+		transactionAndCurrencyPage.submitKYCDetails();
 	}
 }

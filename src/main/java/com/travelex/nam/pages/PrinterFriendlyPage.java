@@ -30,7 +30,7 @@ public class PrinterFriendlyPage extends LoadableComponent<PrinterFriendlyPage>{
 	
 	private WebDriverWrapper wrapper ;
 	private int timeOutPeriod = 3000;
-	@SuppressWarnings("unused")
+
 	private int waitTime=300;
 	
 	@FindBy(xpath="//td[contains(text(),'Confirmation Number')]")
@@ -101,16 +101,16 @@ public class PrinterFriendlyPage extends LoadableComponent<PrinterFriendlyPage>{
 		wrapper = new WebDriverWrapper(driver);
 	}
 	
-	public void nextOrderButtonClick(String configNextBtn){
-		if(WebDriverWrapper.isConfigTrue(configNextBtn)){
+	public void nextOrderButtonClick(){
 		btnNextOrder.click();
 		wrapper.waitForLoaderInvisibility(waitTime);
-		}
 	}
 	
 	public void changeBranchLink(String configChangeBranchLink){
+		if(WebDriverWrapper.isConfigTrue(configChangeBranchLink)){
 		lnkChangeBranch.click();
 		wrapper.waitForLoaderInvisibility(waitTime);
+		}
 	}
 	
 	@SuppressWarnings("unused")
@@ -231,5 +231,7 @@ public class PrinterFriendlyPage extends LoadableComponent<PrinterFriendlyPage>{
 		return new PrinterFriendlyPage(driver).get();
 	}
 	
-	
+	public TransactionAndCurrencyPage verifyNextOrderBtn(){
+		return new TransactionAndCurrencyPage(driver).get();
+	}
 }
