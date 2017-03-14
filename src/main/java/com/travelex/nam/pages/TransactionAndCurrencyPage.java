@@ -14,7 +14,6 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.LoadableComponent;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
@@ -22,9 +21,6 @@ import org.testng.Assert;
 import com.travelex.framework.common.ConfigurationProperties;
 import com.travelex.framework.common.WebDriverWrapper;
 import com.travelex.stepDefinitions.MasterDataReader;
-
-import cucumber.api.Scenario;
-import cucumber.api.java.pt.Mas;
 
 public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAndCurrencyPage>{
 	public String delimiter ="\\|";
@@ -1419,6 +1415,7 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 		btnConfirm.click();
 		wrapper.waitForLoaderInvisibility(waitTime);
 		
+		@SuppressWarnings("unused")
 		Set<String> allWindowHandles = driver.getWindowHandles();
 		
 		for(String ChildWin : driver.getWindowHandles()){

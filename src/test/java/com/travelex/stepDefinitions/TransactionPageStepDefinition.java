@@ -285,7 +285,7 @@ public class TransactionPageStepDefinition {
 	
 	@When("^I select checkbox for secondary card$")
 	public void i_select_checkbox_for_secondary_card(String selection) throws Throwable {
-		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+		//TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
 		
 	}
 	
