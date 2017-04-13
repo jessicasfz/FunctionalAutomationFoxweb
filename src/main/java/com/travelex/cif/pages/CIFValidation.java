@@ -28,7 +28,7 @@ public class CIFValidation {
 	public static Map<String,String> orderDetails;
 	public static Map<String,String> customerDetails;
 		
-	public void searchAndValidateOrderDetails(List<HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>>> mainList,Map<String,String> orderDetails,Map<String,String> customerDetails){
+	public void searchAndValidateOrderDetails(List<HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>>> mainList,Map<String,String> orderDetails,Map<String,String> customerDetails,BufferedWriter writer){
 		String OrderNo = customerDetails.get("ConfirmationNumber");
 		int maxloop = mainList.size()-2;
 		if(mainList.size() >= 3){			
@@ -40,30 +40,30 @@ public class CIFValidation {
 						boolean orderHeader = mainList.get(j).get(OrderNo).containsKey("OrderHeader");										
 						
 						if(orderHeader){
-							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("RecordType"), "001",assertValue);
-							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("CustomersOrderReferenceNo"), customerDetails.get("ConfirmationNumber"),assertValue);
+							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("RecordType"), "001",assertValue,writer,"OrderHearder Details:::RecordType");
+							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("CustomersOrderReferenceNo"), customerDetails.get("ConfirmationNumber"),assertValue,writer,"OrderHearder Details:::CustomersOrderReferenceNo");
 							
 							if(orderDetails.get("TransactionType").contains("Sale") && !orderDetails.get("OrderType").contains("WholeSale")){
-								assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("OrderType"), "SEL",assertValue);
+								assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("OrderType"), "SEL",assertValue,writer,"OrderHearder Details:::OrderType");
 							}else if(orderDetails.get("TransactionType").contains("Purchase") && !orderDetails.get("OrderType").contains("WholeSale")){
-								assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("OrderType"), "BUY",assertValue);
+								assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("OrderType"), "BUY",assertValue,writer,"OrderHearder Details:::OrderType");
 							}else if(orderDetails.get("TransactionType").contains("Sale") && orderDetails.get("OrderType").contains("WholeSale")){
-								assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("OrderType"), "STK",assertValue);
+								assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("OrderType"), "STK",assertValue,writer,"OrderHearder Details:::OrderType");
 							}else if(orderDetails.get("TransactionType").contains("Purchase") && orderDetails.get("OrderType").contains("WholeSale")){
-								assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("OrderType"), "BTK",assertValue);
+								assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("OrderType"), "BTK",assertValue,writer,"OrderHearder Details:::OrderType");
 							}
 							
-							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("OrderStatus"), "000000",assertValue);
-							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("BillingMethod"), "1",assertValue);
-							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("PaymentStatus"), "PFU",assertValue);
-							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("PaymentMethod"), "AC",assertValue);
-							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("BillingCurrency"), "USD",assertValue);														
-							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("DateOrderPlaced"), currentDateInDDMMMYYYY(),assertValue);
-							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("RequiredByDate"), currentdatePlusOneInDDMMMYYYY(),assertValue);													
-							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("SurName"), customerDetails.get("LastName"),assertValue);
-							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("Initials"), customerDetails.get("FirstName").substring(0, 1),assertValue);
-							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("Title"), customerDetails.get("CustomerSalutation")+".",assertValue);												
-							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("Source"), "COL",assertValue);
+							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("OrderStatus"), "000000",assertValue,writer,"OrderHearder Details:::OrderStatus");
+							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("BillingMethod"), "1",assertValue,writer,"OrderHearder Details:::BillingMethod");
+							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("PaymentStatus"), "PFU",assertValue,writer,"OrderHearder Details:::PaymentStatus");
+							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("PaymentMethod"), "AC",assertValue,writer,"OrderHearder Details:::PaymentMethod");
+							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("BillingCurrency"), "USD",assertValue,writer,"OrderHearder Details:::BillingCurrency");														
+							//assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("DateOrderPlaced"), currentDateInDDMMMYYYY(),assertValue,writer,"OrderHearder Details:::DateOrderPlaced");
+							//assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("RequiredByDate"), currentdatePlusOneInDDMMMYYYY(),assertValue,writer,"OrderHearder Details:::RequiredByDate");													
+							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("SurName"), customerDetails.get("LastName"),assertValue,writer,"OrderHearder Details:::SurName");
+							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("Initials"), customerDetails.get("FirstName").substring(0, 1),assertValue,writer,"OrderHearder Details:::Initials");
+							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("Title"), customerDetails.get("CustomerSalutation")+".",assertValue,writer,"OrderHearder Details :::Title");												
+							assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("Source"), "COL",assertValue,writer,"OrderHearder Details:::Source");
 						}					
 	
 						boolean isAddressLineContainsP01 = mainList.get(j).get(OrderNo).get("OrderHeader").get(0).get("DeliveryOption").contains("P01");
@@ -83,17 +83,17 @@ public class CIFValidation {
 									String state = allDetails[5].trim();
 									String zipcode = allDetails[6].trim();
 									
-									assertValue = softAssert(ActualorderDetails.get("Address").get(0).get("RecordType"), "002",assertValue);
-									assertValue = softAssert(ActualorderDetails.get("Address").get(0).get("CustomersOrderReference"), customerDetails.get("ConfirmationNumber"),assertValue);
+									assertValue = softAssert(ActualorderDetails.get("Address").get(0).get("RecordType"), "002",assertValue,writer,"Address Details:::RecordType");
+									assertValue = softAssert(ActualorderDetails.get("Address").get(0).get("CustomersOrderReference"), customerDetails.get("ConfirmationNumber"),assertValue,writer,"Address Details:::RecordType");
 									
-									assertValue = softAssert(ActualorderDetails.get("Address").get(0).get("CompanyName"), companyName,assertValue);						
-									assertValue = softAssert(ActualorderDetails.get("Address").get(0).get("TelephoneNumber"),customerDetails.get("BranchContact")+customerDetails.get("PhoneNumber"),assertValue);									
-									assertValue = softAssert(ActualorderDetails.get("Address").get(0).get("Country"), "USA",assertValue);
-									assertValue = softAssert(ActualorderDetails.get("Address").get(0).get("PostalCode"), zipcode,assertValue);								
-									assertValue = softAssert(ActualorderDetails.get("Address").get(0).get("AddressLine1"), add1,assertValue);
-									assertValue = softAssert(ActualorderDetails.get("Address").get(0).get("AddressLine2"), add2,assertValue);
-									assertValue = softAssert(ActualorderDetails.get("Address").get(0).get("AddressLine4City"), city,assertValue);
-									assertValue = softAssert(ActualorderDetails.get("Address").get(0).get("AddressLine5Country"), state,assertValue);
+									assertValue = softAssert(ActualorderDetails.get("Address").get(0).get("CompanyName"), companyName,assertValue,writer,"Address Details:::RecordType");						
+									assertValue = softAssert(ActualorderDetails.get("Address").get(0).get("TelephoneNumber"),customerDetails.get("BranchContact")+customerDetails.get("PhoneNumber"),assertValue,writer,"Address Details:::RecordType");									
+									assertValue = softAssert(ActualorderDetails.get("Address").get(0).get("Country"), "USA",assertValue,writer,"Address Details:::RecordType");
+									assertValue = softAssert(ActualorderDetails.get("Address").get(0).get("PostalCode"), zipcode,assertValue,writer,"Address Details:::RecordType");								
+									assertValue = softAssert(ActualorderDetails.get("Address").get(0).get("AddressLine1"), add1,assertValue,writer,"Address Details:::RecordType");
+									assertValue = softAssert(ActualorderDetails.get("Address").get(0).get("AddressLine2"), add2,assertValue,writer,"Address Details:::RecordType");
+									assertValue = softAssert(ActualorderDetails.get("Address").get(0).get("AddressLine4City"), city,assertValue,writer,"Address Details:::RecordType");
+									assertValue = softAssert(ActualorderDetails.get("Address").get(0).get("AddressLine5Country"), state,assertValue,writer,"Address Details:::RecordType");
 								}
 							}						
 						}else if(isAddressLineContainsC01){
@@ -106,8 +106,7 @@ public class CIFValidation {
 						if(lineItemDetails){						
 							int countOfLineItems =	mainList.get(j).get(OrderNo).get("LineItem").size();												
 							String multiCurrencyDetails = orderDetails.get("MultiCurrencyDetails");
-							ArrayList<HashMap<String, String>> listOfProductDetails  = productDetailsList(multiCurrencyDetails);
-							
+							ArrayList<HashMap<String, String>> listOfProductDetails  = productDetailsList(multiCurrencyDetails);							
 							for(int a=0;a<=countOfLineItems-1;a++){								
 								String productValue = mainList.get(j).get(OrderNo).get("LineItem").get(a).get("ProductType");
 								String currencyValue = mainList.get(j).get(OrderNo).get("LineItem").get(a).get("Currency");
@@ -126,11 +125,11 @@ public class CIFValidation {
 								int listSize = listOfProductDetails.size();
 								for(int b=0;b<=listSize-1;b++){															
 									if(productName.contains(productValue) && currencyName.substring(currencyName.length()-3).contains(currencyValue)){										
-										assertValue = softAssert(mainList.get(j).get(OrderNo).get("LineItem").get(a).get("RecordType"), "006",assertValue);
-										assertValue = softAssert(mainList.get(j).get(OrderNo).get("LineItem").get(a).get("CustomerOrderReference"), customerDetails.get("ConfirmationNumber"),assertValue);
-										assertValue = softAssert(mainList.get(j).get(OrderNo).get("LineItem").get(a).get("ProductType"),productName,assertValue);
-										assertValue = softAssert(mainList.get(j).get(OrderNo).get("LineItem").get(a).get("Currency"),currencyName.substring(currencyName.length()-3),assertValue);
-										assertValue = softAssert(mainList.get(j).get(OrderNo).get("LineItem").get(a).get("ForeignValue"),foreignAmountValue,assertValue);
+										assertValue = softAssert(mainList.get(j).get(OrderNo).get("LineItem").get(a).get("RecordType"), "006",assertValue,writer,"LineItem Details:::RecordType");
+										assertValue = softAssert(mainList.get(j).get(OrderNo).get("LineItem").get(a).get("CustomerOrderReference"), customerDetails.get("ConfirmationNumber"),assertValue,writer,"LineItem Details:::CustomerOrderReference");
+										assertValue = softAssert(mainList.get(j).get(OrderNo).get("LineItem").get(a).get("ProductType"),productName,assertValue,writer,"LineItem Details:::ProductType");
+										assertValue = softAssert(mainList.get(j).get(OrderNo).get("LineItem").get(a).get("Currency"),currencyName.substring(currencyName.length()-3),assertValue,writer,"LineItem Details:::Currency");
+										assertValue = softAssert(mainList.get(j).get(OrderNo).get("LineItem").get(a).get("ForeignValue"),foreignAmountValue,assertValue,writer,"LineItem Details:::ForeignValue");
 										
 										if(mainList.get(j).get(OrderNo).get("LineItem").get(a).get("DenominationsType").contains("X")){
 											boolean denominationsDetails = mainList.get(j).get(OrderNo).containsKey("Denominations");
@@ -138,25 +137,29 @@ public class CIFValidation {
 												int denominationsOfLineItems =	mainList.get(j).get(OrderNo).get("Denominations").size();
 												for(int c=0;c<=denominationsOfLineItems-1;c++){
 													if(mainList.get(j).get(OrderNo).get("Denominations").get(c).get("LineItem").contains(Integer.toString(a+1))){														
-														assertValue = softAssert(mainList.get(j).get(OrderNo).get("Denominations").get(c).get("RecordType"), "007",assertValue);
-														assertValue = softAssert(mainList.get(j).get(OrderNo).get("Denominations").get(c).get("CustomerOrderReference"), customerDetails.get("ConfirmationNumber"),assertValue);
-														assertValue = softAssert(mainList.get(j).get(OrderNo).get("Denominations").get(c).get("Quantity"), listOfProductDetails.get(a).get("Quantity").trim(),assertValue);
-														assertValue = softAssert(mainList.get(j).get(OrderNo).get("Denominations").get(c).get("DenominationValue"), listOfProductDetails.get(a).get("Denomination").trim(),assertValue);													
+														assertValue = softAssert(mainList.get(j).get(OrderNo).get("Denominations").get(c).get("RecordType"), "007",assertValue,writer,"Denomination Details:::RecordType");
+														assertValue = softAssert(mainList.get(j).get(OrderNo).get("Denominations").get(c).get("CustomerOrderReference"), customerDetails.get("ConfirmationNumber"),assertValue,writer,"Denomination Details:::CustomerOrderReference");
+														assertValue = softAssert(mainList.get(j).get(OrderNo).get("Denominations").get(c).get("Quantity"), listOfProductDetails.get(a).get("Quantity").trim(),assertValue,writer,"Denomination Details:::Quantity");
+														assertValue = softAssert(mainList.get(j).get(OrderNo).get("Denominations").get(c).get("DenominationValue"), listOfProductDetails.get(a).get("Denomination").trim(),assertValue,writer,"Denomination Details:::DenominationValue");													
 													}
 												}
 											}																														
 										}									
 										break;
 									}else{
-										System.out.println("Expected Line Item Is Not Exist");
+										try {
+											writer.write("Expected Line Item Is not Exist");
+										} catch (IOException e) {
+											e.printStackTrace();
+										}
 									}
 								}
 							}					
 						}										
 						boolean orderTrailerDetails = mainList.get(j).get(OrderNo).containsKey("OrderTrailer");
 						if(orderTrailerDetails){							
-							assertValue =  softAssert(ActualorderDetails.get("OrderTrailer").get(0).get("RecordType"),"099",assertValue);
-							assertValue =  softAssert(ActualorderDetails.get("OrderTrailer").get(0).get("CustomerOrderReference"),customerDetails.get("ConfirmationNumber"),assertValue);						
+							assertValue =  softAssert(ActualorderDetails.get("OrderTrailer").get(0).get("RecordType"),"099",assertValue,writer,"OrderTrailer Details:::RecordType");
+							assertValue =  softAssert(ActualorderDetails.get("OrderTrailer").get(0).get("CustomerOrderReference"),customerDetails.get("ConfirmationNumber"),assertValue,writer,"OrderTrailer Details:::CustomerOrderReference");						
 						}					
 						break;	
 					}				
@@ -170,18 +173,20 @@ public class CIFValidation {
 		 }
 	}	
 
-	public void fileHeaderAndFileTrailerValidation(List<HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>>> mainList) {
+	public void fileHeaderAndFileTrailerValidation(List<HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>>> mainList,BufferedWriter writer) {
 				
-		HashMap<String, HashMap<String, ArrayList<HashMap<String, String>>>> FileHeader = mainList.get(0);		
-		Assert.assertEquals(FileHeader.get("FileHeader").get("000").get(0).get("CorporateID"), "COL");
-		Assert.assertEquals(FileHeader.get("FileHeader").get("000").get(0).get("GateWayID"), "COL001");
-		Assert.assertEquals(FileHeader.get("FileHeader").get("000").get(0).get("BookCurrency"), "USD");
-		//Assert.assertEquals(FileHeader.get("FileHeader").get("000").get(0).get("DateFileCreation"), currentDateInDDMMMYYYY());
-		Assert.assertEquals(FileHeader.get("FileHeader").get("000").get(0).get("RecordType"), "000");
-								
+		HashMap<String, HashMap<String, ArrayList<HashMap<String, String>>>> FileHeader = mainList.get(0);
+		
+		softAssertFileLevelValidation(FileHeader.get("FileHeader").get("000").get(0).get("CorporateID"),"COL",writer, "FileHearder Details:::OrderType");		
+		softAssertFileLevelValidation(FileHeader.get("FileHeader").get("000").get(0).get("GateWayID"), "COL001",writer, "FileHearder Details:::GateWayID");
+		softAssertFileLevelValidation(FileHeader.get("FileHeader").get("000").get(0).get("BookCurrency"), "USD",writer, "FileHearder Details:::BookCurrency");
+		softAssertFileLevelValidation(FileHeader.get("FileHeader").get("000").get(0).get("DateFileCreation"), currentDateInDDMMMYYYY(),writer, "FileHearder Details:::DateFileCreation");
+		softAssertFileLevelValidation(FileHeader.get("FileHeader").get("000").get(0).get("RecordType"), "000",writer, "FileHearder Details:::RecordType");
+										
 		HashMap<String, HashMap<String, ArrayList<HashMap<String, String>>>> FileTrailer = mainList.get(mainList.size()-1);		
-		Assert.assertEquals(FileTrailer.get("FileTrailer").get("999").get(0).get("CorporateID"), "COL");
-		Assert.assertEquals(FileTrailer.get("FileTrailer").get("999").get(0).get("RecordType"), "999");
+		
+		softAssertFileLevelValidation(FileTrailer.get("FileTrailer").get("999").get(0).get("CorporateID"), "COL",writer, "FileTrailer Details:::CorporateID");
+		softAssertFileLevelValidation(FileTrailer.get("FileTrailer").get("999").get(0).get("RecordType"), "999",writer, "FileTrailer Details:::RecordType");
 		
 	}
 	
@@ -197,7 +202,9 @@ public class CIFValidation {
 		    fWriter = new FileWriter(file);
 		    writer = new BufferedWriter(fWriter);		    
 			CIFValidation cifvalidation = new CIFValidation();
-			cifvalidation.fileHeaderAndFileTrailerValidation(mainList);
+			writer.write("<html><head><style>body{color: red;}h2{color:Orange;}h3{color:Green;}p{color:Blue}"+"</style></head><body>");
+			writer.write("<h2>"+"FileHeader And FileTrailer Validation"+"</h2>");
+			cifvalidation.fileHeaderAndFileTrailerValidation(mainList,writer);
 			String SheetName = "CustomerDetails";			
 			ConfigurationProperties configurationProperties = new ConfigurationProperties();  
 			String excelFilePath = configurationProperties.getProperty(ConfigurationProperties.Test_Data_Folder_Path);  
@@ -205,8 +212,7 @@ public class CIFValidation {
 			FileInputStream inputStream = new FileInputStream(excelFilePath);		
 			XSSFWorkbook workbook = new XSSFWorkbook(inputStream);  
 			XSSFSheet sheet = workbook.getSheet(SheetName);		
-			int NumberOfRows = sheet.getPhysicalNumberOfRows();
-			writer.write("<html><body>");
+			int NumberOfRows = sheet.getPhysicalNumberOfRows();			
 			for(int l=1;l<=NumberOfRows-1;l++){
 				XSSFRow row = sheet.getRow(l);
 				XSSFCell orderNumber = row.getCell(28);
@@ -214,11 +220,11 @@ public class CIFValidation {
 				if(orderNumber.toString().isEmpty()){
 				}else{
 					String AutomationID = automationID.getStringCellValue();
-					writer.write("<h3>" +"Order Number ::: "+orderNumber.toString());
+					writer.write("<h3>"+"Order Number :::: "+ orderNumber.toString() +"</h3>");					
 					writer.newLine();
 					orderDetails = ExcelFileReader.readDataForAutomationID("OrderDetails",AutomationID);
 					customerDetails = ExcelFileReader.readDataForAutomationID("CustomerDetails",AutomationID);								
-					cifvalidation.searchAndValidateOrderDetails(mainList, orderDetails, customerDetails);	
+					cifvalidation.searchAndValidateOrderDetails(mainList, orderDetails, customerDetails,writer);	
 				}			
 			}
 			writer.write("</body></html>");
@@ -302,27 +308,45 @@ public class CIFValidation {
 		return listofProducts;								
 	}
 		
-	public boolean softAssert(String actual, String expected,boolean assertValue){
+	public boolean softAssert(String actual, String expected,boolean assertValue,BufferedWriter writer,String messageLog){
 		if(assertValue){
 			UpdateDataInExcel up = new UpdateDataInExcel();
 			try{
 		        Assert.assertEquals(expected, actual);
 		        try {
 					up.updateDataInExcel("CustomerDetails", "CIFValidationStatus", "PASS",orderDetails.get("AutomationID"));
-				} catch (FilloException e) {
+					writer.write("<p> Expected And Actual Values Are Same ::: Expected Value -- "+ messageLog +"---" + expected +"   Actual Value --"+ actual + "</p>");
+				} catch (FilloException | IOException e) {
 					e.printStackTrace();
 				}
 		        }catch(AssertionError e){
-		            System.out.println("Assertion Error Expected And Actual Values Are Not Same ::: Expected Value -- "+ expected + "   Actual Value --"+ actual);
 		            assertValue = false;		            
 		            try {
 						up.updateDataInExcel("CustomerDetails", "CIFValidationStatus", "FAIL",orderDetails.get("AutomationID"));
-					} catch (FilloException e1) {
+						writer.write("Assertion Error Expected And Actual Values Are Not Same ::: Expected Value -- "+ messageLog +"---" + expected + "   Actual Value --"+ actual);
+					} catch (FilloException | IOException e1) {
 						e1.printStackTrace();
 					}
 		        } 			
 		}
 		return assertValue;
+	}
+		
+	public void softAssertFileLevelValidation(String actual, String expected,BufferedWriter writer,String messageLog){
+		try{
+	        Assert.assertEquals(expected, actual);
+	        try {
+				writer.write("<p> Expected And Actual Values Are Same ::: Expected Value -- "+ messageLog +"---" + expected +"   Actual Value --"+ actual + "</p>");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	        }catch(AssertionError e){		            
+	            try {
+					writer.write("Assertion Error Expected And Actual Values Are Not Same ::: Expected Value -- "+ messageLog +"---" + expected + "   Actual Value --"+ actual);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+	        } 			
 	}
 
 	public String currentDateInDDMMMYYYY(){

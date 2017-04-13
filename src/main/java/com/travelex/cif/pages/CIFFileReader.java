@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.travelex.framework.common.ConfigurationProperties;
+
 public class CIFFileReader {
 
 	
@@ -341,8 +343,10 @@ public class CIFFileReader {
 		  String recordType,recordTypeOrderLevel,orderNoString,loopOrderNo,strLine,strLineOrder;  
 		  
 		  List<HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>>> MainList = new ArrayList<HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>>>();
-		  		  
-		  FileInputStream fstream = new FileInputStream("C:\\Users\\reddyp\\Desktop\\TX050420170753.ord");
+		  ConfigurationProperties configurationProperties = new ConfigurationProperties();  
+		  String cifFilePath = configurationProperties.getProperty(ConfigurationProperties.CIF_Data_Folder_Path);
+			
+		  FileInputStream fstream = new FileInputStream(cifFilePath);
 	      BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 	      
 	      while ((strLine = br.readLine()) != null){
@@ -370,7 +374,7 @@ public class CIFFileReader {
 	    	  		OrderData = orderHeaderInfoCollectionList(lineSplitUsingTab,OrderData);
 	    	  		OrdersRelatedData.put(orderNoString, OrderData);
 	    	  		
-	    	  		FileInputStream fstream1 = new FileInputStream("C:\\Users\\reddyp\\Desktop\\TX050420170753.ord");
+	    	  		FileInputStream fstream1 = new FileInputStream(cifFilePath);
 	    	  		BufferedReader orderLevelReader = new BufferedReader(new InputStreamReader(fstream1));
 		    	  		while ((strLineOrder = orderLevelReader.readLine()) != null){		    	  			
 			    	  		orderLineReaderTab = strLineOrder.split("\t");

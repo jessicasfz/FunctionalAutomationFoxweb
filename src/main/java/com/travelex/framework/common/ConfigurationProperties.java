@@ -29,6 +29,7 @@ public class ConfigurationProperties {
 	public final static String PLATFORM = "platform";
 	public final static String BROWSER_NAME ="browserName";
 	public final static String MAIL_LIST ="Mail_list";
+	public final static String CIF_Data_Folder_Path = "CIF_File_Path";
 
 	public ConfigurationProperties() {
 		properties = loadProperties();
