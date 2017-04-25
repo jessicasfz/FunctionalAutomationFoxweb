@@ -8,48 +8,46 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.travelex.framework.common.ConfigurationProperties;
-
 public class CIFFileReader {
 
-	
+
 	public static HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>> fileHeaderInfoCollectionList(String[] lineSplitUsingTab, HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>> Header){	
 		String recordType, corporateID, fileType, gateWayID, gateWayControlSequenceNumber, bookCurrency, dateFileCreation, timeFileCreation;  				
-  		
+
 		recordType = lineSplitUsingTab[0];
-  		corporateID = lineSplitUsingTab[1];
-  		fileType = lineSplitUsingTab[2];
-  		gateWayID = lineSplitUsingTab[3];
-  		gateWayControlSequenceNumber = lineSplitUsingTab[4];
-  		bookCurrency = lineSplitUsingTab[5];
-  		dateFileCreation = lineSplitUsingTab[6];
-  		timeFileCreation = lineSplitUsingTab[7];
-  		
-  		HashMap<String, ArrayList<HashMap<String ,String>>> HeaderData = new HashMap<String, ArrayList<HashMap<String ,String>>>();
-  		HashMap<String ,String> FileHeader = new HashMap<String ,String>();
-  		ArrayList<HashMap<String ,String>> ListOfFileHeader = new ArrayList<HashMap<String ,String>>();
-  		
-  		FileHeader.put("RecordType", recordType);
-  		FileHeader.put("CorporateID", corporateID);
-  		FileHeader.put("FileType", fileType);
-  		FileHeader.put("GateWayID", gateWayID);
-  		FileHeader.put("GateWayControlSequenceNumber", gateWayControlSequenceNumber);
-  		FileHeader.put("BookCurrency", bookCurrency);
-  		FileHeader.put("DateFileCreation", dateFileCreation);
-  		FileHeader.put("TimeFileCreation", timeFileCreation);
-  		
-  		ListOfFileHeader.add(FileHeader);
-  		HeaderData.put(recordType, ListOfFileHeader);
-  		Header.put("FileHeader", HeaderData);
-		
-  		return Header;		
+		corporateID = lineSplitUsingTab[1];
+		fileType = lineSplitUsingTab[2];
+		gateWayID = lineSplitUsingTab[3];
+		gateWayControlSequenceNumber = lineSplitUsingTab[4];
+		bookCurrency = lineSplitUsingTab[5];
+		dateFileCreation = lineSplitUsingTab[6];
+		timeFileCreation = lineSplitUsingTab[7];
+
+		HashMap<String, ArrayList<HashMap<String ,String>>> HeaderData = new HashMap<String, ArrayList<HashMap<String ,String>>>();
+		HashMap<String ,String> FileHeader = new HashMap<String ,String>();
+		ArrayList<HashMap<String ,String>> ListOfFileHeader = new ArrayList<HashMap<String ,String>>();
+
+		FileHeader.put("RecordType", recordType);
+		FileHeader.put("CorporateID", corporateID);
+		FileHeader.put("FileType", fileType);
+		FileHeader.put("GateWayID", gateWayID);
+		FileHeader.put("GateWayControlSequenceNumber", gateWayControlSequenceNumber);
+		FileHeader.put("BookCurrency", bookCurrency);
+		FileHeader.put("DateFileCreation", dateFileCreation);
+		FileHeader.put("TimeFileCreation", timeFileCreation);
+
+		ListOfFileHeader.add(FileHeader);
+		HeaderData.put(recordType, ListOfFileHeader);
+		Header.put("FileHeader", HeaderData);
+
+		return Header;		
 	}
 
-	
+
 	public static HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>> fileFooterInfoCollectionList(String[] lineSplitUsingTab,HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>> Trailer){
 		String recordType,corporateID,countOfLineItems,totalBookCurrencyValue,totalCommisionValue,totalPromotonFees,totalDeliveryfees,fileRecordCount,checkSum;
-  		
-  		recordType = lineSplitUsingTab[0];
+
+		recordType = lineSplitUsingTab[0];
 		corporateID =lineSplitUsingTab[1];
 		countOfLineItems =lineSplitUsingTab[2];
 		totalBookCurrencyValue =lineSplitUsingTab[3];
@@ -58,11 +56,11 @@ public class CIFFileReader {
 		totalDeliveryfees =lineSplitUsingTab[6];
 		fileRecordCount =lineSplitUsingTab[7];
 		checkSum =lineSplitUsingTab[8];
-		
+
 		HashMap<String, ArrayList<HashMap<String ,String>>> TrailerData = new HashMap<String, ArrayList<HashMap<String ,String>>>();
-  		ArrayList<HashMap<String ,String>> ListOfFileTrailers = new ArrayList<HashMap<String ,String>>();
-  		HashMap<String ,String> FileTrailer = new HashMap<String ,String>();
-  		
+		ArrayList<HashMap<String ,String>> ListOfFileTrailers = new ArrayList<HashMap<String ,String>>();
+		HashMap<String ,String> FileTrailer = new HashMap<String ,String>();
+
 		FileTrailer.put("RecordType", recordType);
 		FileTrailer.put("CorporateID", corporateID);
 		FileTrailer.put("CountOfLineItems", countOfLineItems);
@@ -72,25 +70,25 @@ public class CIFFileReader {
 		FileTrailer.put("TotalDeliveryfees", totalDeliveryfees);
 		FileTrailer.put("FileRecordCount", fileRecordCount);
 		FileTrailer.put("CheckSum", checkSum);
-		
+
 		ListOfFileTrailers.add(FileTrailer);
 		TrailerData.put(recordType, ListOfFileTrailers);
 		Trailer.put("FileTrailer", TrailerData);
-		
+
 		return Trailer;
-		
+
 	}		
 
 
 	public static HashMap<String ,ArrayList<HashMap<String,String>>> orderHeaderInfoCollectionList(String[] lineSplitUsingTab,HashMap<String ,ArrayList<HashMap<String,String>>> OrderData){
 		String recordType,corporateID,recordSequenceNumber,customersOrderReferenceNo,version,orderType,orderStatus,billingMethod,billingCurrency,paymentMethod,paymentStatus,
-		   customerType,orderLocation,userName,dateOrderPlaced,timeOrderPlaced,originalOrderReference,tcsOrderReference,formReference,faultAllocation,authorizationReference,
-		   requiredByDate,requiredByTime,deliveryOption,deliveryLocationCompany,deliveryLocationTravelex,deliveryCharge,commision,surName,initials,title,source,rewardPointsEligibility,
-		   messageID,cardHandlingFee;
-		
+		customerType,orderLocation,userName,dateOrderPlaced,timeOrderPlaced,originalOrderReference,tcsOrderReference,formReference,faultAllocation,authorizationReference,
+		requiredByDate,requiredByTime,deliveryOption,deliveryLocationCompany,deliveryLocationTravelex,deliveryCharge,commision,surName,initials,title,source,rewardPointsEligibility,
+		messageID,cardHandlingFee;
+
 		ArrayList<HashMap<String ,String>> ListOfOrderHeaders = new ArrayList<HashMap<String ,String>>();
 		HashMap<String,String> OrderHeader = new HashMap<String,String>();
-				
+
 		recordType = lineSplitUsingTab[0];
 		corporateID =lineSplitUsingTab[1];
 		recordSequenceNumber =lineSplitUsingTab[2];
@@ -126,7 +124,7 @@ public class CIFFileReader {
 		rewardPointsEligibility =lineSplitUsingTab[32];
 		messageID =lineSplitUsingTab[33];
 		cardHandlingFee =lineSplitUsingTab[34];
-		
+
 		OrderHeader.put("RecordType", recordType);
 		OrderHeader.put("CorporateID", corporateID);
 		OrderHeader.put("RecordSequenceNumber", recordSequenceNumber);
@@ -162,10 +160,10 @@ public class CIFFileReader {
 		OrderHeader.put("RewardPointsEligibility", rewardPointsEligibility);
 		OrderHeader.put("MessageID", messageID);
 		OrderHeader.put("CardHandlingFee", cardHandlingFee);
-		
+
 		ListOfOrderHeaders.add(OrderHeader);		
 		OrderData.put("OrderHeader", ListOfOrderHeaders);
-		
+
 		return OrderData;
 	}
 
@@ -173,9 +171,9 @@ public class CIFFileReader {
 	public static HashMap<String ,ArrayList<HashMap<String,String>>> addressDetailsInfoCollectionList(String[] orderLineReaderTab,HashMap<String ,ArrayList<HashMap<String,String>>> OrderData, ArrayList<HashMap<String ,String>> ListOfAddress){
 		String recordType,customerID,recordSequenceNumber,customersOrderReference,version,addressType,telephoneNumber,companyName,departmentName,addressLine1,addressLine2,
 		addressLine3,addressLine4City,addressLine5Country,postalCode,country;
-				
+
 		HashMap<String,String> Address = new HashMap<String,String>();
-				
+
 		recordType = orderLineReaderTab[0];
 		customerID =orderLineReaderTab[1];
 		recordSequenceNumber =orderLineReaderTab[2];
@@ -192,7 +190,7 @@ public class CIFFileReader {
 		addressLine5Country =orderLineReaderTab[13];
 		postalCode =orderLineReaderTab[14];
 		country =orderLineReaderTab[15];
-		
+
 		Address.put("RecordType", recordType);
 		Address.put("CustomerID", customerID);
 		Address.put("RecordSequenceNumber", recordSequenceNumber);
@@ -209,19 +207,19 @@ public class CIFFileReader {
 		Address.put("AddressLine5Country", addressLine5Country);
 		Address.put("PostalCode", postalCode);
 		Address.put("Country", country);
-		
+
 		ListOfAddress.add(Address);
 		OrderData.put("Address", ListOfAddress);		
-		
+
 		return OrderData;
-		
+
 	}
-	
+
 
 	public static HashMap<String ,ArrayList<HashMap<String,String>>> orderTrailerInfoCollectionList(String[] orderLineReaderTab,HashMap<String ,ArrayList<HashMap<String,String>>> OrderData, ArrayList<HashMap<String ,String>> ListOfOrderTrailer){
 		String recordType,customerID,recordSequenceNumber,customerOrderReference,version,countOfLineItems,totalBookCurrencyValue,totalCommissionValue,totalPromotionFees,
 		totalDeliveryFees,orderRecordCount,checkSum;
-						
+
 		recordType = orderLineReaderTab[0];
 		customerID =orderLineReaderTab[1];
 		recordSequenceNumber =orderLineReaderTab[2];
@@ -234,7 +232,7 @@ public class CIFFileReader {
 		totalDeliveryFees =orderLineReaderTab[9];
 		orderRecordCount =orderLineReaderTab[10];
 		checkSum =orderLineReaderTab[11];
-		
+
 		HashMap<String,String> OrderTrailer = new HashMap<String,String>();
 
 		OrderTrailer.put("RecordType", recordType);
@@ -254,11 +252,11 @@ public class CIFFileReader {
 		return OrderData;
 
 	}
-	
+
 
 	public static HashMap<String ,ArrayList<HashMap<String,String>>> denominationsInfoCollectionList(String[] orderLineReaderTab,HashMap<String ,ArrayList<HashMap<String,String>>> OrderData, ArrayList<HashMap<String ,String>> ListOfDenominations){
 		String recordType,customerID,recordSequenceNumber,customerOrderReference,version,lineItem,denominationValue,quantity;
-		
+
 		recordType = orderLineReaderTab[0];
 		customerID =orderLineReaderTab[1];
 		recordSequenceNumber =orderLineReaderTab[2];
@@ -267,9 +265,9 @@ public class CIFFileReader {
 		lineItem =orderLineReaderTab[5];
 		denominationValue =orderLineReaderTab[6];
 		quantity =orderLineReaderTab[7];
-		
+
 		HashMap<String,String> Denominations = new HashMap<String,String>();
-		
+
 		Denominations.put("RecordType", recordType);
 		Denominations.put("CustomerID", customerID);
 		Denominations.put("RecordSequenceNumber", recordSequenceNumber);
@@ -278,18 +276,18 @@ public class CIFFileReader {
 		Denominations.put("LineItem", lineItem);
 		Denominations.put("DenominationValue", denominationValue);
 		Denominations.put("Quantity", quantity);
-		
+
 		ListOfDenominations.add(Denominations);
 		OrderData.put("Denominations", ListOfDenominations);		
 		return OrderData;
-		
+
 	}
-	
+
 
 	public static HashMap<String ,ArrayList<HashMap<String,String>>> lineItemInfoCollectionList(String[] orderLineReaderTab,HashMap<String ,ArrayList<HashMap<String,String>>> OrderData, ArrayList<HashMap<String ,String>> ListOfLineItem){
 		String recordType,customerID,recordSequenceNumber,customerOrderReference,version,lineItem,productType,currency,foreignValue,exchangeRate,bookCurrencyValue,
 		denominationsType,commissionAmount,issuer;
-		
+
 		recordType = orderLineReaderTab[0];
 		customerID =orderLineReaderTab[1];
 		recordSequenceNumber =orderLineReaderTab[2];
@@ -304,9 +302,9 @@ public class CIFFileReader {
 		denominationsType =orderLineReaderTab[11];
 		commissionAmount =orderLineReaderTab[12];
 		issuer =orderLineReaderTab[13];
-		
+
 		HashMap<String,String> LineItem = new HashMap<String,String>();
-				
+
 		LineItem.put("RecordType", recordType);
 		LineItem.put("CustomerID", customerID);
 		LineItem.put("RecordSequenceNumber", recordSequenceNumber);
@@ -321,133 +319,131 @@ public class CIFFileReader {
 		LineItem.put("DenominationsType", denominationsType);
 		LineItem.put("CommissionAmount", commissionAmount);
 		LineItem.put("Issuer", issuer);
-		
+
 		ListOfLineItem.add(LineItem);
 		OrderData.put("LineItem", ListOfLineItem);		
 		return OrderData;
-		
+
 	}
-	
+
 
 	public static boolean isListContainSequence(ArrayList<String> orderReferenceNo, String sequnce){
 		for(String str: orderReferenceNo) {
-		    if(str.trim().contains(sequnce))
-		       return true;
+			if(str.trim().contains(sequnce))
+				return true;
 		}
 		return false;
 	}
 
 
-	public static List<HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>>> mainMethod() throws IOException{
-		  String[] lineSplitUsingTab;String[] orderLineReaderTab;
-		  String recordType,recordTypeOrderLevel,orderNoString,loopOrderNo,strLine,strLineOrder;  
-		  
-		  List<HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>>> MainList = new ArrayList<HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>>>();
-		  ConfigurationProperties configurationProperties = new ConfigurationProperties();  
-		  String cifFilePath = configurationProperties.getProperty(ConfigurationProperties.CIF_Data_Folder_Path);
-			
-		  FileInputStream fstream = new FileInputStream(cifFilePath);
-	      BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-	      
-	      while ((strLine = br.readLine()) != null){
-	    	  	lineSplitUsingTab = strLine.split("\t");	    	  	
-	    	  	recordType = lineSplitUsingTab[0];
-	    	 	    	  	
-	    	  	if(recordType.contains("000")){
-	    	  		HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>> Header = new HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>>();
-	    	  		Header = fileHeaderInfoCollectionList(lineSplitUsingTab,Header);
-	    	  		MainList.add(Header);
-	        	}
-	    	  	
-	    	  	if(recordType.contains("001")){
-	    	  		orderNoString = lineSplitUsingTab[3];
-	    	  		
-	    	  		HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>> OrdersRelatedData = new HashMap<String,HashMap<String,ArrayList<HashMap<String,String>>>>();
-	    	  		HashMap<String ,ArrayList<HashMap<String,String>>> OrderData = new HashMap<String ,ArrayList<HashMap<String,String>>>();
-	    	  		
-	    	  		ArrayList<HashMap<String ,String>> ListOfAddress = new ArrayList<HashMap<String ,String>>();
-	    	  		ArrayList<HashMap<String ,String>> ListOfLineItem = new ArrayList<HashMap<String ,String>>();
-	    	  		ArrayList<HashMap<String ,String>> ListOfDenominations = new ArrayList<HashMap<String ,String>>();
-	    	  		ArrayList<HashMap<String ,String>> ListOfOrderTrailer = new ArrayList<HashMap<String ,String>>();
-	    	  		ArrayList<HashMap<String ,String>> ListOfCustomDetails = new ArrayList<HashMap<String ,String>>();
-	    	  		
-	    	  		OrderData = orderHeaderInfoCollectionList(lineSplitUsingTab,OrderData);
-	    	  		OrdersRelatedData.put(orderNoString, OrderData);
-	    	  		
-	    	  		FileInputStream fstream1 = new FileInputStream(cifFilePath);
-	    	  		BufferedReader orderLevelReader = new BufferedReader(new InputStreamReader(fstream1));
-		    	  		while ((strLineOrder = orderLevelReader.readLine()) != null){		    	  			
-			    	  		orderLineReaderTab = strLineOrder.split("\t");
-			    	  		loopOrderNo = orderLineReaderTab[3];
-			    	  		recordTypeOrderLevel = orderLineReaderTab[0];
-			    	  		if(loopOrderNo.contains(orderNoString)){			    	  			
-			    	  			if(recordTypeOrderLevel.contains("002")){			    	  				
-			    	  				OrderData = addressDetailsInfoCollectionList(orderLineReaderTab, OrderData, ListOfAddress);
-			    	  			}			    	  			
-			    	  			if(recordTypeOrderLevel.contains("004")){	    	  				
-			    	  				OrderData = customDetailsDetailsInfoCollectionList(orderLineReaderTab, OrderData, ListOfCustomDetails);
-			    	  			}			    	  			
-			    	  			if(recordTypeOrderLevel.contains("006")){
-			    	  				OrderData = lineItemInfoCollectionList(orderLineReaderTab, OrderData, ListOfLineItem);			    	  				
-			    	  			}			    	  			
-			    	  			if(recordTypeOrderLevel.contains("007")){
-			    	  				OrderData = denominationsInfoCollectionList(orderLineReaderTab, OrderData, ListOfDenominations);
-			    	  			}			    	  			
-			    	  			if(recordTypeOrderLevel.contains("099")){
-			    	  				OrderData = orderTrailerInfoCollectionList(orderLineReaderTab, OrderData, ListOfOrderTrailer);			    	  				
-			    	  			}			    	  			
-			    	  		}			    	  		
-		    	  		}
-		    	  	orderLevelReader.close();
-		    	  	OrdersRelatedData.put(orderNoString, OrderData);
-		    	  	MainList.add(OrdersRelatedData);
-	        	}
-	    	  	
-	    	  	if(recordType.contains("999")){    	  		
-	    	  		HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>> Trailer = new HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>>();	    	  		
-	    	  		Trailer = fileFooterInfoCollectionList(lineSplitUsingTab,Trailer);
-	    	  		MainList.add(Trailer);
-	        	}	    	  	
-	      }	      
-	      br.close();
-	      
+	public static List<HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>>> mainMethod(String cifFilePath) throws IOException{
+		String[] lineSplitUsingTab;String[] orderLineReaderTab;
+		String recordType,recordTypeOrderLevel,orderNoString,loopOrderNo,strLine,strLineOrder;  
+
+		List<HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>>> MainList = new ArrayList<HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>>>();
+		
+		FileInputStream fstream = new FileInputStream(cifFilePath);
+		BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+
+		while ((strLine = br.readLine()) != null){
+			lineSplitUsingTab = strLine.split("\t");	    	  	
+			recordType = lineSplitUsingTab[0];
+
+			if(recordType.contains("000")){
+				HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>> Header = new HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>>();
+				Header = fileHeaderInfoCollectionList(lineSplitUsingTab,Header);
+				MainList.add(Header);
+			}
+
+			if(recordType.contains("001")){
+				orderNoString = lineSplitUsingTab[3];
+
+				HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>> OrdersRelatedData = new HashMap<String,HashMap<String,ArrayList<HashMap<String,String>>>>();
+				HashMap<String ,ArrayList<HashMap<String,String>>> OrderData = new HashMap<String ,ArrayList<HashMap<String,String>>>();
+
+				ArrayList<HashMap<String ,String>> ListOfAddress = new ArrayList<HashMap<String ,String>>();
+				ArrayList<HashMap<String ,String>> ListOfLineItem = new ArrayList<HashMap<String ,String>>();
+				ArrayList<HashMap<String ,String>> ListOfDenominations = new ArrayList<HashMap<String ,String>>();
+				ArrayList<HashMap<String ,String>> ListOfOrderTrailer = new ArrayList<HashMap<String ,String>>();
+				ArrayList<HashMap<String ,String>> ListOfCustomDetails = new ArrayList<HashMap<String ,String>>();
+
+				OrderData = orderHeaderInfoCollectionList(lineSplitUsingTab,OrderData);
+				OrdersRelatedData.put(orderNoString, OrderData);
+
+				FileInputStream fstream1 = new FileInputStream(cifFilePath);
+				BufferedReader orderLevelReader = new BufferedReader(new InputStreamReader(fstream1));
+				while ((strLineOrder = orderLevelReader.readLine()) != null){		    	  			
+					orderLineReaderTab = strLineOrder.split("\t");
+					loopOrderNo = orderLineReaderTab[3];
+					recordTypeOrderLevel = orderLineReaderTab[0];
+					if(loopOrderNo.contains(orderNoString)){			    	  			
+						if(recordTypeOrderLevel.contains("002")){			    	  				
+							OrderData = addressDetailsInfoCollectionList(orderLineReaderTab, OrderData, ListOfAddress);
+						}			    	  			
+						if(recordTypeOrderLevel.contains("004")){	    	  				
+							OrderData = customDetailsDetailsInfoCollectionList(orderLineReaderTab, OrderData, ListOfCustomDetails);
+						}			    	  			
+						if(recordTypeOrderLevel.contains("006")){
+							OrderData = lineItemInfoCollectionList(orderLineReaderTab, OrderData, ListOfLineItem);			    	  				
+						}			    	  			
+						if(recordTypeOrderLevel.contains("007")){
+							OrderData = denominationsInfoCollectionList(orderLineReaderTab, OrderData, ListOfDenominations);
+						}			    	  			
+						if(recordTypeOrderLevel.contains("099")){
+							OrderData = orderTrailerInfoCollectionList(orderLineReaderTab, OrderData, ListOfOrderTrailer);			    	  				
+						}			    	  			
+					}			    	  		
+				}
+				orderLevelReader.close();
+				OrdersRelatedData.put(orderNoString, OrderData);
+				MainList.add(OrdersRelatedData);
+			}
+
+			if(recordType.contains("999")){    	  		
+				HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>> Trailer = new HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>>();	    	  		
+				Trailer = fileFooterInfoCollectionList(lineSplitUsingTab,Trailer);
+				MainList.add(Trailer);
+			}	    	  	
+		}	      
+		br.close();
+
 		return MainList;
 	}
 
-	
+
 	public static HashMap<String ,ArrayList<HashMap<String,String>>> customDetailsDetailsInfoCollectionList(String[] orderLineReaderTab,HashMap<String ,ArrayList<HashMap<String,String>>> OrderData, ArrayList<HashMap<String ,String>> ListOfCustomDetails){
 		String /*recordType,customerID,recordSequenceNumber,customersOrderReference,version,*/keyword,keyworddata;
-				
+
 		HashMap<String,String> CustomDetails = new HashMap<String,String>();
-				
-/*		recordType = orderLineReaderTab[0];
+
+		/*		recordType = orderLineReaderTab[0];
 		customerID =orderLineReaderTab[1];
 		recordSequenceNumber =orderLineReaderTab[2];
 		customersOrderReference =orderLineReaderTab[3];
 		version =orderLineReaderTab[4];*/
 		keyword =orderLineReaderTab[5];
 		keyworddata =orderLineReaderTab[6];
-		
-/*		CustomDetails.put("RecordType", recordType);
+
+		/*		CustomDetails.put("RecordType", recordType);
 		CustomDetails.put("CustomID", customerID);
 		CustomDetails.put("RecordSequenceNumber", recordSequenceNumber);
 		CustomDetails.put("CustomersOrderReference", customersOrderReference);
 		CustomDetails.put("Version", version);
 		CustomDetails.put("Keyword", keyword);*/
 		CustomDetails.put(keyword, keyworddata);
-				
+
 		ListOfCustomDetails.add(CustomDetails);
 		OrderData.put("CustomDetails", ListOfCustomDetails);		
-		
+
 		return OrderData;
-		
+
 	}
 
-	
+
 	public static boolean isCPLineItemExistsInOrder(List<HashMap<String, HashMap<String,ArrayList<HashMap<String,String>>>>> mainList,String OrderNo,int j){
 		int lineItemsCount = mainList.get(j).get(OrderNo).get("LineItem").size();
 		boolean Value = false;
-		
+
 		for(int k=0;k<=lineItemsCount;k++){
 			if(mainList.get(j).get(OrderNo).get("LineItem").get(k).get("ProductType").contains("CP")){
 				Value = true;
@@ -457,5 +453,5 @@ public class CIFFileReader {
 		return Value;		 
 	}
 
-	
+
 }

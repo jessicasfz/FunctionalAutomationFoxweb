@@ -284,9 +284,11 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 			txtAttention.sendKeys(attentionName);
 		}
 		if(!branchContact.equalsIgnoreCase("NA")){
+			txtBranchContact.clear();
 			txtBranchContact.sendKeys(branchContact);	
 		}
 		if(!phoneNumber.equalsIgnoreCase("NA")){
+			txtPhoneNumber.clear();
 			txtPhoneNumber.sendKeys(phoneNumber);	
 		}
 	}
@@ -466,7 +468,10 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 			String zipcode = allDetails[6].trim();
 			
 			boolean isChecked = false;
-			if(partner.equalsIgnoreCase("119982")){
+			if(partner.equalsIgnoreCase("119982") || "16974".equalsIgnoreCase(partner) || "113008".equalsIgnoreCase(partner) ||
+					"118970".equalsIgnoreCase(partner) || "126548".equalsIgnoreCase(partner) || "19340".equalsIgnoreCase(partner) || 
+					"127875".equalsIgnoreCase(partner) || "128103".equalsIgnoreCase(partner) || "129666".equalsIgnoreCase(partner) ||
+					"116198".equalsIgnoreCase(partner)){
 				isChecked = chkHomeBranch.isSelected();
 				if(isChecked){
 					chkHomeBranch.click();

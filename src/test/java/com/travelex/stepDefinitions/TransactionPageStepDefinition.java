@@ -21,6 +21,7 @@ public class TransactionPageStepDefinition {
 		TransactionAndCurrencyPage transactionAndCurrencyPage = homePage.selectOrderType(orderType);
 		transactionAndCurrencyPage.selectTransactionTypeDetails(MasterDataReader.orderDetails.get("TransactionType"), MasterDataReader.orderDetails.get("CustomerType"));
 		MasterDataReader.pageDetails.put("TransactionAndCurrencyPage", transactionAndCurrencyPage);
+		i_confirm_this_trasaction();
 	}
 		
 	@When("^I select currency of product$")
@@ -69,9 +70,9 @@ public class TransactionPageStepDefinition {
 	public void i_do_not_add_denomination_on_add_order(String addDenomination) throws Throwable {
 		if(!MasterDataReader.orderDetails.get("TransactionType").equalsIgnoreCase("Purchase") || (MasterDataReader.orderDetails.get("TransactionType").equalsIgnoreCase("Purchase") && MasterDataReader.orderDetails.get("OrderType").equalsIgnoreCase("WholeSale"))){
 			TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
-			if(addDenomination.equalsIgnoreCase("do not add")){
+			if(addDenomination.equalsIgnoreCase("do not add")  && MasterDataReader.orderDetails.get("ProductType").contains("Currencies")){
 				transactionAndCurrencyPage.driver.switchTo().alert().dismiss();			
-			}else if(addDenomination.equalsIgnoreCase("add")){
+			}else if(addDenomination.equalsIgnoreCase("add") && MasterDataReader.orderDetails.get("ProductType").contains("Currencies")){
 				transactionAndCurrencyPage.driver.switchTo().alert().accept();
 				transactionAndCurrencyPage.denomSelection(MasterDataReader.orderDetails.get("Quantity"), MasterDataReader.orderDetails.get("Denomination"));
 			}			
@@ -299,5 +300,21 @@ public class TransactionPageStepDefinition {
 	public void i_get_kyc_success_message_on_submitting_the_details() throws Throwable {
 		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
 		transactionAndCurrencyPage.submitKYCDetails();
+	}
+	
+	@When("^I confirm this trasaction$")
+	public void i_confirm_this_trasaction() throws Throwable {		
+		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+		String flag = MasterDataReader.orderDetails.get("ConfirmTransaction");
+		transactionAndCurrencyPage.checkBoxClick("CHROME", flag.equalsIgnoreCase("YES")? "Y":"NA");
+		MasterDataReader.pageDetails.put("TransactionAndCurrencyPage", transactionAndCurrencyPage);
+	}
+	
+	@When("^I select delivery method$")
+	public void i_select_delivery_method() throws Throwable {		
+		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+		String temp = MasterDataReader.orderDetails.get("DeliveryMethod");
+		transactionAndCurrencyPage.deliveryTypeBtn(temp.equalsIgnoreCase("NA") ? "N" : "Y", temp);
+		MasterDataReader.pageDetails.put("TransactionAndCurrencyPage", transactionAndCurrencyPage);
 	}
 }
