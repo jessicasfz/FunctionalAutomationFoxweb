@@ -16,12 +16,12 @@ import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.Reporter;
 
-
 public class Setup {
 
 	static String absolutePath=new File("").getAbsolutePath();
 	static String IEDriverLocation=absolutePath+"/drivers/IEDriverServer.exe";
 	static String ChromeDriverLocation=absolutePath+"/drivers/chromedriver.exe";
+	
 	public static WebDriver createInstance(String browserName) {
 		
 		DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -146,10 +146,11 @@ public class Setup {
 	
 	public static WebDriver voltaPurchaseDriver(){
 		WebDriver driver = null;
-		Reporter.log("<B><I><font size='4' color='Black'>"+"---------Launching Purchase Volta--------"+ "</font></I></B>");
+		Reporter.log("<B><I><font size='4' color='Black'>"+"---------Launching Purchase RAP--------"+ "</font></I></B>");
         DesiredCapabilities cap = new DesiredCapabilities();
-        cap.setCapability("app", "C:\\Volta Purchases\\purchases.exe");
-        cap.setCapability("launchDelay", "5");   
+        cap.setCapability("app", "C:\\Purchases\\purchases.exe");
+        //cap.setCapability("app", "C:\\Volta Purchases\\purchases.exe");
+        cap.setCapability("launchDelay", "15");   
                
         try {
            driver = new RemoteWebDriver(new URL("http://localhost:9999"),cap);
@@ -167,7 +168,8 @@ public class Setup {
 		WebDriver driver = null;
 		Reporter.log("<B><I><font size='4' color='Black'>"+"---------Launching Sale Volta--------"+ "</font></I></B>");
         DesiredCapabilities cap = new DesiredCapabilities();
-        cap.setCapability("app", "C:\\Volta\\rap.exe");
+        //cap.setCapability("app", "C:\\Volta\\rap.exe");
+        cap.setCapability("app", "C:\\RAP\\rap.exe");
 			cap.setCapability("launchDelay", "15");
 			
 				try {
@@ -186,7 +188,8 @@ public class Setup {
 		WebDriver driver = null;
 		Reporter.log("<B><I><font size='4' color='Black'>"+"---------Launching AutoPR Volta--------"+ "</font></I></B>");
         DesiredCapabilities cap = new DesiredCapabilities();
-        cap.setCapability("app", "C:\\SaleAutoPRexe\\rapautopr.exe.lnk");
+       // cap.setCapability("app", "C:\\SaleAutoPRexe\\rapautopr.exe.lnk");
+        cap.setCapability("app", "C:\\LaunchAutoPR\\rapautopr.lnk");
 			cap.setCapability("launchDelay", "15");
 			
 				try {
