@@ -26,10 +26,12 @@ public class MasterDataReader {
 	ConfigurationProperties configurationProperties = ConfigurationProperties.getInstance();
 	static EnvironmentParameter environmentParameter;
 	public static WebDriver driver;
+	public static WebDriver Ddriver;
 	public static Scenario scenario;
 		
 	public static Map<String,String> orderDetails;
 	public static Map<String,String> customerDetails;
+	public static Map<String,String> rapDetails;
 	public static Map<String,Object> pageDetails;
 	public static ArrayList<HashMap<String,String>> txnDetails;
 	
@@ -44,6 +46,7 @@ public class MasterDataReader {
 			environmentParameter.setPlatform(platform);	
 			WebDriverFactory factory = new WebDriverFactory();
 			driver = factory.get(environmentParameter);
+			Ddriver = driver;
 			MasterDataReader.scenario = scenario;
 			pageDetails = new HashMap<String, Object>();
 	    }
@@ -62,16 +65,21 @@ public class MasterDataReader {
 	            System.err.println(somePlatformsDontSupportScreenshots.getMessage());
 	        }        
 	        }
-	        driver.quit();
+	        Ddriver.quit();
+	        if(scenario.isFailed()){
+	        	driver.quit();
+	        }
 	        pageDetails.clear();
 	    }
 		
-	@Given("^I read Excel data with AutomationID \"([^\"]*)\"$")
-	public void i_read_Excel_data_with_AutomationID(String automationID) throws IOException{
-		orderDetails = ExcelFileReader.readDataForAutomationID("OrderDetails",automationID);
-		customerDetails = ExcelFileReader.readDataForAutomationID("CustomerDetails",automationID);
-		MasterDataReader.scenario.write("Order Details Data "+ MasterDataReader.orderDetails);
-		MasterDataReader.scenario.write("Customer Details Data "+ MasterDataReader.customerDetails);
-	}
+	    @Given("^I read Excel data with AutomationID \"([^\"]*)\"$")
+		public void i_read_Excel_data_with_AutomationID(String automationID) throws IOException{
+			orderDetails = ExcelFileReader.readDataForAutomationID("OrderDetails",automationID);
+			customerDetails = ExcelFileReader.readDataForAutomationID("CustomerDetails",automationID);
+			rapDetails = ExcelFileReader.readDataForAutomationID("RAPDetails", automationID);
+			MasterDataReader.scenario.write("Order Details Data "+ MasterDataReader.orderDetails);
+			MasterDataReader.scenario.write("Customer Details Data "+ MasterDataReader.customerDetails);
+			MasterDataReader.scenario.write("RAP Details Data "+ MasterDataReader.rapDetails);
+		}
 
 }
