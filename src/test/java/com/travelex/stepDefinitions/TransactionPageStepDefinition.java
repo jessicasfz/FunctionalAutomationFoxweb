@@ -70,14 +70,17 @@ public class TransactionPageStepDefinition {
 
 	@When("^I (do not add|add) denomination on add order$")
 	public void i_do_not_add_denomination_on_add_order(String addDenomination) throws Throwable {
-		if(!MasterDataReader.orderDetails.get("TransactionType").equalsIgnoreCase("Purchase") || (MasterDataReader.orderDetails.get("TransactionType").equalsIgnoreCase("Purchase") && MasterDataReader.orderDetails.get("OrderType").equalsIgnoreCase("WholeSale"))){
+		if(MasterDataReader.orderDetails.get("TransactionType").equalsIgnoreCase("Sale") && MasterDataReader.orderDetails.get("OrderType").equalsIgnoreCase("WholeSale")) {
+
+		}
+		else if(!(MasterDataReader.orderDetails.get("TransactionType").equalsIgnoreCase("Purchase")) || (MasterDataReader.orderDetails.get("TransactionType").equalsIgnoreCase("Purchase") && MasterDataReader.orderDetails.get("OrderType").equalsIgnoreCase("WholeSale"))){
 			TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
 			if((addDenomination.equalsIgnoreCase("do not add")  && MasterDataReader.orderDetails.get("ProductType").contains("Currencies")) || (MasterDataReader.orderDetails.get("ConfigDenoms").contains("No"))){
 				transactionAndCurrencyPage.driver.switchTo().alert().dismiss();			
 			}else if(addDenomination.equalsIgnoreCase("add") && MasterDataReader.orderDetails.get("ProductType").contains("Currencies")){
 				transactionAndCurrencyPage.driver.switchTo().alert().accept();
 				transactionAndCurrencyPage.denomSelection(MasterDataReader.orderDetails.get("Quantity"), MasterDataReader.orderDetails.get("Denomination"));
-			}			
+			}
 		}
 	}
 
@@ -85,7 +88,9 @@ public class TransactionPageStepDefinition {
 	public void i_waive_fee(String waiveFee) throws Throwable {
 		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
 		if(waiveFee.equalsIgnoreCase("waive")){
-			transactionAndCurrencyPage.checkwaiveFeeCheck(MasterDataReader.orderDetails.get("WaiveReason"));
+			if(!MasterDataReader.orderDetails.get("WaiveReason").equalsIgnoreCase("NA")) {
+				transactionAndCurrencyPage.checkwaiveFeeCheck(MasterDataReader.orderDetails.get("WaiveReason"));
+			}
 		}else{
 			transactionAndCurrencyPage.uncheckwaiveFeeCheck();
 		}

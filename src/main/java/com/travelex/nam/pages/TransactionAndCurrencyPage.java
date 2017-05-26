@@ -805,8 +805,8 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 		int denomsCount = denominationlist.length;
 
 		for (int j=0;j<=denomsCount-1;j++) {
-			String quantityValue = quantitylist[j];
-			String denominationValue = denominationlist[j];
+			String quantityValue = quantitylist[j].trim();
+			String denominationValue = denominationlist[j].trim();
 			driver.findElement(By.xpath("//div[normalize-space(text())='"+ denominationValue +"']/../../td[3]/span/span/input")).sendKeys(quantityValue);
 		}
 		
@@ -1275,6 +1275,7 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 		if(isExists){
 			if(rbPrirityOvernightBtn.isSelected()){
 				deliveryCharge = rbPrirityOvernightFee.getText() ;
+				deliveryCharge = (deliveryCharge.equalsIgnoreCase("FREE")) ? "0.00" : deliveryCharge;
 			}else if(rbNextDeliveryBtn.isSelected()){
 				deliveryCharge = rbNextDeliveryFee.getText();
 				deliveryCharge = (deliveryCharge.equalsIgnoreCase("FREE")) ? "0.00" : deliveryCharge;

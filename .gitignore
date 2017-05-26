@@ -4,3 +4,4 @@ TestLogs/
 test-output/
 .classpath
 .project
+src/test/resources/ordFiles/

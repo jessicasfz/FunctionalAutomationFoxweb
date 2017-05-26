@@ -61,7 +61,13 @@ public class CIFValidation {
 						assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("BillingMethod"), "1",assertValue,writer,"OrderHearder Details ::: BillingMethod",connection);
 						assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("PaymentStatus"), "PFU",assertValue,writer,"OrderHearder Details ::: PaymentStatus",connection);
 
-						assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("PaymentMethod"), "AC", assertValue,writer,"OrderHearder Details ::: PaymentMethod",connection);
+						String paymentMethod = "";
+						if(orderDetails.get("PaymentMethod").contains("Check")) {
+							paymentMethod = "CC";
+						} else {
+							paymentMethod = "AC";
+						}
+						assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("PaymentMethod"), paymentMethod, assertValue,writer,"OrderHearder Details ::: PaymentMethod",connection);
 						assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("BillingCurrency"), "USD",assertValue,writer,"OrderHearder Details ::: BillingCurrency",connection);														
 						//						assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("DateOrderPlaced"), currentDateInDDMMMYYYY(),assertValue,writer,"OrderHearder Details ::: DateOrderPlaced",connection);
 						//						assertValue = softAssert(ActualorderDetails.get("OrderHeader").get(0).get("RequiredByDate"), currentdatePlusOneInDDMMMYYYY(),assertValue,writer,"OrderHearder Details ::: RequiredByDate",connection);													

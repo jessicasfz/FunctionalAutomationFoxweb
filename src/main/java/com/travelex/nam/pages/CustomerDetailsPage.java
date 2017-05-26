@@ -188,7 +188,7 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 
 	@FindBy(id = "resetDelivDetails")
 	WebElement chkChangeBranch;
-	
+
 	@FindBy(id = "spanOrderTotal")
 	WebElement orderTotal;
 
@@ -321,7 +321,7 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 		MasterDataReader.scenario.write("<B><font size='3' color='Magenta'>Confirmation Number is : " +confirmationNumber+"</font></B>");
 		return confirmationNumber;
 	}
-	
+
 	public String getOrderTotal(){
 		String orderAmount = "";
 		String Ordertext = orderTotal.getText();
@@ -482,7 +482,7 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 			String zipcode = allDetails[6].trim();
 
 			boolean isChecked = false;
-			ConfigurationProperties configurationProperties = new ConfigurationProperties();
+			/*ConfigurationProperties configurationProperties = new ConfigurationProperties();
 			String changePartnerList = configurationProperties.getProperty(ConfigurationProperties.CHANGE_BRANCH_PARTNER_LIST);
 			List<String> listOfPartners = new ArrayList<String>();
 			for (String s1 : changePartnerList.split("\\,")) {
@@ -498,6 +498,10 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 				if(isChecked){
 					chkChangeBranch.click();
 				}
+			}*/
+			isChecked = chkHomeBranch.isSelected();
+			if (isChecked) {
+				chkHomeBranch.click();
 			}
 
 			if(!attentionName.equalsIgnoreCase("NA")){

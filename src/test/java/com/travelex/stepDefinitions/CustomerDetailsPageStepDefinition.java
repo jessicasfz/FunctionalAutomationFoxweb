@@ -1,5 +1,8 @@
 package com.travelex.stepDefinitions;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import com.codoid.products.fillo.Connection;
 import com.travelex.framework.common.UpdateDataInExcel;
 import com.travelex.nam.pages.CustomerDetailsPage;
@@ -38,8 +41,11 @@ public class CustomerDetailsPageStepDefinition {
 		CustomerDetailsPage customerDetailsPage = (CustomerDetailsPage)MasterDataReader.pageDetails.get("CustomerDetailsPage");
 		String orderConfNumber = customerDetailsPage.getConfirmationNumber();
 		String orderTotal = customerDetailsPage.getOrderTotal();
+		String todayAsString = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss").format(new Date());
+		
 		UpdateDataInExcel up = new UpdateDataInExcel();
 		up.updateDataInExcel("CustomerDetails", "ConfirmationNumber", orderConfNumber, MasterDataReader.customerDetails.get("AutomationID"),connection);
 		up.updateDataInExcel("CustomerDetails", "TotalOrderAmount", orderTotal, MasterDataReader.customerDetails.get("AutomationID"),connection);
+		up.updateDataInExcel("CustomerDetails", "ExecutionDate", todayAsString, MasterDataReader.customerDetails.get("AutomationID"),connection);
 	}
 }
