@@ -30,6 +30,7 @@ public class ConfigurationProperties {
 	public final static String BROWSER_NAME ="browserName";
 	public final static String MAIL_LIST ="Mail_list";
 	public final static String CIF_Data_Folder_Path = "CIF_File_Path";
+	public final static String CHANGE_BRANCH_PARTNER_LIST = "Change_Branch_Partner_List";
 
 	public ConfigurationProperties() {
 		properties = loadProperties();
