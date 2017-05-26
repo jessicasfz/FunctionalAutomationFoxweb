@@ -94,8 +94,8 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 	@FindBy(name = "foreignAmount")
 	WebElement txtForeignAmount;
 
-	/*@FindBy(id = "btnQuoteAndView")
-	WebElement btnQuote;*/
+	@FindBy(xpath = "//*[@id='quoteChoice' and @value='1'] ")
+	WebElement btnRoundedValue;
 	
 	@FindBy(xpath = "//input[@value='Quote & View']")
 	WebElement btnQuote;
@@ -389,6 +389,9 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 
 		if(!currency.equalsIgnoreCase("NA")){
 			Select currencyList = new Select(lstCurrency);
+			/*List<WebElement> allOptions = currencyList.getOptions();
+			for(WebElement s : allOptions)
+				System.out.println(s.getText());*/
 			currencyList.selectByVisibleText(currency);
 		}
 	}
@@ -701,6 +704,14 @@ public class TransactionAndCurrencyPage extends LoadableComponent<TransactionAnd
 		btnQuote.click();
 		Thread.sleep(3000);
 		//wrapper.waitForLoaderInvisibility(waitTime); Code modified for IE
+	}
+	
+	public void clickOnRoundedValue() throws InterruptedException{
+		try {
+			if (btnRoundedValue.isDisplayed()) {
+				btnRoundedValue.click();
+			}
+		} catch (Exception ex ) {}
 	}
 
 	public void enterBeneficiaryDetails(String beneficiary,String add,String add1,String city,String state,String zipcode,String country,String comment){

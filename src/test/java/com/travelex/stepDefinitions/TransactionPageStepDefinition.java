@@ -13,7 +13,7 @@ import cucumber.api.java.en.When;
 
 public class TransactionPageStepDefinition {
 	WebDriverWrapper wrapper ;
-	
+
 	@When("^I create order of transaction for customer$")
 	public void i_create_order_of_transaction_for_customer() throws Throwable {		
 		HomePage homePage = (HomePage)MasterDataReader.pageDetails.get("HomePage");
@@ -21,24 +21,27 @@ public class TransactionPageStepDefinition {
 		TransactionAndCurrencyPage transactionAndCurrencyPage = homePage.selectOrderType(orderType);
 		transactionAndCurrencyPage.selectTransactionTypeDetails(MasterDataReader.orderDetails.get("TransactionType"), MasterDataReader.orderDetails.get("CustomerType"));
 		MasterDataReader.pageDetails.put("TransactionAndCurrencyPage", transactionAndCurrencyPage);
+		i_confirm_this_trasaction();
 	}
-		
+
 	@When("^I select currency of product$")
 	public void i_select_currency_of_product() throws Throwable {
 		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
 		transactionAndCurrencyPage.selectProductAndCurrency(MasterDataReader.orderDetails.get("Currency"),MasterDataReader.orderDetails.get("ProductType"));
 	}
-		
+
 	@When("^I (do not click|click) on Quote and view (after|before) entering amount$")
 	public void i_do_not_click_on_Quote_and_view_after_entering_amount(String clickStr, String beforeAfter) throws Throwable {
 		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");		
-		
+
 		if(clickStr.equalsIgnoreCase("click")){
 			if(beforeAfter.equalsIgnoreCase("after")){
 				transactionAndCurrencyPage.clearAndEnterForeignAmount(MasterDataReader.orderDetails.get("ForeignAmount"));
 				transactionAndCurrencyPage.clickQuoteAndViewButton();
+				transactionAndCurrencyPage.clickOnRoundedValue();
 			}else{
 				transactionAndCurrencyPage.clickQuoteAndViewButton();
+				transactionAndCurrencyPage.clickOnRoundedValue();
 				boolean alertExist = transactionAndCurrencyPage.isAlertPresent();
 				if(alertExist){
 					String actualErrorMessgae = transactionAndCurrencyPage.acceptAlerts();
@@ -50,34 +53,34 @@ public class TransactionPageStepDefinition {
 			}
 		}else{
 			transactionAndCurrencyPage.clearAndEnterForeignAmount(MasterDataReader.orderDetails.get("ForeignAmount"));
-		}	
+		}
 	}
-	
+
 	@When("^I enter beneficiary details$")
 	public void i_enter_beneficiary_details() throws Throwable {
 		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");	
 		transactionAndCurrencyPage.enterBeneficiaryDetails(MasterDataReader.orderDetails.get("DraftBeneficiary"), MasterDataReader.orderDetails.get("DraftAddressLine1"), MasterDataReader.orderDetails.get("DraftAddressLine2"), MasterDataReader.orderDetails.get("DraftCity"), MasterDataReader.orderDetails.get("DraftState"), MasterDataReader.orderDetails.get("DraftZipCode"), MasterDataReader.orderDetails.get("DraftDepositCountry"), MasterDataReader.orderDetails.get("DraftComments"));
 	}
-	
+
 	@When("^I click on AddToOrder$")
 	public void i_click_on_AddToOrder() throws Throwable {
 		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
 		transactionAndCurrencyPage.addtoOrderAndViewCurrencyWindow(MasterDataReader.orderDetails.get("ConfigCurrencyView"),MasterDataReader.orderDetails.get("ConfigErrMsg"));
 	}
-	
+
 	@When("^I (do not add|add) denomination on add order$")
 	public void i_do_not_add_denomination_on_add_order(String addDenomination) throws Throwable {
 		if(!MasterDataReader.orderDetails.get("TransactionType").equalsIgnoreCase("Purchase") || (MasterDataReader.orderDetails.get("TransactionType").equalsIgnoreCase("Purchase") && MasterDataReader.orderDetails.get("OrderType").equalsIgnoreCase("WholeSale"))){
 			TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
-			if(addDenomination.equalsIgnoreCase("do not add")){
+			if((addDenomination.equalsIgnoreCase("do not add")  && MasterDataReader.orderDetails.get("ProductType").contains("Currencies")) || (MasterDataReader.orderDetails.get("ConfigDenoms").contains("No"))){
 				transactionAndCurrencyPage.driver.switchTo().alert().dismiss();			
-			}else if(addDenomination.equalsIgnoreCase("add")){
+			}else if(addDenomination.equalsIgnoreCase("add") && MasterDataReader.orderDetails.get("ProductType").contains("Currencies")){
 				transactionAndCurrencyPage.driver.switchTo().alert().accept();
 				transactionAndCurrencyPage.denomSelection(MasterDataReader.orderDetails.get("Quantity"), MasterDataReader.orderDetails.get("Denomination"));
 			}			
 		}
 	}
-	
+
 	@When("^I (waive|do not waive) fee$")
 	public void i_waive_fee(String waiveFee) throws Throwable {
 		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
@@ -87,7 +90,7 @@ public class TransactionPageStepDefinition {
 			transactionAndCurrencyPage.uncheckwaiveFeeCheck();
 		}
 	}
-		
+
 	@When("^I select (payment method|delivery time|without payment method) to confirm order$")
 	public void i_select_payment_method_to_confirm_order(String confirmBeforeCondition) throws Throwable {
 		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
@@ -105,7 +108,7 @@ public class TransactionPageStepDefinition {
 			MasterDataReader.pageDetails.put("CustomerDetailsPage", customerDetailsPage);
 		}
 	}
-		
+
 	@When("^I add more currency (do not add|add) denomination on add order (do not click|click) On currency view$")
 	public void i_add_more_currency_do_not_add_denomination_on_add_order_do_not_click_On_currency_view(String addDenomination,String clickCurrencyView) throws Throwable {
 		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");	
@@ -126,11 +129,12 @@ public class TransactionPageStepDefinition {
 					String foreignAmount = eachProductDetails[2].trim();
 
 					transactionAndCurrencyPage.selectProductAndCurrency(currency,product);
-					transactionAndCurrencyPage.clickingOrNotClickingOnQuoteAndViewBeforeAndAfterEnteringAmount("click", "after", foreignAmount);				
+					transactionAndCurrencyPage.clickingOrNotClickingOnQuoteAndViewBeforeAndAfterEnteringAmount("click", "after", foreignAmount);
+					transactionAndCurrencyPage.clickOnRoundedValue();
 					transactionAndCurrencyPage.addtoOrderAndViewCurrencyWindow(MasterDataReader.orderDetails.get("ConfigCurrencyView"),MasterDataReader.orderDetails.get("ConfigErrMsg"));
 
 					if(!MasterDataReader.orderDetails.get("TransactionType").equalsIgnoreCase("Purchase") || (MasterDataReader.orderDetails.get("TransactionType").equalsIgnoreCase("Purchase") && MasterDataReader.orderDetails.get("OrderType").equalsIgnoreCase("WholeSale"))){
-						if(addDenomination.equalsIgnoreCase("do not add")){
+						if(addDenomination.equalsIgnoreCase("do not add") || (MasterDataReader.orderDetails.get("ConfigDenoms").contains("No"))){
 							if(!(MasterDataReader.orderDetails.get("TransactionType").equalsIgnoreCase("Sale") && MasterDataReader.orderDetails.get("OrderType").equalsIgnoreCase("WholeSale"))){
 								transactionAndCurrencyPage.dismissAlert();
 							}
@@ -139,15 +143,10 @@ public class TransactionPageStepDefinition {
 							String quantity = eachProductDetails[3].trim();
 							String denom = eachProductDetails[4].trim();
 
-							if(quantity.equalsIgnoreCase("NA")){
-								String[] quantityList = quantity.split("\\,");
-								String[] denomList = denom.split("\\,");
-
-								for(int j=0;i<=quantityList.length-1;j++){
-									transactionAndCurrencyPage.denomSelection(quantityList[j], denomList[j]);
-								}								
+							if(!quantity.equalsIgnoreCase("NA")){
+								transactionAndCurrencyPage.denomSelection(quantity.toString(), denom.toString());
 							}							
-						}			
+						}
 					}
 				}
 
@@ -178,19 +177,19 @@ public class TransactionPageStepDefinition {
 					String zipCode = eachProductDetails[8].trim();
 					String country = eachProductDetails[9].trim();
 					String comments = eachProductDetails[10].trim();
-					
+
 					transactionAndCurrencyPage.selectProductAndCurrency(currency,product);
 					transactionAndCurrencyPage.clickingOrNotClickingOnQuoteAndViewBeforeAndAfterEnteringAmount("click", "after", foreignAmount);
 					transactionAndCurrencyPage.enterBeneficiaryDetails(beneficiary, addressLine1, addressLine2, city, state, zipCode, country, comments);
 					transactionAndCurrencyPage.addtoOrderAndViewCurrencyWindow(MasterDataReader.orderDetails.get("ConfigCurrencyView"),MasterDataReader.orderDetails.get("ConfigErrMsg"));
 				}
-				
+
 				else if(eachProductDetails[0].equalsIgnoreCase("Pre-Paid Cards")){
-					
+
 					String product = eachProductDetails[0].trim();
 					String currency = eachProductDetails[1].trim();
 					String foreignAmount = eachProductDetails[2].trim();
-					
+
 					transactionAndCurrencyPage.selectProductAndCurrency(currency,product);
 					transactionAndCurrencyPage.clickingOrNotClickingOnQuoteAndViewBeforeAndAfterEnteringAmount("do not click", "after", foreignAmount);
 					transactionAndCurrencyPage.addtoOrderAndViewCurrencyWindow(MasterDataReader.orderDetails.get("ConfigCurrencyView"),MasterDataReader.orderDetails.get("ConfigErrMsg"));
@@ -198,47 +197,47 @@ public class TransactionPageStepDefinition {
 			}						
 		}	
 	}
-	
+
 	@Then("^I verify order details$")
 	public void i_verify_order_details() throws Throwable {
-	    
+
 	}
-	
+
 	@When("^I update check details$")
 	public void i_update_check_details() throws Throwable {
 		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
 		transactionAndCurrencyPage.updateCheckDetails(MasterDataReader.orderDetails.get("CountryOfIssue"),MasterDataReader.orderDetails.get("CheckDate"),MasterDataReader.orderDetails.get("IssuerEndorsed"),MasterDataReader.orderDetails.get("PayeeEndorsed"));	    
 	}
-	
+
 	@Then("^I click on (Cancel Order|Clear Fields|Delete order|Change order|Next order|Edit Order) button$")
 	public void i_click_on_Cancel_Order_button(String button) throws Throwable {
 		if(button.equalsIgnoreCase("Cancel Order")){
 			CustomerDetailsPage customerDetailsPage = (CustomerDetailsPage)MasterDataReader.pageDetails.get("CustomerDetailsPage");
 			customerDetailsPage.clickOnCancelOrderButton();
-			
+
 		}else if(button.equalsIgnoreCase("Clear Fields")){
 			TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
 			transactionAndCurrencyPage.clickOnclearFieldsButton();
-			
+
 		}else if(button.equalsIgnoreCase("Delete order")){
 			TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
 			transactionAndCurrencyPage.clickOnDeleteOrderButton();
-			
+
 		}else if(button.equalsIgnoreCase("Change order")){
 			CustomerDetailsPage customerDetailsPage = (CustomerDetailsPage)MasterDataReader.pageDetails.get("CustomerDetailsPage");
 			customerDetailsPage.clickOnChangeOrderButton();
-			
+
 		}else if(button.equalsIgnoreCase("Next order")){
 			PrinterFriendlyPage printerFriendlyPage = (PrinterFriendlyPage)MasterDataReader.pageDetails.get("PrinterPage");
 			printerFriendlyPage.nextOrderButtonClick();
-			
+
 		}else if(button.equalsIgnoreCase("Edit Order")){
 			TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
 			transactionAndCurrencyPage.editOrderButtonClick();
-			
+
 		}
 	}
-	
+
 	@Then("^I verify page for (Cancel Order|Clear Fields|Delete Order|Change Order|Next Order|Edit Order)$")
 	public void i_verify_page(String page) throws Throwable {
 		if(page.equalsIgnoreCase("Cancel Order")){
@@ -272,32 +271,48 @@ public class TransactionPageStepDefinition {
 			transactionAndCurrencyPage.verifyEditOrderPage();
 		}
 	}
-	
+
 	@Then("^I get (maximumAmt|minimumAmt) error message$")
 	public void i_get_maximumAmt_error_message(String msg) throws Throwable {
-	    if(msg.equalsIgnoreCase("minimumAmt")){
-	    	
-	    }else if(msg.equalsIgnoreCase("maximumAmt")){
-	    	TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
-	    	transactionAndCurrencyPage.verifyAmtAlert(MasterDataReader.orderDetails.get("ErrMsg"));
-	    }
+		if(msg.equalsIgnoreCase("minimumAmt")){
+
+		}else if(msg.equalsIgnoreCase("maximumAmt")){
+			TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+			transactionAndCurrencyPage.verifyAmtAlert(MasterDataReader.orderDetails.get("ErrMsg"));
+		}
 	}
-	
+
 	@When("^I select checkbox for secondary card$")
 	public void i_select_checkbox_for_secondary_card(String selection) throws Throwable {
 		//TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
-		
+
 	}
-	
+
 	@When("^I enter valid Primary cardholder details$")
 	public void i_enter_valid_primary_cardholder_details() throws Throwable {
 		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
 		transactionAndCurrencyPage.enterKYCDetails(MasterDataReader.customerDetails.get("PPCDetails"));
 	}
-	
+
 	@When("^I get KYC success message on submitting the details$")
 	public void i_get_kyc_success_message_on_submitting_the_details() throws Throwable {
 		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
 		transactionAndCurrencyPage.submitKYCDetails();
+	}
+
+	@When("^I confirm this trasaction$")
+	public void i_confirm_this_trasaction() throws Throwable {		
+		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+		String flag = MasterDataReader.orderDetails.get("ConfirmTransaction");
+		transactionAndCurrencyPage.checkBoxClick("CHROME", flag.equalsIgnoreCase("YES")? "Y":"NA");
+		MasterDataReader.pageDetails.put("TransactionAndCurrencyPage", transactionAndCurrencyPage);
+	}
+
+	@When("^I select delivery method$")
+	public void i_select_delivery_method() throws Throwable {		
+		TransactionAndCurrencyPage transactionAndCurrencyPage = (TransactionAndCurrencyPage)MasterDataReader.pageDetails.get("TransactionAndCurrencyPage");
+		String temp = MasterDataReader.orderDetails.get("DeliveryMethod");
+		transactionAndCurrencyPage.deliveryTypeBtn(temp.equalsIgnoreCase("NA") ? "N" : "Y", temp);
+		MasterDataReader.pageDetails.put("TransactionAndCurrencyPage", transactionAndCurrencyPage);
 	}
 }

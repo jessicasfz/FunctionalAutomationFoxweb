@@ -7,7 +7,7 @@ import com.codoid.products.fillo.Fillo;
 
 public class UpdateDataInExcel {
 		
-	public Connection getConnection() {
+	public static Connection getConnection() {
 		
 		ConfigurationProperties configurationProperties = new ConfigurationProperties();
 		 String fileN = configurationProperties.getProperty(ConfigurationProperties.Test_Data_Folder_Path);
@@ -22,12 +22,11 @@ public class UpdateDataInExcel {
 		return connection;
 	}
 		
-	public void updateDataInExcel(String sheetName, String colName, String textTobeUpdated, String AutomationID) throws FilloException{
+	public void updateDataInExcel(String sheetName, String colName, String textTobeUpdated, String AutomationID, Connection connection) throws FilloException{
 		if(textTobeUpdated==null || textTobeUpdated=="" || textTobeUpdated.contains("NA")){
 			return;
 		}
 		String updateQuery = "Update "+sheetName+" set "+colName+"='"+textTobeUpdated+"' where AutomationID = '"+AutomationID+"'";
-		getConnection().executeUpdate(updateQuery);
+		connection.executeUpdate(updateQuery);
 	}
-
 }

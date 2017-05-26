@@ -1,5 +1,6 @@
 package com.travelex.stepDefinitions;
 
+import com.codoid.products.fillo.Connection;
 import com.travelex.framework.common.UpdateDataInExcel;
 import com.travelex.nam.pages.CustomerDetailsPage;
 import com.travelex.nam.pages.PrinterFriendlyPage;
@@ -8,7 +9,7 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
 public class CustomerDetailsPageStepDefinition {
-	
+	public static Connection connection = UpdateDataInExcel.getConnection();
 	
 	@When("^I enter customer details$")
 	public void i_enter_customer_details() throws Throwable {
@@ -36,7 +37,9 @@ public class CustomerDetailsPageStepDefinition {
 	public void i_get_order_confirmation_no() throws Throwable {
 		CustomerDetailsPage customerDetailsPage = (CustomerDetailsPage)MasterDataReader.pageDetails.get("CustomerDetailsPage");
 		String orderConfNumber = customerDetailsPage.getConfirmationNumber();
+		String orderTotal = customerDetailsPage.getOrderTotal();
 		UpdateDataInExcel up = new UpdateDataInExcel();
-		up.updateDataInExcel("CustomerDetails", "ConfirmationNumber", orderConfNumber, MasterDataReader.customerDetails.get("AutomationID"));
+		up.updateDataInExcel("CustomerDetails", "ConfirmationNumber", orderConfNumber, MasterDataReader.customerDetails.get("AutomationID"),connection);
+		up.updateDataInExcel("CustomerDetails", "TotalOrderAmount", orderTotal, MasterDataReader.customerDetails.get("AutomationID"),connection);
 	}
 }
