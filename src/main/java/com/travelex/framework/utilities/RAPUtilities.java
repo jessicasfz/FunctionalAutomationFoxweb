@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-
 public class RAPUtilities {	
 	
 	public Connection dbConnect(String URL,String dbName, String uName, String pwd) throws SQLException{

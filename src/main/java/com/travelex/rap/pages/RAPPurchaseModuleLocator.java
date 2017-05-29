@@ -16,7 +16,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 import org.testng.Reporter;
 
@@ -46,22 +45,15 @@ public class RAPPurchaseModuleLocator extends WebdriverWrapper {
 	public static Locator okButton=new Locator ("OkButton","id","2"); 
 	public static Locator supervisorMenu=new Locator ("SupervisorMenu","name","Supervisor"); 
 	public static Locator importPurchasesMenu=new Locator ("ImportPurchasesMenu","name","Import Purchases"); 
-	//public static Locator selectPurchaseBag=new Locator ("SelectPurchaseBagWindow","name","Select Purchase Bag");
 	public static Locator selectPurchaseBag=new Locator ("SelectPurchaseBagWindow","name","Select Purchase Order");
 	public static Locator selectPurchaseBag1=new Locator ("SelectPurchaseBagWindowq","class","FNWNS3120");
-	//public static Locator retrieveButton=new Locator ("RetrieveButton","id","1006"); 
 	public static Locator retrieveButton=new Locator ("RetrieveButton","name","Retrieve");
-	//public static Locator selectButton=new Locator ("SelectButton","id","1020");
 	public static Locator selectButton=new Locator ("SelectButton","name","Select"); 
 	public static Locator selectPurchaseOrderWindow=new Locator ("SelectPurchaseOrderWindow","name","Select Purchase Order"); 
 	public static Locator remittanceWindow=new Locator ("RemittanceWindow","name","Remittance");
-	
 	public static Locator purchaseOrderRef=new Locator ("PurchaseOrderRef","name","purchases_purchase_id");
-	//public static Locator shortQtyTextField=new Locator ("ShortQuantityTextField","name","short_qty");
 	public static Locator shortQtyTextField=new Locator ("ShortQuantityTextField","name","Edit");
 	public static Locator saveButton=new Locator ("SaveButton","id","1017");
-	//public static Locator saveButton=new Locator ("SaveButton","name","Save");
-	//public static Locator refCodeTextField=new Locator ("RefCodeTextField","name","reference_code");
 	public static Locator refCodeTextField=new Locator ("RefCodeTextField","id","11");
 	public static Locator closeBtn=new Locator ("CloseBtn","id","1003"); 
 	public static Locator amalgamationWindow=new Locator ("AmalgamationWindow","name","Amalgamation"); 
@@ -87,12 +79,8 @@ public class RAPPurchaseModuleLocator extends WebdriverWrapper {
 	public static Locator rapDialogOK=new Locator ("DialogBoxOK","name","OK");
 	
 	public static Locator errorMessage = new Locator("errmessage","id","65535");
-	//public static Locator errorMessage = new Locator("errmessage","name","Denom value cannot be null. (E4007)");
-	
 	public static Locator denomValueDropDown = new Locator("denomValueDropDown","name","denom_value");
-	//public static Locator fitTextField = new Locator("FitAmountTextField","name","fit");65546
 	public static Locator fitTextField = new Locator("FitAmountTextField","name","65546");
-	//public static Locator fitTextField = new Locator("FitAmountTextField","id","12");
 	public static Locator cancelBtn = new Locator("CancelBtn","name","Cancel");
 	public static Locator cancelerrmessage = new Locator("CancelBtn","id","65535");
 	
@@ -148,7 +136,7 @@ public class RAPPurchaseModuleLocator extends WebdriverWrapper {
 	'Description 	 : This method is developed to Launch Purchase RAP
 	'InputParameters : NA 
 	'OutPutParameters: NA
-	'Author			 : Rakesh Karkare
+	'Author			 : Ramchandra Devalkar
 	'Date		     : 
 	'**************************************************************************************************
 	'                               C  H  A  N  G  E                       H  I  S  T  O  R  Y
@@ -158,8 +146,7 @@ public class RAPPurchaseModuleLocator extends WebdriverWrapper {
 	'
 	'**************************************************************************************************
 	 */	
-	
-	
+		
 	public void launchPurchaseRAP(){
 		try{
 		Date purchaseRAPLaunchTime = new java.util.Date();
@@ -189,7 +176,7 @@ public class RAPPurchaseModuleLocator extends WebdriverWrapper {
 	'Description 	 : This method is developed to Import Purchases
 	'InputParameters : NA 
 	'OutPutParameters: NA
-	'Author			 : Rakesh Karkare
+	'Author			 : Ramchandra Devalkar
 	'Date		     : 
 	'**************************************************************************************************
 	'                               C  H  A  N  G  E                       H  I  S  T  O  R  Y
@@ -234,7 +221,7 @@ public class RAPPurchaseModuleLocator extends WebdriverWrapper {
 	'Description 	 : This method is developed to Process Purchase Order
 	'InputParameters : NA 
 	'OutPutParameters: NA
-	'Author			 : Rakesh Karkare
+	'Author			 : Ramchandra Devalkar
 	'Date		     : 
 	'**************************************************************************************************
 	'                               C  H  A  N  G  E                       H  I  S  T  O  R  Y
@@ -245,6 +232,7 @@ public class RAPPurchaseModuleLocator extends WebdriverWrapper {
 	'**************************************************************************************************
 	 */	
 	
+	@SuppressWarnings("unused")
 	public void processPurchaseOrder(String OrderNumber,String Denom,String Amount){
 		WebDriver driver = DriverFactory.getDriver();
 		String[] amounts=Amount.split(delimiter);
@@ -336,7 +324,7 @@ public class RAPPurchaseModuleLocator extends WebdriverWrapper {
 	'Description 	 : This method is developed to Amalgamation
 	'InputParameters : NA 
 	'OutPutParameters: NA
-	'Author			 : Rakesh Karkare
+	'Author			 : Ramchandra Devalkar
 	'Date		     : 
 	'**************************************************************************************************
 	'                               C  H  A  N  G  E                       H  I  S  T  O  R  Y
@@ -509,7 +497,7 @@ public class RAPPurchaseModuleLocator extends WebdriverWrapper {
 	'Description 	 : This method is developed to Update Inventory
 	'InputParameters : NA 
 	'OutPutParameters: NA
-	'Author			 : Rakesh Karkare
+	'Author			 : Ramchandra Devalkar
 	'Date		     : 
 	'**************************************************************************************************
 	'                               C  H  A  N  G  E                       H  I  S  T  O  R  Y
@@ -566,7 +554,7 @@ public class RAPPurchaseModuleLocator extends WebdriverWrapper {
 	'Description 	 : This method is developed to Close Purchase RAP
 	'InputParameters : NA 
 	'OutPutParameters: NA
-	'Author			 : Rakesh Karkare
+	'Author			 : Ramchandra Devalkar
 	'Date		     : 
 	'**************************************************************************************************
 	'                               C  H  A  N  G  E                       H  I  S  T  O  R  Y
@@ -599,7 +587,7 @@ public class RAPPurchaseModuleLocator extends WebdriverWrapper {
 	'Description 	 : This method is developed to Launch Sale RAP
 	'InputParameters : NA 
 	'OutPutParameters: NA
-	'Author			 : Rakesh Karkare
+	'Author			 : Ramchandra Devalkar
 	'Date		     : 
 	'**************************************************************************************************
 	'                               C  H  A  N  G  E                       H  I  S  T  O  R  Y
@@ -633,7 +621,7 @@ public class RAPPurchaseModuleLocator extends WebdriverWrapper {
 	'Description 	 : This method is developed to Import Purchase Inventory
 	'InputParameters : NA 
 	'OutPutParameters: NA
-	'Author			 : Rakesh Karkare
+	'Author			 : Ramchandra Devalkar
 	'Date		     : 
 	'**************************************************************************************************
 	'                               C  H  A  N  G  E                       H  I  S  T  O  R  Y
@@ -666,72 +654,13 @@ public class RAPPurchaseModuleLocator extends WebdriverWrapper {
 		}
 	}
 	
-	/*
-	'***************************************************************************************************
-	'Description 	 : This method is developed to Amalgamation ID Select Query
-	'InputParameters : NA 
-	'OutPutParameters: NA
-	'Author			 : Rakesh Karkare
-	'Date		     : 
-	'**************************************************************************************************
-	'                               C  H  A  N  G  E                       H  I  S  T  O  R  Y
-	'**************************************************************************************************
-	' Date                                      Change made by                  Purpose of change
-	'--------                    ------------------- -------------------------------------------------
-	'
-	'**************************************************************************************************
-	 */
-	
-	public String amalgamationIDSelectQuery(String voltaDB,String OrderReferenceNo)  throws SQLException{
-		   
-		Connection dbObj = null;
-		Statement stmt = null;
-		//ResultSet dBRecs = null;
-		String URL = "10.186.1.99", dbName = voltaDB, userName = "drop4", passWord = "drop4";
-			
-			dbObj = connectDB(URL, dbName, userName, passWord);
-			
-	        String AmalgamationID ="";
-	        try{
-	        	stmt = dbObj.createStatement();
-				String selectQuery = "select pd.amalgamation_id from "
-						+ "purchase_denomination pd, purchases p where "
-						+ "pd.purchase_id = p.purchase_id and p.reference_code = '"+OrderReferenceNo+"'";
-				System.out.println(selectQuery);
-	        	ResultSet inputData =  stmt.executeQuery(selectQuery);
-				while (inputData.next()) {
-					
-					AmalgamationID = inputData.getString("amalgamation_id");
-					
-					if (!(AmalgamationID == null) && !(AmalgamationID == "")) {
-						break;
-					}
-				}
-				
-				if ((AmalgamationID == null) || (AmalgamationID == "")) {
-					Reporter.log("No Amalgamation ID");
-					return AmalgamationID;
-				}
-	        }
-				catch(Exception e){
-					e.printStackTrace();
-				}
-				
-				finally {
-					if(stmt != null) stmt.close();
-					if(dbObj != null) dbObj.close();
-
-				}
-			return AmalgamationID;
-	    	
-		}
 	
 	/*
 	'***************************************************************************************************
 	'Description 	 : This method is developed to Cancel Order 
 	'InputParameters : NA 
 	'OutPutParameters: NA
-	'Author			 : Rakesh Karkare
+	'Author			 : Ramchandra Devalkar
 	'Date		     : 
 	'**************************************************************************************************
 	'                               C  H  A  N  G  E                       H  I  S  T  O  R  Y
@@ -790,7 +719,7 @@ public class RAPPurchaseModuleLocator extends WebdriverWrapper {
 	'Description 	 : This method is developed to Normal Purchase Order
 	'InputParameters : NA 
 	'OutPutParameters: NA
-	'Author			 : Rakesh Karkare
+	'Author			 : Ramchandra Devalkar
 	'Date		     : 
 	'**************************************************************************************************
 	'                               C  H  A  N  G  E                       H  I  S  T  O  R  Y
@@ -801,17 +730,15 @@ public class RAPPurchaseModuleLocator extends WebdriverWrapper {
 	'**************************************************************************************************
 	 */
 	
+	@SuppressWarnings("unused")
 	public void fetchRecordsFromDB(String orderID) throws SQLException{
 		try{
 			RAPUtilities rapUtils = new RAPUtilities();
 			RAPOrderDetails = new HashMap<String,String>();
 
-			if(dbName.equalsIgnoreCase("RAP")){
-				//selectQuery = "select TXM_ORDER_HEADER.* from TXM_ORDER_HEADER where order_id in (select order_id from txm_line_item where product_type = 'FC' group by order_id having count(order_id) < 2) AND PROCESSED = '2' AND ORDER_TYPE = 'BUY'";
-				//selectQuery = "select DISTINCT corporate_products.supplier_id, TXM_ORDER_HEADER.* from TXM_ORDER_HEADER,corporate_products where order_id in (select order_id from txm_line_item where product_type = 'FC' group by order_id having count(order_id) < 2) AND PROCESSED = '2' AND ORDER_TYPE = 'BUY' and TXM_ORDER_HEADER.corporate_id = corporate_products.corporate_id and TXM_ORDER_HEADER.corporate_id = corporate_products.corporate_id and corporate_products.supplier_id not in ('BAML','NULL')"; 
+			if(dbName.equalsIgnoreCase("RAP")){ 
 				selectQuery = "select TXM_ORDER_HEADER.*,txm_line_item.product_type from TXM_ORDER_HEADER,txm_line_item where TXM_ORDER_HEADER.order_id = txm_line_item.order_id and txm_line_item.customer_order_ref = '"+orderID+"'";
 			}else{
-				//selectQuery = "select TXM_ORDER_HEADER.* from TXM_ORDER_HEADER where order_id in (select order_id from txm_line_item where product_type = 'FC' group by order_id having count(order_id) < 2) AND PROCESSED = '1' AND ORDER_TYPE = 'BUY'";
 				selectQuery = "select TXM_ORDER_HEADER.*,txm_line_item.product_type from TXM_ORDER_HEADER,txm_line_item where TXM_ORDER_HEADER.order_id = txm_line_item.order_id and txm_line_item.customer_order_ref = '"+orderID+"'";
 			}
 

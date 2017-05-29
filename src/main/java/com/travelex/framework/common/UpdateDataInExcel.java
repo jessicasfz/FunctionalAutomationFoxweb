@@ -29,4 +29,12 @@ public class UpdateDataInExcel {
 		String updateQuery = "Update "+sheetName+" set "+colName+"='"+textTobeUpdated+"' where AutomationID = '"+AutomationID+"'";
 		connection.executeUpdate(updateQuery);
 	}
+	
+	public void updateDataInExcel(String sheetName, String colName, String textTobeUpdated, String AutomationID) throws FilloException{
+		if(textTobeUpdated==null || textTobeUpdated=="" || textTobeUpdated.contains("NA")){
+			return;
+		}
+		String updateQuery = "Update "+sheetName+" set "+colName+"='"+textTobeUpdated+"' where AutomationID = '"+AutomationID+"'";
+		getConnection().executeUpdate(updateQuery);
+	}
 }

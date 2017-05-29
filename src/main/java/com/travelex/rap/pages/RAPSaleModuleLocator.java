@@ -27,6 +27,7 @@ import org.testng.Reporter;
 
 
 
+
 import com.travelex.framework.utilities.DriverFactory;
 import com.travelex.framework.utilities.Locator;
 import com.travelex.framework.utilities.RAPUtilities;
@@ -204,14 +205,7 @@ public class RAPSaleModuleLocator extends WebdriverWrapper {
 			Robot robot;
 			robot = new Robot();
 			robot.keyPress(KeyEvent.VK_ENTER);
-			
-			
-			
-			// 15 min sleep
 			//Thread.sleep(900000);
-			
-			
-			
 			DriverFactory.setWebDriverWait(900);
 			waitForElementToBeDisplayed("Rap Sale dialog", rapSaleDialog);
 			DriverFactory.setWebDriverWait(30);
@@ -529,48 +523,6 @@ public class RAPSaleModuleLocator extends WebdriverWrapper {
 		}
 		
 	}
-
-	/*
-	'***************************************************************************************************
-	'Description 	 : This method is developed to perform view orders in sales RAP
-	'InputParameters : NA 
-	'OutPutParameters: NA
-	'Author			 : Ramchandra Devalkar
-	'Date		     : 
-	'**************************************************************************************************
-	'                               C  H  A  N  G  E                       H  I  S  T  O  R  Y
-	'**************************************************************************************************
-	' Date                                      Change made by                  Purpose of change
-	'--------                    ------------------- -------------------------------------------------
-	'
-	'**************************************************************************************************
-	 */
-	
-	public void viewOrders(String orderRef){
-		Reporter.log("<B><I><font size='4' color='Black'>"+ "---------------- View Orders ----------------"+ "</font></I></B>");
-		try{
-		clickElementForVolta("View Orders", viewOrders);
-		waitForElementToBeDisplayed("ViewOrderRef", orderRefLbl);
-		clearAndSendKeysForVolta(orderRefField, orderRef);
-		clickElementForVolta("Retrieve", retrieveButtonTab);
-		waitForElementToBeDisplayed("ViewOrderRef", orderRefLbl2);
-		clickElementForVolta("CancelOrder Button", cancelOrder);
-		Thread.sleep(2000);
-		waitForElementToBeDisplayed("Reason Text", canReasonTxt);
-		
-		clearAndSendKeysForVolta(canReasonTxt,"Automation Testing");
-		clickElementForVolta("RAP Dialog box", rapDialogOK);
-		waitForElementToBeDisplayed("RAP Sale dialog", rapSaleDialog);
-		clickElementForVolta("RAP Dialog box", rapDialogYes);
-		waitForElementToBeDisplayed("RAP Sale dialog", rapSaleDialog);
-		clickElementForVolta("RAP Dialog box", rapDialogOK);
-		waitForElementToBeDisplayed("Close button", closeButtonTab);
-		clickElementForVolta("Close button", closeButtonTab);
-		}catch (Exception e){
-			Assert.fail("View Orders Function Failed"+e.getMessage());
-			e.printStackTrace();
-		}
-	}
 	
 	/*
 	'***************************************************************************************************
@@ -589,13 +541,13 @@ public class RAPSaleModuleLocator extends WebdriverWrapper {
 	 */
 	
 
+	@SuppressWarnings("unused")
 	public void fetchSaleRecordsFromDB(String orderRef,boolean isMulti) throws SQLException{
 		try{
 			RAPUtilities rapUtils = new RAPUtilities();
 			saleDetails = new HashMap<String,String>();
 			
 			if(!isMulti){
-				//selectQuery = "select TXM_ORDER_HEADER.* from TXM_ORDER_HEADER where order_id in (select order_id from txm_line_item where product_type = 'FC') AND PROCESSED = '2' AND ORDER_TYPE = 'SEL'";
 				selectQuery = "select * from TXM_ORDER_HEADER where customer_order_ref = '"+orderRef+"'";
 				String deleteQuery = "";
 				String updateQuery = "";
