@@ -6,13 +6,9 @@ Feature: Process purcase order in RAP
     And I launch the RAP application
     And I import purchase orders
     When I process purchase order
-    #And I retrieve the orders using bag id and refrence code
     When I perform Amalgamation process to confirm order
     Then I update inventory
     And I invoke Sale RAP to import inventory
-
-    #When I navigate to Update Inventory on Supervsor menu
-    #And I update the inventory
     Examples: 
       | AutomationId |
       | Auto0000013  |

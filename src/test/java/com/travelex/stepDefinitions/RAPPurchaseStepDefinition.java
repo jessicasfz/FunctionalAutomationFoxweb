@@ -4,13 +4,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.junit.Assert;
-
 import com.travelex.framework.common.UpdateDataInExcel;
 import com.travelex.rap.pages.RAPPurchaseModuleLocator;
-import com.travelex.rap.pages.RAPSaleModuleLocator;
 
-import cucumber.api.java.After;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -127,7 +123,6 @@ public class RAPPurchaseStepDefinition {
 	
 	@When("^I process and amalgamate order$")
 	public void i_process_and_amalgamate_order() throws Throwable {
-		//test code
 		rAPPurchaseModuleLocator = new RAPPurchaseModuleLocator();
 		rAPPurchaseModuleLocator.updateSnC("update user_application set logged_on = 'N'");
 		rAPPurchaseModuleLocator.launchPurchaseRAP();
@@ -160,17 +155,9 @@ public class RAPPurchaseStepDefinition {
 	
 	@Then("^Order gets processed$")
 	public void order_gets_processed() throws Throwable {
-		//delete this code
-		/*rAPPurchaseModuleLocator = new RAPPurchaseModuleLocator();
-		rAPPurchaseModuleLocator.fetchRecordsFromDB();
-		rAPPurchaseModuleLocator = new RAPPurchaseModuleLocator();
-		rAPPurchaseModuleLocator.launchPurchaseRAP();
-		rAPPurchaseModuleLocator.afterLaunchPurchase();
-		rAPPurchaseModuleLocator.processPurchaseOrder("02077253", "100", "20");*/
-	}
 		
-	
-	//------------------------------------------
+	}
+
 	
 	@When("^I launch and Import RAP to import multiple orders$")
 	public void i_launch_and_Import_RAP_to_import_multiple_orders() throws Throwable {

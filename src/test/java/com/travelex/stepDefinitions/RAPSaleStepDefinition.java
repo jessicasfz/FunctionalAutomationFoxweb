@@ -1,11 +1,8 @@
 package com.travelex.stepDefinitions;
 
-import org.junit.Assert;
-
 import com.travelex.framework.common.UpdateDataInExcel;
 import com.travelex.rap.pages.RAPSaleModuleLocator;
 
-import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 
 public class RAPSaleStepDefinition {
