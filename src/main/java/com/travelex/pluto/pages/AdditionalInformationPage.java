@@ -17,4 +17,15 @@ public class AdditionalInformationPage {
 	@FindBy(name = "UserName")
 	WebElement txtTellerName;
 	
+	@FindBy(name = "COLLECTION_CHQ")
+	WebElement rdoCollectionCheque;
+		
+	@FindBy(name = "COMMISSION")
+	WebElement txtOtherFeeCheque;
+	
+	
+	
+	
+	
+	
 }
