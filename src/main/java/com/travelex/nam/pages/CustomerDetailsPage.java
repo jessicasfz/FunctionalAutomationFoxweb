@@ -25,7 +25,7 @@ import com.travelex.stepDefinitions.MasterDataReader;
 public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{	
 
 	private WebDriver driver;
-	
+
 	private WebDriverWrapper wrapper ;
 	private int timeOutPeriod = 3000;
 	private int waitTime=300;
