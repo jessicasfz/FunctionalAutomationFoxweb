@@ -1,19 +1,29 @@
 package com.travelex.pluto.pages;
 
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
+
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.LoadableComponent;
 import org.openqa.selenium.support.ui.Select;
 
+import com.gargoylesoftware.htmlunit.javascript.background.JavaScriptExecutor;
 import com.travelex.framework.common.WebDriverWrapper;
 
-public class TransactionPage {
+public class TransactionPage extends LoadableComponent<TransactionPage>{
 	
 	WebDriverWrapper wrapper ;
 	WebDriver driver;
 	private int timeOutPeriod = 3000;
+	public JavascriptExecutor myExecutor;
 		
 	@FindBy(id = "cboPurchaseType")
 	WebElement listPurchaseType;
@@ -29,6 +39,9 @@ public class TransactionPage {
 	
 	@FindBy(name = "btnBranchMatch")
 	WebElement btnSearchName;
+	
+	@FindBy(name = "btnSubmit")
+	WebElement btnSearchMatch;
 		
 	@FindBy(name = "SiteProductTypes")
 	WebElement listProductType;
@@ -113,6 +126,18 @@ public class TransactionPage {
 	
 	@FindBy(name = "btnClear")
 	WebElement btnClear;
+	
+	@FindBy(name = "lstBranches")
+	WebElement lstBranches;
+	
+	@FindBy(name = "cmbTitle")
+	WebElement lstSalutation;
+	
+	@FindBy(name = "txtShippingFirstName")
+	WebElement txtfirstname;
+	
+	@FindBy(name = "txtShippingSurName")
+	WebElement txtLastname;
 			
 	public TransactionPage(WebDriver driver) {
 		this.driver = driver;
@@ -137,13 +162,6 @@ public class TransactionPage {
 		}
 	}
 	
-	public void selectTypeOfPurchase(String transactionType,String purchaseType){
-		if(transactionType.equalsIgnoreCase("PurchaseOrder")){			
-			Select listPurchaseTypeList = new Select(listPurchaseType);
-			listPurchaseTypeList.selectByVisibleText(purchaseType);
-			btnNext.click();
-		}		
-	}
 	
 	public void selectCustomerTypeAndDeliveryType(String customerType,String deliveryMethod){
 		if(!customerType.equalsIgnoreCase("NA")){			
@@ -162,7 +180,10 @@ public class TransactionPage {
 			btnSearchName.click();
 			switchToNewWindowOrPreviousWindow();
 			txtbranchLocation.sendKeys(branchLocation);
-			btnSearchName.click();
+			btnSearchMatch.click();
+			wrapper.waitForElementToBeClickable(lstBranches, timeOutPeriod);
+			Select branchlist = new Select(lstBranches);
+			branchlist.selectByIndex(0);
 			// Need To Select Exact Match 
 			btnSelect.click();
 			switchToNewWindowOrPreviousWindow();			
@@ -177,35 +198,68 @@ public class TransactionPage {
 		return  Title;		
 	}
 	
+	public void selectProductAndCurrency(String tranType, String salutaion,String fname,String lname){
+		myExecutor = ((JavascriptExecutor) driver);
+		if(tranType.equalsIgnoreCase("PurchaseOrder")){
+			Select salutaionList = new Select(lstSalutation);
+			salutaionList.selectByVisibleText(salutaion);
+			
+			myExecutor.executeScript("arguments[0].value='"+fname+"';", txtfirstname);
+			myExecutor.executeScript("arguments[0].value='"+lname+"';", txtLastname);
+
+		}
+	}
+	
+	public void clearAndEnterForeignAmount(String foreignAmount){
+		txtForeignAmount.clear();
+		txtForeignAmount.sendKeys(foreignAmount);
+	}
+	
 	public void enterProductDetails(String multiproductDetails){
+		myExecutor = ((JavascriptExecutor) driver);
 		String[] listOfProductsInDetailDenoms = multiproductDetails.split("\\|");
 		int noOfProducts = listOfProductsInDetailDenoms.length;
 		
 		for(int i=0;i<=noOfProducts-1;i++){
+			if(!(i==0)){
+			btnAddCurrency.click();
+			}
 			String listOfProductDetails = listOfProductsInDetailDenoms[i];
 			String[] eachProductDetails = listOfProductDetails.split("\\#");
 			
-			if(eachProductDetails[0].equalsIgnoreCase("Foreign Currencies")){
+			if(eachProductDetails[0].equalsIgnoreCase("Foreign Currency")){
 				String productType = eachProductDetails[0].trim();
 				String currency = eachProductDetails[1].trim();
 				String foreignAmount = eachProductDetails[2].trim();
 				String quantity = eachProductDetails[3].trim();
 				String denom = eachProductDetails[4].trim();
-				
-				if(!productType.equalsIgnoreCase("NA")){			
+
+				if(i==0){
+
+					if(!productType.equalsIgnoreCase("NA")){			
+						Select productTypeList = new Select(listProductType);
+						productTypeList.selectByVisibleText(productType);
+					}
+
+					if(!currency.equalsIgnoreCase("NA")){			
+						Select currencyList = new Select(listCurrencyCards);
+						currencyList.selectByVisibleText(currency);
+					}
+
+					if(!foreignAmount.equalsIgnoreCase("NA")){			
+						myExecutor.executeScript("arguments[0].value='"+foreignAmount+"';", txtForeignAmount);
+					}
+				}else{
+					listProductType = driver.findElement(By.name("SiteProductTypes"+i));
 					Select productTypeList = new Select(listProductType);
 					productTypeList.selectByVisibleText(productType);
-				}
-				
-				if(!currency.equalsIgnoreCase("NA")){			
+					listCurrencyCards = driver.findElement(By.name("SiteProducts"+i));
 					Select currencyList = new Select(listCurrencyCards);
 					currencyList.selectByVisibleText(currency);
+					txtForeignAmount = driver.findElement(By.name("txtForeignValue"+i));
+					myExecutor.executeScript("arguments[0].value='"+foreignAmount+"';", txtForeignAmount);
+					
 				}
-				
-				if(!foreignAmount.equalsIgnoreCase("NA")){			
-					txtForeignAmount.sendKeys(foreignAmount);
-				}
-				
 				if(!quantity.equalsIgnoreCase("NA")){
 					try {
 						denomSelection(quantity.toString(), denom.toString());
@@ -261,6 +315,8 @@ public class TransactionPage {
 					
 				}
 			}
+
+
 		}
 		
 	}
@@ -280,15 +336,10 @@ public class TransactionPage {
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	public void clickOnNextBtn(){
+		btnNext.click();
+	}
+		
 	
 	
 }

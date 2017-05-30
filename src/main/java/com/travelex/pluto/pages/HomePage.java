@@ -6,6 +6,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.LoadableComponent;
+import org.openqa.selenium.support.ui.Select;
 
 import com.travelex.framework.common.WebDriverWrapper;
 
@@ -46,6 +47,11 @@ public class HomePage extends LoadableComponent<HomePage>{
 	@FindBy(id = "Menu24")
 	WebElement linkShortsList;
 	
+	@FindBy(name = "cboPurchaseType")
+	WebElement listPurchaseType;
+		
+	@FindBy(name = "btnNext")
+	WebElement btnNext;
 	
 	public HomePage(WebDriver driver) {
 		this.driver = driver;
@@ -70,27 +76,42 @@ public class HomePage extends LoadableComponent<HomePage>{
 		}
 	}
 	
-	public HomePage navigateToTransactionPage(String transactonType) {
-
+	public TransactionPage navigateToTransactionPage(String transactonType,String purchaseType) {
+		wrapper.waitForElementToBeDisplayed(linkPurchaseOrder, timeOutPeriod);
 		switch (transactonType) {
 		case "SaleOrder":
 			linkSaleOrder.click();
+			break;
 
 		case "WholeSaleSaleOrder":
 			linkWholeSaleSaleOrder.click();
-
+			break;
+			
 		case "PurchaseOrder":
 			linkPurchaseOrder.click();
+			selectTypeOfPurchase(transactonType,purchaseType);
+			break;
 
 		case "WholeSalePurchaseOrder":
 			linkWholeSalePurchase.click();
-
+			selectTypeOfPurchase(transactonType,purchaseType);
+			break;
+			
 		default:
 			System.out.println("Transaction Type Not Exist");
 			Assert.fail("Not Exist Transaction Type");
 		}
 		
-		return new HomePage(driver).get();
+		return new TransactionPage(driver).get();
+	}
+	
+	public void selectTypeOfPurchase(String transactionType,String purchaseType){
+		if(transactionType.equalsIgnoreCase("PurchaseOrder")){
+			wrapper.waitForElementToBeDisplayed(listPurchaseType, timeOutPeriod);
+			Select listPurchaseTypeList = new Select(listPurchaseType);
+			listPurchaseTypeList.selectByVisibleText(purchaseType);
+			btnNext.click();
+		}		
 	}
 		
 }

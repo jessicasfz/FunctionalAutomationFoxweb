@@ -24,7 +24,7 @@ import cucumber.api.java.en.Given;
 public class MasterDataReader {
 	
 	ConfigurationProperties configurationProperties = ConfigurationProperties.getInstance();
-	static EnvironmentParameter environmentParameter;
+	public static EnvironmentParameter environmentParameter;
 	public static WebDriver driver;
 	public static WebDriver Ddriver;
 	public static Scenario scenario;
@@ -33,6 +33,7 @@ public class MasterDataReader {
 	public static Map<String,String> customerDetails;
 	public static Map<String,String> rapDetails;
 	public static Map<String,Object> pageDetails;
+	public static Map<String,String> plutoDetails;
 	public static ArrayList<HashMap<String,String>> txnDetails;
 	
 	 @Before
@@ -77,9 +78,10 @@ public class MasterDataReader {
 			orderDetails = ExcelFileReader.readDataForAutomationID("OrderDetails",automationID);
 			customerDetails = ExcelFileReader.readDataForAutomationID("CustomerDetails",automationID);
 			rapDetails = ExcelFileReader.readDataForAutomationID("RAPDetails", automationID);
+			plutoDetails = ExcelFileReader.readDataForAutomationID("PultoDetails", automationID);
 			MasterDataReader.scenario.write("Order Details Data "+ MasterDataReader.orderDetails);
 			MasterDataReader.scenario.write("Customer Details Data "+ MasterDataReader.customerDetails);
 			MasterDataReader.scenario.write("RAP Details Data "+ MasterDataReader.rapDetails);
+			MasterDataReader.scenario.write("RAP Details Data "+ MasterDataReader.plutoDetails);
 		}
-
 }
