@@ -192,6 +192,12 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 	@FindBy(id = "spanOrderTotal")
 	WebElement orderTotal;
 
+	@FindBy(xpath = "//*[contains(text(),'Service Charge')]/following-sibling::td[6]")
+	WebElement serviceChargeAmount;
+
+	@FindBy(xpath = "//*[contains(text(),'Shipping Charge')]/parent::*/following-sibling::td[4]")
+	WebElement shippingChargeAmount;
+
 
 	public CustomerDetailsPage(WebDriver driver) {
 		this.driver = driver;
@@ -322,12 +328,36 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 		return confirmationNumber;
 	}
 
-	public String getOrderTotal(){
+	public String getOrderTotal() {
 		String orderAmount = "";
 		String Ordertext = orderTotal.getText();
 		orderAmount = Ordertext.trim();
 		System.out.println(orderAmount);
 		return orderAmount;
+	}
+
+	public String getServiceCharge() {
+		String serviceChargeAmt = "";
+		try {
+			serviceChargeAmt = serviceChargeAmount.getText();
+		} catch (Exception ex) {
+			serviceChargeAmt = "0.00";
+		}
+		serviceChargeAmt = serviceChargeAmt.trim();
+		System.out.println(serviceChargeAmt);
+		return serviceChargeAmt;
+	}
+
+	public String getShippingCharge() {
+		String shippingChargeAmt = "";
+		try {
+			shippingChargeAmt = shippingChargeAmount.getText();
+		} catch (Exception ex) {
+			shippingChargeAmt = "0.00";
+		}
+		shippingChargeAmt = shippingChargeAmt.trim();
+		System.out.println(shippingChargeAmt);
+		return shippingChargeAmt;
 	}
 
 
