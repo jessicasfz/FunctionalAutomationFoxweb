@@ -1,21 +1,14 @@
 package com.travelex.pluto.pages;
 
-import java.awt.AWTException;
-import java.awt.Robot;
-import java.awt.event.KeyEvent;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.LoadableComponent;
 import org.openqa.selenium.support.ui.Select;
 
-import com.gargoylesoftware.htmlunit.javascript.background.JavaScriptExecutor;
 import com.travelex.framework.common.WebDriverWrapper;
 
 public class TransactionPage extends LoadableComponent<TransactionPage>{
@@ -233,19 +226,15 @@ public class TransactionPage extends LoadableComponent<TransactionPage>{
 				String foreignAmount = eachProductDetails[2].trim();
 				String quantity = eachProductDetails[3].trim();
 				String denom = eachProductDetails[4].trim();
-
 				if(i==0){
-
 					if(!productType.equalsIgnoreCase("NA")){			
 						Select productTypeList = new Select(listProductType);
 						productTypeList.selectByVisibleText(productType);
 					}
-
 					if(!currency.equalsIgnoreCase("NA")){			
 						Select currencyList = new Select(listCurrencyCards);
 						currencyList.selectByVisibleText(currency);
 					}
-
 					if(!foreignAmount.equalsIgnoreCase("NA")){			
 						myExecutor.executeScript("arguments[0].value='"+foreignAmount+"';", txtForeignAmount);
 					}

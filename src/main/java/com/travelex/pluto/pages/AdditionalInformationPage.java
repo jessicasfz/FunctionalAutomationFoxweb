@@ -14,7 +14,6 @@ public class AdditionalInformationPage extends LoadableComponent<AdditionalInfor
 	public WebDriver driver;
 	WebDriverWrapper wrapper ;
 	private int timeOutPeriod = 3000;
-	private int waitTime=300;
 	public JavascriptExecutor myExecutor;
 	
 	@FindBy(name = "COMMENTS")

@@ -27,28 +27,7 @@ public class SuiteLevelDesign extends AbstractTestNGCucumberTests{
 		} 
 		if(!directory.exists()) {	
 			directory.mkdir();		
-		}
-		
-		/*String webGridHubpath="cmd /c start/min " + System.getProperty("user.dir") +"/gridConfig/StartHub.bat";
-    	Runtime rn=Runtime.getRuntime();
-    	rn.exec(webGridHubpath);
-    	Thread.sleep(1000);
-    	String browserName = configurationProperties.getProperty(ConfigurationProperties.BROWSER_NAME);
-    	String webGridNodepath = null;
-    	
-    	if(browserName.equalsIgnoreCase("IE")){   		
-    		 webGridNodepath="cmd /c start/min " + System.getProperty("user.dir") +"/gridConfig/StartNode_IE.bat";    		
-    	}else if(browserName.equalsIgnoreCase("CHROME")){    		
-    		 webGridNodepath="cmd /c start/min " + System.getProperty("user.dir") +"/gridConfig/StartNode.bat";
-    		System.out.println("Node started ");
-    	}
-    	
-    	rn.exec(webGridNodepath);
-    	Thread.sleep(1000);
-    	String windowsGridNodepath="cmd /c start/min " + System.getProperty("user.dir") +"/gridConfig/Winium.Desktop.Driver.exe";
-    	rn.exec(windowsGridNodepath);
-    	Thread.sleep(1000);*/
-    	    	
+		}   	    	
 	}
 
 	@AfterSuite(alwaysRun = true)	
