@@ -41,11 +41,16 @@ public class CustomerDetailsPageStepDefinition {
 		CustomerDetailsPage customerDetailsPage = (CustomerDetailsPage)MasterDataReader.pageDetails.get("CustomerDetailsPage");
 		String orderConfNumber = customerDetailsPage.getConfirmationNumber();
 		String orderTotal = customerDetailsPage.getOrderTotal();
+		String serviceCharge = customerDetailsPage.getServiceCharge();
+		String shippingCharge = customerDetailsPage.getShippingCharge();
 		String todayAsString = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss").format(new Date());
 		
 		UpdateDataInExcel up = new UpdateDataInExcel();
 		up.updateDataInExcel("CustomerDetails", "ConfirmationNumber", orderConfNumber, MasterDataReader.customerDetails.get("AutomationID"),connection);
 		up.updateDataInExcel("CustomerDetails", "TotalOrderAmount", orderTotal, MasterDataReader.customerDetails.get("AutomationID"),connection);
 		up.updateDataInExcel("CustomerDetails", "ExecutionDate", todayAsString, MasterDataReader.customerDetails.get("AutomationID"),connection);
+		up.updateDataInExcel("CustomerDetails", "ServiceCharge", serviceCharge, MasterDataReader.customerDetails.get("AutomationID"),connection);
+		up.updateDataInExcel("CustomerDetails", "ShippingCharge", shippingCharge, MasterDataReader.customerDetails.get("AutomationID"),connection);
+
 	}
 }
