@@ -2,6 +2,7 @@ package com.travelex.stepDefinitions;
 
 import com.travelex.framework.common.ConfigurationProperties;
 import com.travelex.pluto.pages.AdditionalInformationPage;
+import com.travelex.pluto.pages.CustomerDetailsPage;
 import com.travelex.pluto.pages.HomePage;
 import com.travelex.pluto.pages.LoginPage;
 import com.travelex.pluto.pages.TransactionPage;
@@ -34,7 +35,6 @@ public class PlutoStepDefinitions {
 	@And("^I enter company name customer type and delivery method$")
 	public void i_enter_company_name_customer_type_and_Delivery_method() {
 		TransactionPage transactionPage = (TransactionPage) MasterDataReader.pageDetails.get("TransactionPage");
-		//transactionPage.selectTypeOfPurchase(MasterDataReader.plutoDetails.get("TransType"), MasterDataReader.plutoDetails.get("PurchaseType"));
 		transactionPage.selectCustomerTypeAndDeliveryType(MasterDataReader.plutoDetails.get("CustomerType"), MasterDataReader.plutoDetails.get("DeliveryType"));
 	}
 	
@@ -47,21 +47,16 @@ public class PlutoStepDefinitions {
 	@And("^I select product type and currency$")
 	public void i_select_product_type_and_currency() {
 		TransactionPage transactionPage = (TransactionPage) MasterDataReader.pageDetails.get("TransactionPage");
-		//transactionPage.selectProductAndCurrency(MasterDataReader.plutoDetails.get("Currency"), MasterDataReader.plutoDetails.get("ProductType"),MasterDataReader.plutoDetails.get("TransType"),MasterDataReader.plutoDetails.get("Salutation"),MasterDataReader.plutoDetails.get("FirstName"),MasterDataReader.plutoDetails.get("LastName"));
-		transactionPage.selectProductAndCurrency(MasterDataReader.plutoDetails.get("TransType"),MasterDataReader.plutoDetails.get("Salutation"),MasterDataReader.plutoDetails.get("FirstName"),MasterDataReader.plutoDetails.get("LastName"));
+		transactionPage.enterCustomerDetailsInPurchse(MasterDataReader.plutoDetails.get("TransType"),MasterDataReader.plutoDetails.get("Salutation"),MasterDataReader.plutoDetails.get("FirstName"),MasterDataReader.plutoDetails.get("LastName"));
 		transactionPage.enterProductDetails(MasterDataReader.plutoDetails.get("MultipleCurrencies"));
 	}
-	
-	@And("^I enter foreign amount and select denomination$")
-	public void i_enter_foreign_amount_and_select_denomination() {
-		TransactionPage transactionPage = (TransactionPage) MasterDataReader.pageDetails.get("TransactionPage");
-		transactionPage.clearAndEnterForeignAmount(MasterDataReader.plutoDetails.get("ForeignAmt"));
-	}
-	
-	
-	@And("^I enter more currencies select denomination and click on calculate$")
-	public void i_enter_more_currencies_select_denomination_and_click_on_calculate() {
 		
+	@And("^I enter customer detail$")
+	public void i_enter_customer_details() {
+		CustomerDetailsPage customerDetailsPage = new CustomerDetailsPage(MasterDataReader.driver);
+		customerDetailsPage.enterCustomerDeliveryDetails(MasterDataReader.plutoDetails.get("Salutation"),MasterDataReader.plutoDetails.get("FirstName"), MasterDataReader.plutoDetails.get("LastName"), 
+				MasterDataReader.plutoDetails.get("CollectionDate"),MasterDataReader.plutoDetails.get("DeliveryType"),MasterDataReader.plutoDetails.get("AwayBranchLocation"),MasterDataReader.plutoDetails.get("Address1"),
+				MasterDataReader.plutoDetails.get("Address2"),MasterDataReader.plutoDetails.get("State"),MasterDataReader.plutoDetails.get("Country"),MasterDataReader.plutoDetails.get("ZipCode"),MasterDataReader.plutoDetails.get("HomeTelephoneNo"));
 	}
 	
 	@And("^I click on Next button$")
@@ -75,6 +70,14 @@ public class PlutoStepDefinitions {
 	public void i_enter_Comapny_Additional_Info() {
 		AdditionalInformationPage additionalInformationPage = new AdditionalInformationPage(MasterDataReader.driver);
 		additionalInformationPage.enterAdditionalInfo(MasterDataReader.plutoDetails.get("Comments"), MasterDataReader.plutoDetails.get("OtherFee"), MasterDataReader.plutoDetails.get("TellerName"));
+		additionalInformationPage.clickOnNextBtn();
+		MasterDataReader.pageDetails.put("AdditionalInformationPage", additionalInformationPage);
+	}
+	
+	@And("^I enter Company Additional Info For Sale$")
+	public void i_enter_Comapny_Additional_Info_For_Sale() {
+		AdditionalInformationPage additionalInformationPage = new AdditionalInformationPage(MasterDataReader.driver);
+		additionalInformationPage.enterAdditionalInfo(MasterDataReader.plutoDetails.get("DeliveryType"),MasterDataReader.plutoDetails.get("ConfigAdditionalInfo"),MasterDataReader.plutoDetails.get("Comments"), MasterDataReader.plutoDetails.get("OtherFee"), MasterDataReader.plutoDetails.get("TellerName"),MasterDataReader.plutoDetails.get("AlternateTellerName"),MasterDataReader.plutoDetails.get("DeliveryFee"));
 		additionalInformationPage.clickOnNextBtn();
 		MasterDataReader.pageDetails.put("AdditionalInformationPage", additionalInformationPage);
 	}

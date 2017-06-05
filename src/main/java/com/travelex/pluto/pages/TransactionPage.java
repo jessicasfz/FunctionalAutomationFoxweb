@@ -60,6 +60,11 @@ public class TransactionPage extends LoadableComponent<TransactionPage>{
 	@FindBy(name = "btnDenom")
 	WebElement btnDenom;
 	
+	@FindBy(name = "btnDraftDetail")
+	WebElement btnDraftDetail;
+	
+	
+	
 	@FindBy(name = "btnCurrencyDelete")
 	WebElement btnDelete;
 		
@@ -131,6 +136,9 @@ public class TransactionPage extends LoadableComponent<TransactionPage>{
 	
 	@FindBy(name = "txtShippingSurName")
 	WebElement txtLastname;
+	
+	@FindBy(name = "btnAcceptDenoms")
+	WebElement btnAcceptDenoms;
 			
 	public TransactionPage(WebDriver driver) {
 		this.driver = driver;
@@ -155,14 +163,15 @@ public class TransactionPage extends LoadableComponent<TransactionPage>{
 		}
 	}
 	
-	
 	public void selectCustomerTypeAndDeliveryType(String customerType,String deliveryMethod){
-		if(!customerType.equalsIgnoreCase("NA")){			
+		if(!customerType.equalsIgnoreCase("NA")){	
+			wrapper.waitForElementToBeDisplayed(listCustomerType, timeOutPeriod);
 			Select listCustomerTypeList = new Select(listCustomerType);
 			listCustomerTypeList.selectByVisibleText(customerType);
 		}
 		
-		if(!deliveryMethod.equalsIgnoreCase("NA")){			
+		if(!deliveryMethod.equalsIgnoreCase("NA")){	
+			wrapper.waitForElementToBeDisplayed(listDeliveryMethods, timeOutPeriod);
 			Select listDeliveryMethodsList = new Select(listDeliveryMethods);
 			listDeliveryMethodsList.selectByVisibleText(deliveryMethod);
 		}
@@ -170,7 +179,9 @@ public class TransactionPage extends LoadableComponent<TransactionPage>{
 	
 	public void clickOnSearchAndSelectBranchLocation(String branchLocation){
 		if(!branchLocation.equalsIgnoreCase("NA")){
+			wrapper.waitForElementToBeDisplayed(btnSearchName, timeOutPeriod);
 			btnSearchName.click();
+			try {Thread.sleep(2000);} catch (InterruptedException e) {}
 			switchToNewWindowOrPreviousWindow();
 			txtbranchLocation.sendKeys(branchLocation);
 			btnSearchMatch.click();
@@ -191,7 +202,7 @@ public class TransactionPage extends LoadableComponent<TransactionPage>{
 		return  Title;		
 	}
 	
-	public void selectProductAndCurrency(String tranType, String salutaion,String fname,String lname){
+	public void enterCustomerDetailsInPurchse(String tranType, String salutaion, String fname, String lname){
 		myExecutor = ((JavascriptExecutor) driver);
 		if(tranType.equalsIgnoreCase("PurchaseOrder")){
 			Select salutaionList = new Select(lstSalutation);
@@ -203,6 +214,18 @@ public class TransactionPage extends LoadableComponent<TransactionPage>{
 		}
 	}
 	
+	public void enterCustomerDetails(String tranType, String salutaion, String fname, String lname){
+		myExecutor = ((JavascriptExecutor) driver);
+		if(tranType.equalsIgnoreCase("PurchaseOrder")){
+			Select salutaionList = new Select(lstSalutation);
+			salutaionList.selectByVisibleText(salutaion);
+			
+			myExecutor.executeScript("arguments[0].value='"+fname+"';", txtfirstname);
+			myExecutor.executeScript("arguments[0].value='"+lname+"';", txtLastname);
+
+		}
+	}
+		
 	public void clearAndEnterForeignAmount(String foreignAmount){
 		txtForeignAmount.clear();
 		txtForeignAmount.sendKeys(foreignAmount);
@@ -257,57 +280,63 @@ public class TransactionPage extends LoadableComponent<TransactionPage>{
 					}
 				}
 				
-			}else if(eachProductDetails[0].equalsIgnoreCase("Foreign Drafts")){
+			}else if(eachProductDetails[0].equalsIgnoreCase("Drafts")){
+				String productType = eachProductDetails[0].trim();
+				String currency = eachProductDetails[1].trim();
+				String foreignAmount = eachProductDetails[2].trim();				
+				String benificiaryDetails = eachProductDetails[3].trim();
+				
+				if(i==0){
+					if(!productType.equalsIgnoreCase("NA")){			
+						Select productTypeList = new Select(listProductType);
+						productTypeList.selectByVisibleText(productType);
+					}
+					if(!currency.equalsIgnoreCase("NA")){			
+						Select currencyList = new Select(listCurrencyCards);
+						currencyList.selectByVisibleText(currency);
+					}
+					if(!foreignAmount.equalsIgnoreCase("NA")){			
+						myExecutor.executeScript("arguments[0].value='"+foreignAmount+"';", txtForeignAmount);
+					}
+				}else{
+					listProductType = driver.findElement(By.name("SiteProductTypes"+i));
+					Select productTypeList = new Select(listProductType);
+					productTypeList.selectByVisibleText(productType);
+					listCurrencyCards = driver.findElement(By.name("SiteProducts"+i));
+					Select currencyList = new Select(listCurrencyCards);
+					currencyList.selectByVisibleText(currency);
+					txtForeignAmount = driver.findElement(By.name("txtForeignValue"+i));
+					myExecutor.executeScript("arguments[0].value='"+foreignAmount+"';", txtForeignAmount);							
+				}
+				benificiaryDetails(benificiaryDetails);				
+			}else if(eachProductDetails[0].equalsIgnoreCase("Checks")){
 				String productType = eachProductDetails[0].trim();
 				String currency = eachProductDetails[1].trim();
 				String foreignAmount = eachProductDetails[2].trim();
-				String benificiaryDetails = eachProductDetails[3].trim();
-				
-				if(!productType.equalsIgnoreCase("NA")){			
+				if(i==0){
+					if(!productType.equalsIgnoreCase("NA")){			
+						Select productTypeList = new Select(listProductType);
+						productTypeList.selectByVisibleText(productType);
+					}
+					if(!currency.equalsIgnoreCase("NA")){			
+						Select currencyList = new Select(listCurrencyCards);
+						currencyList.selectByVisibleText(currency);
+					}
+					if(!foreignAmount.equalsIgnoreCase("NA")){			
+						myExecutor.executeScript("arguments[0].value='"+foreignAmount+"';", txtForeignAmount);
+					}
+				}else{
+					listProductType = driver.findElement(By.name("SiteProductTypes"+i));
 					Select productTypeList = new Select(listProductType);
 					productTypeList.selectByVisibleText(productType);
-				}
-				
-				if(!currency.equalsIgnoreCase("NA")){			
+					listCurrencyCards = driver.findElement(By.name("SiteProducts"+i));
 					Select currencyList = new Select(listCurrencyCards);
 					currencyList.selectByVisibleText(currency);
-				}
-				
-				if(!foreignAmount.equalsIgnoreCase("NA")){			
-					txtForeignAmount.sendKeys(foreignAmount);
-				}
-				
-				if(!benificiaryDetails.equalsIgnoreCase("NA")){
-					
-				}
-			}else if(eachProductDetails[0].equalsIgnoreCase("Foreign checks")){
-				String productType = eachProductDetails[0].trim();
-				String currency = eachProductDetails[1].trim();
-				String foreignAmount = eachProductDetails[2].trim();
-				String benificiaryDetails = eachProductDetails[3].trim();
-				
-				if(!productType.equalsIgnoreCase("NA")){			
-					Select productTypeList = new Select(listProductType);
-					productTypeList.selectByVisibleText(productType);
-				}
-				
-				if(!currency.equalsIgnoreCase("NA")){			
-					Select currencyList = new Select(listCurrencyCards);
-					currencyList.selectByVisibleText(currency);
-				}
-				
-				if(!foreignAmount.equalsIgnoreCase("NA")){			
-					txtForeignAmount.sendKeys(foreignAmount);
-				}
-				
-				if(!benificiaryDetails.equalsIgnoreCase("NA")){
-					
-				}
+					txtForeignAmount = driver.findElement(By.name("txtForeignValue"+i));
+					myExecutor.executeScript("arguments[0].value='"+foreignAmount+"';", txtForeignAmount);					
+				}				
 			}
-
-
-		}
-		
+		}		
 	}
 	
 	public void denomSelection(String quantity,String denom) throws InterruptedException{			
@@ -316,19 +345,64 @@ public class TransactionPage extends LoadableComponent<TransactionPage>{
 			String[] quantitylist = quantity.split(",");		
 			int denomsCount = denominationlist.length;
 			for (int j=0;j<=denomsCount-1;j++) {
+				WebElement element,element2 = null;
 				String quantityValue = quantitylist[j].trim();
 				String denominationValue = denominationlist[j].trim();
-				driver.findElement(By.xpath("//div[normalize-space(text())='"+ denominationValue +"']/../../td[3]/span/span/input")).sendKeys(quantityValue);
+				element = driver.findElement(By.xpath("//td/div/font[normalize-space(text())='" + denominationValue + "']/../../following-sibling::*/input"));
+				element2 = driver.findElement(By.xpath("//td/div/font[normalize-space(text())='" + denominationValue + "']/../../following-sibling::td[2]/input"));
+				myExecutor.executeScript("arguments[0].value='" + quantityValue + "';", element);				
+				int foreignValue = (Integer.parseInt(denominationValue)) * (Integer.parseInt(quantityValue));
+				myExecutor.executeScript("arguments[0].value='" + foreignValue + "';", element2);
 			}			
-
-			Thread.sleep(1000);		
+			clickOnAcceptDenomBtn();
 	}
-	
 	
 	public void clickOnNextBtn(){
+		wrapper.waitForElementToBeDisplayed(btnNext, timeOutPeriod);
 		btnNext.click();
 	}
+	
+	public void clickOnAcceptDenomBtn(){
+		wrapper.waitForElementToBeDisplayed(btnAcceptDenoms, timeOutPeriod);
+		btnAcceptDenoms.click();		
+		if (wrapper.isAlertPresent()) {
+			wrapper.acceptAlert();
+			btnAcceptDenoms.click();
+		}
+	}	
+	
+	public void benificiaryDetails(String benificiaryDetails){
+		btnDraftDetail.click();
 		
-	
-	
+		wrapper.waitForElementToBeDisplayed(listBeneficiaryState, timeOutPeriod);
+		String[] benificiaryDetailsList = benificiaryDetails.split(",");
+		String benificiaryName = benificiaryDetailsList[0];
+		String address1 = benificiaryDetailsList[1];
+		String address2 = benificiaryDetailsList[2];
+		String city = benificiaryDetailsList[3];
+		String country = benificiaryDetailsList[4];
+		String state = benificiaryDetailsList[5];
+		String zipcode = benificiaryDetailsList[6];
+		String draftComment = benificiaryDetailsList[7];
+		
+		txtBeneficiaryName.sendKeys(benificiaryName);
+		
+		
+		myExecutor.executeScript("arguments[0].value='" + benificiaryName + "';", txtBeneficiaryName);
+		myExecutor.executeScript("arguments[0].value='" + address1 + "';", txtBeneficiaryAddressLine1);
+		myExecutor.executeScript("arguments[0].value='" + address2 + "';", txtBeneficiaryAddressLine2);
+		myExecutor.executeScript("arguments[0].value='" + city+ "';", txtBeneficiaryCity);
+		
+		Select currencyList = new Select(listBenificiaryCountry);
+		currencyList.selectByVisibleText(country);
+		
+		Select stateList = new Select(listBeneficiaryState);
+		stateList.selectByVisibleText(state);
+		
+		myExecutor.executeScript("arguments[0].value='" + zipcode + "';", txtBeneficiaryZipCode);
+		myExecutor.executeScript("arguments[0].value='" + draftComment + "';", txtBeneficiaryComment);
+		
+		btnBeneficiaryOK.click();
+				
+	}
 }

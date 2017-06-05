@@ -48,7 +48,9 @@ public class AdditionalInformationPage extends LoadableComponent<AdditionalInfor
 	
 	@FindBy(xpath = "//*[contains(text(),'Reference Number')]/../following-sibling::td")
 	WebElement lblOrderRefNo;
-	
+		
+	@FindBy(name = "ATTENTION")
+	WebElement txtAlternateTellerName;
 	
 	public AdditionalInformationPage(WebDriver driver) {
 		this.driver = driver;
@@ -101,5 +103,22 @@ public class AdditionalInformationPage extends LoadableComponent<AdditionalInfor
 		String orderNo = null;
 		orderNo = lblOrderRefNo.getText().trim();
 		return orderNo;
+	}
+	
+	
+	public void enterAdditionalInfo(String deliveryType,String configAdditionalInfo, String comments,String otherfee,String tellerName,String alternateTellername,String deliveryCharge){
+		if(configAdditionalInfo.equalsIgnoreCase("Yes")){
+			myExecutor = ((JavascriptExecutor) driver);
+			wrapper.waitForElementToBeDisplayed(txtComments, timeOutPeriod);
+			if(!deliveryType.contains("Home Delivery")){
+				myExecutor.executeScript("arguments[0].value='"+alternateTellername+"';", txtAlternateTellerName);
+			}
+			myExecutor.executeScript("arguments[0].value='"+comments+"';", txtComments);
+			myExecutor.executeScript("arguments[0].value='"+otherfee+"';", txtOtherFee);
+			myExecutor.executeScript("arguments[0].value='"+deliveryCharge+"';", txtDeliveryCharge);			
+			myExecutor.executeScript("arguments[0].value='"+tellerName+"';", txtTellerName);
+
+		}
+		
 	}
 }
