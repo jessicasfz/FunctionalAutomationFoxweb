@@ -20,7 +20,7 @@ public class LoginPage extends LoadableComponent<LoginPage>{
 	
 	WebDriverWrapper wrapper ;
 	WebDriver driver;
-	private int timeOutPeriod = 3000;
+	private int timeOutPeriod = 30;
 		
 	@FindBy(name = "txtuserid")
 	WebElement txtuserid;

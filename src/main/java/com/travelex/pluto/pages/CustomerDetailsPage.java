@@ -14,7 +14,7 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 	
 	WebDriverWrapper wrapper ;
 	WebDriver driver;
-	private int timeOutPeriod = 3000;
+	private int timeOutPeriod = 30;
 	public JavascriptExecutor myExecutor;
 	
 	@FindBy(name = "cmbTitle")

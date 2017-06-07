@@ -13,7 +13,7 @@ public class AdditionalInformationPage extends LoadableComponent<AdditionalInfor
 
 	public WebDriver driver;
 	WebDriverWrapper wrapper ;
-	private int timeOutPeriod = 3000;
+	private int timeOutPeriod = 30;
 	public JavascriptExecutor myExecutor;
 
 	@FindBy(name = "COMMENTS")
@@ -137,7 +137,11 @@ public class AdditionalInformationPage extends LoadableComponent<AdditionalInfor
 	}
 
 	public void clickOnNextBtn(){
-		btnNext.click();
+		try {
+			btnNext.click();
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		}
 	}
 
 	public void authenticationRequired(String username, String pwd){

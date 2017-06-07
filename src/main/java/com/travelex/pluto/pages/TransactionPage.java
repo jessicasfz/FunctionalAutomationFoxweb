@@ -15,7 +15,7 @@ public class TransactionPage extends LoadableComponent<TransactionPage>{
 
 	WebDriverWrapper wrapper ;
 	WebDriver driver;
-	private int timeOutPeriod = 3000;
+	private int timeOutPeriod = 30;
 	public JavascriptExecutor myExecutor;
 
 	@FindBy(id = "cboPurchaseType")
@@ -183,6 +183,7 @@ public class TransactionPage extends LoadableComponent<TransactionPage>{
 			btnSearchName.click();
 			try {Thread.sleep(3000);} catch (InterruptedException e) {}
 			switchToNewWindowOrPreviousWindow();
+			wrapper.waitForElementToBeDisplayed(txtbranchLocation, timeOutPeriod);
 			myExecutor = ((JavascriptExecutor) driver);
 			myExecutor.executeScript("arguments[0].value='" + branchLocation + "';", txtbranchLocation);
 			btnSearchMatch.click();
