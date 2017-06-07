@@ -101,7 +101,9 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 		if(deliveryType.contains("Home Delivery")){
 			myExecutor.executeScript("arguments[0].value='"+address1+"';", txtAddress1);
 			myExecutor.executeScript("arguments[0].value='"+address2+"';", txtAddress2);
-			myExecutor.executeScript("arguments[0].value='"+state+"';", txtState);
+			
+			txtState.sendKeys(state);
+			wrapper.waitForElementToBeDisplayed(autoSuggest, timeOutPeriod);
 			autoSuggest.click();
 			
 			select = new Select(listCountry);

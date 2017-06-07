@@ -82,6 +82,6 @@ public class MasterDataReader {
 			MasterDataReader.scenario.write("Order Details Data "+ MasterDataReader.orderDetails);
 			MasterDataReader.scenario.write("Customer Details Data "+ MasterDataReader.customerDetails);
 			MasterDataReader.scenario.write("RAP Details Data "+ MasterDataReader.rapDetails);
-			MasterDataReader.scenario.write("RAP Details Data "+ MasterDataReader.plutoDetails);
+			MasterDataReader.scenario.write("Pluto Details Data "+ MasterDataReader.plutoDetails);
 		}
 }
