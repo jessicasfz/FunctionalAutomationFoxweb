@@ -33,9 +33,11 @@ import com.google.common.base.Predicate;
 public class WebDriverWrapper {
 	//static Logger logger = Logger.getLogger(WebDriverWrapper.class.getName());
 	WebDriver driver;
-
+	public JavascriptExecutor myExecutor;
+	
 	public WebDriverWrapper(WebDriver driver) {
 		this.driver = driver;
+		myExecutor = ((JavascriptExecutor) driver);
 	}
 
 	public static String getCurrentBrowserName(WebDriver driver) {
@@ -605,6 +607,14 @@ public class WebDriverWrapper {
 		else
 			return false;
 	}
+	
+	
+	public void sendKeysUsingJavaScript(WebElement element, String value){
+		myExecutor.executeScript("arguments[0].value='" + value + "';", element);
+	}
+	
+	
+	
 
 
 

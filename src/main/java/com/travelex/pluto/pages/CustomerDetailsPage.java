@@ -1,6 +1,5 @@
 package com.travelex.pluto.pages;
 
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -14,8 +13,7 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 	
 	WebDriverWrapper wrapper ;
 	WebDriver driver;
-	private int timeOutPeriod = 3000;
-	public JavascriptExecutor myExecutor;
+	private int timeOutPeriod = 30;
 	
 	@FindBy(name = "cmbTitle")
 	WebElement listTitle;
@@ -53,6 +51,9 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 	@FindBy(css = "ul li a")
 	WebElement autoSuggest;
 	
+	@FindBy(name = "btnNext")
+	WebElement btnNext;
+	
 	
 	public CustomerDetailsPage(WebDriver driver) {
 		this.driver = driver;
@@ -79,36 +80,37 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 		}	
 	}
 	
-	public void enterCustomerDeliveryDetails(String title, String fName, String lName, String collectionDate,String deliveryType,String awayBranchLocation,String address1,String address2,String state,String country,String zipcode,String homeTelephone) {
+	public void clickOnNextBtn(){
+		btnNext.click();	
+}
+	
+	public void enterCustomerDeliveryDetails(String title, String fName, String lName, String collectionDate,String deliveryType,String awayBranchLocation,String address1,String address2,String state,String country,String zipcode,String homeTelephone) throws InterruptedException {
 		wrapper.waitForElementToBeDisplayed(listTitle, timeOutPeriod);
-		myExecutor = ((JavascriptExecutor) driver);
 		Select select = new Select(listTitle);
-		select.selectByValue(title);		
-		myExecutor.executeScript("arguments[0].value='"+fName+"';", txtFirstName);
-		myExecutor.executeScript("arguments[0].value='"+lName+"';", txtLastName);
-		
-		if(deliveryType.contains("Away Branch")){
+		select.selectByValue(title);
+		wrapper.sendKeysUsingJavaScript(txtFirstName, fName);
+		wrapper.sendKeysUsingJavaScript(txtLastName, lName);		
 			if(!awayBranchLocation.equalsIgnoreCase("NA")){
 				TransactionPage transactionPage = new TransactionPage(driver);
 				transactionPage.clickOnSearchAndSelectBranchLocation(awayBranchLocation);
 			}
-			
-		}
 		
 		select = new Select(listCollectionDateAndDeliveryDate);
 		select.selectByIndex(Integer.parseInt(collectionDate));
 		
 		if(deliveryType.contains("Home Delivery")){
-			myExecutor.executeScript("arguments[0].value='"+address1+"';", txtAddress1);
-			myExecutor.executeScript("arguments[0].value='"+address2+"';", txtAddress2);
-			myExecutor.executeScript("arguments[0].value='"+state+"';", txtState);
+			wrapper.sendKeysUsingJavaScript(txtAddress1, address1);
+			wrapper.sendKeysUsingJavaScript(txtAddress2, address2);
+			
+			txtState.sendKeys(state);
+			wrapper.waitForElementToBeDisplayed(autoSuggest, timeOutPeriod);
 			autoSuggest.click();
 			
 			select = new Select(listCountry);
 			select.selectByVisibleText(country);
 			
-			myExecutor.executeScript("arguments[0].value='"+zipcode+"';", txtZipcode);
-			myExecutor.executeScript("arguments[0].value='"+homeTelephone+"';", txtHomeTelephoneNo);
+			wrapper.sendKeysUsingJavaScript(txtZipcode, zipcode);
+			wrapper.sendKeysUsingJavaScript(txtHomeTelephoneNo, homeTelephone);
 			
 		}	
 	}

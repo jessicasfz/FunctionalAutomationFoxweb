@@ -11,7 +11,6 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
 import com.travelex.framework.common.ConfigurationProperties;
-import com.travelex.framework.common.SendReport;
 
 import cucumber.api.testng.AbstractTestNGCucumberTests;
 

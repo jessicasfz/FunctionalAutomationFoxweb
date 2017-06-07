@@ -20,7 +20,7 @@ public class LoginPage extends LoadableComponent<LoginPage>{
 	
 	WebDriverWrapper wrapper ;
 	WebDriver driver;
-	private int timeOutPeriod = 3000;
+	private int timeOutPeriod = 30;
 		
 	@FindBy(name = "txtuserid")
 	WebElement txtuserid;
@@ -37,14 +37,8 @@ public class LoginPage extends LoadableComponent<LoginPage>{
 	@FindBy(css = "ul li a")
 	WebElement autoSuggest;
 	
-	public LoginPage(WebDriver driver,String url,String browser){
+	public LoginPage(WebDriver driver,String url){
 		this.driver = driver;
-		/*if(browser.equalsIgnoreCase("IE")){
-			if(!driver.getTitle().contains("Certificate Error")) Assert.fail("Failed to launch the browser");
-			driver.get("javascript:document.getElementById('overrridelink').click();");
-		}*/
-		driver.manage().window().maximize();
-		driver.get(url);
 		PageFactory.initElements(driver, this);
 		wrapper = new WebDriverWrapper(driver);
 	}
