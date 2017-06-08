@@ -9,7 +9,7 @@ import org.openqa.selenium.support.ui.Select;
 
 import com.travelex.framework.common.WebDriverWrapper;
 
-public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
+public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage> implements CustomerAdditionalInfo{
 	
 	WebDriverWrapper wrapper ;
 	WebDriver driver;
@@ -80,9 +80,20 @@ public class CustomerDetailsPage extends LoadableComponent<CustomerDetailsPage>{
 		}	
 	}
 	
-	public void clickOnNextBtn(){
-		btnNext.click();	
-}
+	public CustomerAdditionalInfo clickOnNextBtn(String TransType,String CustomerType){
+		CustomerAdditionalInfo returnPage = null;
+		wrapper.waitForElementToBeDisplayed(btnNext, timeOutPeriod);
+		btnNext.click();
+		if(TransType.equalsIgnoreCase("SaleOrder")){
+			if(CustomerType.equalsIgnoreCase("Customer") || CustomerType.equalsIgnoreCase("Citigold") || CustomerType.equalsIgnoreCase("Private Banking") || CustomerType.equalsIgnoreCase("Corporate") 
+					|| CustomerType.equalsIgnoreCase("Gold")|| CustomerType.equalsIgnoreCase("Platinum") || CustomerType.equalsIgnoreCase("Employee")|| CustomerType.equalsIgnoreCase("CitiBusiness")){
+				returnPage	= new OrderConfirmationPage(driver).get();
+			}else{
+				returnPage	= new AdditionalInformationPage(driver).get();
+			}
+		}
+		return returnPage;		
+	}
 	
 	public void enterCustomerDeliveryDetails(String title, String fName, String lName, String collectionDate,String deliveryType,String awayBranchLocation,String address1,String address2,String state,String country,String zipcode,String homeTelephone) throws InterruptedException {
 		wrapper.waitForElementToBeDisplayed(listTitle, timeOutPeriod);

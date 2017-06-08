@@ -1,6 +1,6 @@
 Feature: Pluto
 
-  @PlutoPurchase
+  @Pluto
   Scenario Outline: Pluto purchase order
     Given I read Excel data with AutomationID "<AutomationId>"
     When I launch PLUTO application
@@ -13,10 +13,11 @@ Feature: Pluto
     And I get the reference number
 
     Examples: 
-      | AutomationId |
-      | AutoChelsea4 |
+      | AutomationId  |
+      | AutoChelsea_8 |
+      | AutoChelsea_9 |
 
-  @PlutoSale
+  @Pluto
   Scenario Outline: Pluto Sale order
     Given I read Excel data with AutomationID "<AutomationId>"
     When I launch PLUTO application
@@ -30,5 +31,6 @@ Feature: Pluto
     And I get the reference number
 
     Examples: 
-      | AutomationId |
-      | AutoChelsea3 |
+      | AutomationId  |
+      | AutoChelsea_8 |
+      | AutoChelsea_9 |

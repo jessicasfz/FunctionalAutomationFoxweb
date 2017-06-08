@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 
 public class ConfigurationProperties {
 
-	//private static final Logger log = Logger.getLogger(ConfigurationProperties.class);
 	private final String PROPERTY_FILENAME = "config/configuration.properties";
 	private Properties properties = new Properties();
 	private static ConfigurationProperties  configProperties;

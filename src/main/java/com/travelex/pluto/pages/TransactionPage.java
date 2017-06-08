@@ -246,74 +246,39 @@ public class TransactionPage extends LoadableComponent<TransactionPage>{
 					txtForeignAmount = driver.findElement(By.name("txtForeignValue"+ch));
 					wrapper.sendKeysUsingJavaScript(txtForeignAmount, foreignAmount);
 					if(!quantity.equalsIgnoreCase("NA")){
-						try {
 							denomSelection(quantity.toString(), denom.toString(), i);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
 					}
 			}else if(eachProductDetails[0].equalsIgnoreCase("Drafts")){
 				String productType = eachProductDetails[0].trim();
 				String currency = eachProductDetails[1].trim();
 				String foreignAmount = eachProductDetails[2].trim();				
 				String benificiaryDetails = eachProductDetails[3].trim();
-
-				//  Added benificiaryDetails() in both condition
-				if(i==0){
-					if(!productType.equalsIgnoreCase("NA")){			
-						Select productTypeList = new Select(listProductType);
-						productTypeList.selectByVisibleText(productType);
-					}
-					if(!currency.equalsIgnoreCase("NA")){			
-						Select currencyList = new Select(listCurrencyCards);
-						currencyList.selectByVisibleText(currency);
-					}
-					if(!foreignAmount.equalsIgnoreCase("NA")){			
-						wrapper.sendKeysUsingJavaScript(txtForeignAmount, foreignAmount);
-					}
-					benificiaryDetails(benificiaryDetails, i);
-				}else{
-					listProductType = driver.findElement(By.name("SiteProductTypes"+i));
+					listProductType = driver.findElement(By.name("SiteProductTypes"+ch));
 					Select productTypeList = new Select(listProductType);
 					productTypeList.selectByVisibleText(productType);
-					listCurrencyCards = driver.findElement(By.name("SiteProducts"+i));
+					listCurrencyCards = driver.findElement(By.name("SiteProducts"+ch));
 					Select currencyList = new Select(listCurrencyCards);
 					currencyList.selectByVisibleText(currency);
-					txtForeignAmount = driver.findElement(By.name("txtForeignValue"+i));
+					txtForeignAmount = driver.findElement(By.name("txtForeignValue"+ch));
 					wrapper.sendKeysUsingJavaScript(txtForeignAmount, foreignAmount);
 					benificiaryDetails(benificiaryDetails, i);
-				}
 			}else if(eachProductDetails[0].equalsIgnoreCase("Checks")){
 				String productType = eachProductDetails[0].trim();
 				String currency = eachProductDetails[1].trim();
 				String foreignAmount = eachProductDetails[2].trim();
-				if(i==0){
-					if(!productType.equalsIgnoreCase("NA")){			
-						Select productTypeList = new Select(listProductType);
-						productTypeList.selectByVisibleText(productType);
-					}
-					if(!currency.equalsIgnoreCase("NA")){			
-						Select currencyList = new Select(listCurrencyCards);
-						currencyList.selectByVisibleText(currency);
-					}
-					if(!foreignAmount.equalsIgnoreCase("NA")){			
-						wrapper.sendKeysUsingJavaScript(txtForeignAmount, foreignAmount);
-					}
-				}else{
-					listProductType = driver.findElement(By.name("SiteProductTypes"+i));
+					listProductType = driver.findElement(By.name("SiteProductTypes"+ch));
 					Select productTypeList = new Select(listProductType);
 					productTypeList.selectByVisibleText(productType);
-					listCurrencyCards = driver.findElement(By.name("SiteProducts"+i));
+					listCurrencyCards = driver.findElement(By.name("SiteProducts"+ch));
 					Select currencyList = new Select(listCurrencyCards);
 					currencyList.selectByVisibleText(currency);
-					txtForeignAmount = driver.findElement(By.name("txtForeignValue"+i));
-					wrapper.sendKeysUsingJavaScript(txtForeignAmount, foreignAmount);					
-				}				
+					txtForeignAmount = driver.findElement(By.name("txtForeignValue"+ch));
+					wrapper.sendKeysUsingJavaScript(txtForeignAmount, foreignAmount);				
 			}
-		}		
+		}
 	}
 
-	public void denomSelection(String quantity,String denom, int row) throws InterruptedException{			
+	public void denomSelection(String quantity,String denom, int row) {			
 		if (row == 0) {
 			btnDenom = driver.findElement(By.name("btnDenom"));
 		} else {
@@ -336,9 +301,19 @@ public class TransactionPage extends LoadableComponent<TransactionPage>{
 		clickOnAcceptDenomBtn();
 	}
 
-	public void clickOnNextBtn(){
+	public CustomerAdditionalInfo clickOnNextBtn(String TransType,String CustomerType){
 		wrapper.waitForElementToBeDisplayed(btnNext, timeOutPeriod);
 		btnNext.click();
+		if(TransType.equalsIgnoreCase("PurchaseOrder")){
+			if(CustomerType.equalsIgnoreCase("Customer") || CustomerType.equalsIgnoreCase("Citigold") || CustomerType.equalsIgnoreCase("Private Banking") || CustomerType.equalsIgnoreCase("Corporate") 
+					|| CustomerType.equalsIgnoreCase("Gold")|| CustomerType.equalsIgnoreCase("Platinum") || CustomerType.equalsIgnoreCase("Employee")|| CustomerType.equalsIgnoreCase("CitiBusiness")){
+				return new OrderConfirmationPage(driver).get();					
+			}else{
+				return new AdditionalInformationPage(driver).get();
+			}			
+		}else{
+			return new CustomerDetailsPage(driver).get();
+		}
 	}
 
 	public void clickOnAcceptDenomBtn(){
@@ -358,7 +333,6 @@ public class TransactionPage extends LoadableComponent<TransactionPage>{
 		}
 		wrapper.waitForElementToBeDisplayed(btnDraftDetail, timeOutPeriod);
 		btnDraftDetail.click();
-
 		wrapper.waitForElementToBeDisplayed(listBeneficiaryState, timeOutPeriod);
 		String[] benificiaryDetailsList = benificiaryDetails.split(",");
 		String benificiaryName = benificiaryDetailsList[0];

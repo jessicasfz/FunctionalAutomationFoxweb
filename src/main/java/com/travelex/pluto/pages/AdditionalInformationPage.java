@@ -8,7 +8,7 @@ import org.openqa.selenium.support.ui.LoadableComponent;
 
 import com.travelex.framework.common.WebDriverWrapper;
 
-public class AdditionalInformationPage extends LoadableComponent<AdditionalInformationPage>{
+public class AdditionalInformationPage extends LoadableComponent<AdditionalInformationPage> implements CustomerAdditionalInfo {
 
 	public WebDriver driver;
 	WebDriverWrapper wrapper ;
@@ -38,11 +38,6 @@ public class AdditionalInformationPage extends LoadableComponent<AdditionalInfor
 	@FindBy(className = "TITLETEXTSTD")
 	WebElement lblAuthorisationPage;
 
-	@FindBy(name = "txtUserName")
-	WebElement txtAuthUsername;
-
-	@FindBy(name = "txtPassword")
-	WebElement txtAuthPwd;
 
 	@FindBy(xpath = "//*[contains(text(),'Reference Number')]/../following-sibling::td")
 	WebElement lblOrderRefNo;
@@ -84,8 +79,8 @@ public class AdditionalInformationPage extends LoadableComponent<AdditionalInfor
 	@Override
 	public void isLoaded(){
 		boolean isPageLoaded = false;
-		wrapper.waitForElementToBeDisplayed(txtOtherFee, timeOutPeriod);
-		if(txtOtherFee.isDisplayed()){
+		wrapper.waitForElementToBeDisplayed(txtTellerName, timeOutPeriod);
+		if(txtTellerName.isDisplayed()){
 			isPageLoaded = true;
 		}
 	}
@@ -93,14 +88,12 @@ public class AdditionalInformationPage extends LoadableComponent<AdditionalInfor
 	@Override
 	public void load(){
 		try {
-			wrapper.waitForElementToBeDisplayed(txtOtherFee, timeOutPeriod);
+			wrapper.waitForElementToBeDisplayed(txtTellerName, timeOutPeriod);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}	
 	}
 
-	// Added code if condition, need this for Single FC scenario
-	// Also added collectionCheck condition, required for Single Check scenario
 	public void enterAdditionalInfo(String CollectionCheck, String comments,String fee,String tellerName, String additionalInfo){
 		if ("YES".equalsIgnoreCase(CollectionCheck)) {
 			wrapper.waitForElementToBeDisplayed(rdoCollectionCheque, timeOutPeriod);
@@ -133,29 +126,10 @@ public class AdditionalInformationPage extends LoadableComponent<AdditionalInfor
 		}
 	}
 
-	public void clickOnNextBtn(){
-			btnNext.click();	
+	public CustomerAdditionalInfo clickOnNextBtn(){
+			btnNext.click();
+		return new OrderConfirmationPage(driver).get();	
 	}
-
-	public void authenticationRequired(String username, String pwd){
-		boolean isrequired = false;
-		try {
-			isrequired = txtAuthUsername.isDisplayed();
-		} catch (Exception ex) {
-			isrequired = false;
-		}
-		if (isrequired) {
-			wrapper.sendKeysUsingJavaScript(txtAuthUsername, username);
-			wrapper.sendKeysUsingJavaScript(txtAuthPwd, pwd);
-			clickOnNextBtn();
-		}
-	}
-
-	public String getConfirmationNum(){
-		String orderNo = lblOrderRefNo.getText().trim();
-		return orderNo;
-	}
-
 
 	public void enterAdditionalInfo(String deliveryType,String configAdditionalInfo, String comments,String otherfee,String tellerName,String alternateTellername,String deliveryCharge){
 		if (configAdditionalInfo.equalsIgnoreCase("Yes")) {

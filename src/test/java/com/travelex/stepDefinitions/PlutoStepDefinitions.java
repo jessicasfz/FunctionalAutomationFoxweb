@@ -5,6 +5,7 @@ import com.codoid.products.fillo.Connection;
 import com.travelex.framework.common.ConfigurationProperties;
 import com.travelex.framework.common.UpdateDataInExcel;
 import com.travelex.pluto.pages.AdditionalInformationPage;
+import com.travelex.pluto.pages.CustomerAdditionalInfo;
 import com.travelex.pluto.pages.CustomerDetailsPage;
 import com.travelex.pluto.pages.HomePage;
 import com.travelex.pluto.pages.LoginPage;
@@ -28,7 +29,6 @@ public class PlutoStepDefinitions {
 		HomePage homePage = loginPage.clickLogin(MasterDataReader.plutoDetails.get("Username"), MasterDataReader.plutoDetails.get("Password"), MasterDataReader.plutoDetails.get("Company"));
 		MasterDataReader.pageDetails.put("HomePage", homePage);
 	}
-
 
 	@And("^I select order type$")
 	public void i_select_order_type() {
@@ -56,23 +56,23 @@ public class PlutoStepDefinitions {
 			transactionPage.enterCustomerDetailsInPurchse(MasterDataReader.plutoDetails.get("Salutation"),MasterDataReader.plutoDetails.get("FirstName"),MasterDataReader.plutoDetails.get("LastName"));	
 		}
 		transactionPage.enterProductDetails(MasterDataReader.plutoDetails.get("MultipleCurrencies"));
-		transactionPage.clickOnNextBtn();
-		
+		CustomerAdditionalInfo customerAdditionalInfoPage = transactionPage.clickOnNextBtn(MasterDataReader.plutoDetails.get("TransType"),MasterDataReader.plutoDetails.get("CustomerType"));
+		MasterDataReader.pageDetails.put("CustomerAdditionalInfoPage", customerAdditionalInfoPage);
 	}
 
 	@And("^I enter customer detail$")
 	public void i_enter_customer_details() throws InterruptedException {
-		//Get Driver From transaction page return type 
-		CustomerDetailsPage customerDetailsPage = new CustomerDetailsPage(MasterDataReader.driver);
+		CustomerDetailsPage customerDetailsPage = (CustomerDetailsPage) MasterDataReader.pageDetails.get("CustomerAdditionalInfoPage"); 
 		customerDetailsPage.enterCustomerDeliveryDetails(MasterDataReader.plutoDetails.get("Salutation"),MasterDataReader.plutoDetails.get("FirstName"), MasterDataReader.plutoDetails.get("LastName"), 
 				MasterDataReader.plutoDetails.get("CollectionDate"),MasterDataReader.plutoDetails.get("DeliveryType"),MasterDataReader.plutoDetails.get("AwayBranchLocation"),MasterDataReader.plutoDetails.get("Address1"),
 				MasterDataReader.plutoDetails.get("Address2"),MasterDataReader.plutoDetails.get("State"),MasterDataReader.plutoDetails.get("Country"),MasterDataReader.plutoDetails.get("ZipCode"),MasterDataReader.plutoDetails.get("HomeTelephoneNo"));
-		customerDetailsPage.clickOnNextBtn();
+		CustomerAdditionalInfo customerAdditionalInfoPage = customerDetailsPage.clickOnNextBtn(MasterDataReader.plutoDetails.get("TransType"),MasterDataReader.plutoDetails.get("CustomerType"));
+		MasterDataReader.pageDetails.put("CustomerAdditionalInfoPage", customerAdditionalInfoPage);
 	}
 
 	@And("^I enter Company Additional Info$")
-	public void i_enter_Comapny_Additional_Info() { 
-		AdditionalInformationPage additionalInformationPage = new AdditionalInformationPage(MasterDataReader.driver);
+	public void i_enter_Comapny_Additional_Info() {
+		AdditionalInformationPage additionalInformationPage = (AdditionalInformationPage) MasterDataReader.pageDetails.get("CustomerAdditionalInfoPage");
 		if(MasterDataReader.scenario.getName().contains("purchase order")){
 			additionalInformationPage.enterAdditionalInfo(MasterDataReader.plutoDetails.get("CollectionCheck"),MasterDataReader.plutoDetails.get("Comments"), MasterDataReader.plutoDetails.get("OtherFee"), MasterDataReader.plutoDetails.get("TellerName"), MasterDataReader.plutoDetails.get("AdditionalInfo"));
 		}else if(MasterDataReader.scenario.getName().contains("Sale order")){
@@ -84,17 +84,14 @@ public class PlutoStepDefinitions {
 
 	@And("^I confirm the order$")
 	public void i_confirm_the_order() {
-		AdditionalInformationPage additionalInformationPage = (AdditionalInformationPage) MasterDataReader.pageDetails.get("AdditionalInformationPage");
-		additionalInformationPage.clickOnNextBtn();
-		additionalInformationPage.authenticationRequired(MasterDataReader.plutoDetails.get("AuthUname"),MasterDataReader.plutoDetails.get("AuthPwd"));
+
 	}
 
 	@And("^I get the reference number$")
 	public void i_get_the_reference_number() throws FilloException {
-		AdditionalInformationPage additionalInformationPage = (AdditionalInformationPage) MasterDataReader.pageDetails.get("AdditionalInformationPage");
-		String confirmationNum = additionalInformationPage.getConfirmationNum();
+		String confirmationNum = null;
 		UpdateDataInExcel up = new UpdateDataInExcel();
-		up.updateDataInExcel("PlutoDetails", "ReferenceNumber", confirmationNum, MasterDataReader.customerDetails.get("AutomationID"),connection);
+		up.updateDataInExcel("PultoDetails", "ReferenceNumber", confirmationNum, MasterDataReader.plutoDetails.get("AutomationID"),connection);
 		MasterDataReader.scenario.write("Order confirmation number is : "+ confirmationNum);		
 	}
 }
