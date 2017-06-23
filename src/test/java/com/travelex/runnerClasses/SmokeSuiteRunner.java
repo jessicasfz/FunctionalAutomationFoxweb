@@ -13,7 +13,7 @@ import com.travelex.stepDefinitions.SuiteLevelDesign;
 
 @CucumberOptions(plugin={"pretty", "html:target/cucumber-html-report","json:target/JsonReports/cucumber-report.json"},
 	dryRun=false,monochrome=true,
-	features ="src/test/resources/features/", tags={"@Pluto"},glue ="com.travelex.stepDefinitions")
+	features ="src/test/resources/features/", tags={"@GetQuoteFW1"},glue ="com.travelex.stepDefinitions")
 
 public class SmokeSuiteRunner extends SuiteLevelDesign {
    private TestNGCucumberRunner testNGCucumberRunner;

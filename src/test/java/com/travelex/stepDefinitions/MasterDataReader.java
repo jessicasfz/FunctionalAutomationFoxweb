@@ -2,7 +2,6 @@ package com.travelex.stepDefinitions;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,12 +28,8 @@ public class MasterDataReader {
 	public static WebDriver Ddriver;
 	public static Scenario scenario;
 		
-	public static Map<String,String> orderDetails;
-	public static Map<String,String> customerDetails;
-	public static Map<String,String> rapDetails;
 	public static Map<String,Object> pageDetails;
-	public static Map<String,String> plutoDetails;
-	public static ArrayList<HashMap<String,String>> txnDetails;
+	public static Map<String,String> foxwebOrderDetails;
 	
 	 @Before
 	    public void openBrowser(Scenario scenario) throws MalformedURLException,Throwable {    	
@@ -67,21 +62,14 @@ public class MasterDataReader {
 	        }        
 	        }
 	        Ddriver.quit();
-	        if(scenario.isFailed()){
-	        	driver.quit();
-	        }
+	        driver.quit();
 	        pageDetails.clear();
 	    }
 		
 	    @Given("^I read Excel data with AutomationID \"([^\"]*)\"$")
 		public void i_read_Excel_data_with_AutomationID(String automationID) throws IOException{
-			orderDetails = ExcelFileReader.readDataForAutomationID("OrderDetails",automationID);
-			customerDetails = ExcelFileReader.readDataForAutomationID("CustomerDetails",automationID);
-			rapDetails = ExcelFileReader.readDataForAutomationID("RAPDetails", automationID);
-			plutoDetails = ExcelFileReader.readDataForAutomationID("PultoDetails", automationID);
-			MasterDataReader.scenario.write("Order Details Data "+ MasterDataReader.orderDetails);
-			MasterDataReader.scenario.write("Customer Details Data "+ MasterDataReader.customerDetails);
-			MasterDataReader.scenario.write("RAP Details Data "+ MasterDataReader.rapDetails);
-			MasterDataReader.scenario.write("Pluto Details Data "+ MasterDataReader.plutoDetails);
+	    	foxwebOrderDetails = ExcelFileReader.readDataForAutomationID("FoxwebOrderDetails", automationID);
+			MasterDataReader.scenario.write("Foxweb Details Data "+ MasterDataReader.foxwebOrderDetails);
+			
 		}
 }

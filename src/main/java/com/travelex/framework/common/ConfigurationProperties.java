@@ -16,7 +16,6 @@ public class ConfigurationProperties {
 	public final static String Test_Data_Folder_Path = "Test_Data_File_Path";
 	public final static String Test_Data_SheetName = "SheetName";
 	public final static String REMOTE_SERVER_URL = "REMOTE_SERVER_URL";
-	public final static String COL_APPLICATION_URL = "COL_Application_URL";
 	public final static String LOG_LEVEL = "log_level";
 	public final static String LOG_FLAG = "log_flag";
 	public final static String SCREENSHOT_FLAG = "screenshot_flag";
@@ -29,8 +28,7 @@ public class ConfigurationProperties {
 	public final static String BROWSER_NAME ="browserName";
 	public final static String MAIL_LIST ="Mail_list";
 	public final static String CIF_Data_Folder_Path = "CIF_File_Path";
-	public final static String CHANGE_BRANCH_PARTNER_LIST = "Change_Branch_Partner_List";
-	public final static String PLUTO_APPLICATION_URL = "PLUTO_Application_URL";
+	public final static String FOXWEB_APPLICATION_URL_UAT = "Foxweb_Application_URL_UAT";
 
 	public ConfigurationProperties() {
 		properties = loadProperties();
