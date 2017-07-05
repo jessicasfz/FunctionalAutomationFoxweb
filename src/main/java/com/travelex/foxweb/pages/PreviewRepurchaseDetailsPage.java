@@ -23,7 +23,7 @@ import com.travelex.framework.utilities.RandomCodeGenerator;
 import com.travelex.stepDefinitions.MasterDataReader;
 
 @SuppressWarnings("unused")
-public class PreviewDetailsPage extends LoadableComponent<PreviewDetailsPage>{	
+public class PreviewRepurchaseDetailsPage extends LoadableComponent<PreviewRepurchaseDetailsPage>{	
 
 	private WebDriver driver;
 
@@ -37,11 +37,8 @@ public class PreviewDetailsPage extends LoadableComponent<PreviewDetailsPage>{
 	@FindBy(css="input[type='radio'][value='1']")
 	WebElement rdbSuspicious;
 	
-	@FindBy(id= "confirm_sell")
-	WebElement btnOrderConfirm;
-	
-	@FindBy(css=".hmhead")
-	WebElement previewPageTitle;
+	@FindBy(id= "confirm_buy")
+	WebElement btnRepurchaseConfirm;
 	
 	@FindBy(css="input[type='radio']")
 	WebElement spanSuspTrans;
@@ -55,7 +52,7 @@ public class PreviewDetailsPage extends LoadableComponent<PreviewDetailsPage>{
 	}
 
 
-	public PreviewDetailsPage(WebDriver driver) {
+	public PreviewRepurchaseDetailsPage(WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
 		wrapper = new WebDriverWrapper(driver);
@@ -64,24 +61,21 @@ public class PreviewDetailsPage extends LoadableComponent<PreviewDetailsPage>{
 	@Override
 	public void isLoaded(){
 		boolean isPageLoaded = false;
-		wrapper.waitForElementToBeDisplayed(previewPageTitle, timeOutPeriod);
-		String titlePreviewPage = previewPageTitle.getText();
-		if(titlePreviewPage.matches("Preview Your Order")){
+		wrapper.waitForElementToBeDisplayed(btnRepurchaseConfirm, timeOutPeriod);
+		if(btnRepurchaseConfirm.isDisplayed()){
 			isPageLoaded = true;
 		}
 	}
 
 
 
-	public boolean isPreviewOrderPageLoaded(){
-		boolean isPreviewOrderPageLoaded = false;
-		wrapper.waitForElementToBeDisplayed(previewPageTitle, timeOutPeriod);
-		String titlePreviewPage = previewPageTitle.getText();
-		System.out.println(titlePreviewPage);
-		if(titlePreviewPage.matches("Preview Your Order")){
-			isPreviewOrderPageLoaded = true;
+	public boolean isPreviewRepurchasePageLoaded(){
+		boolean isPreviewRepurchasePageLoaded = false;
+		wrapper.waitForElementToBeDisplayed(btnRepurchaseConfirm, timeOutPeriod);
+		if(btnRepurchaseConfirm.isDisplayed()){
+			isPreviewRepurchasePageLoaded = true;
 		}
-		return isPreviewOrderPageLoaded;
+		return isPreviewRepurchasePageLoaded;
 	}
 
 
@@ -101,17 +95,17 @@ public class PreviewDetailsPage extends LoadableComponent<PreviewDetailsPage>{
 
 			Boolean status = rdbNotSuspicious.isEnabled();
 			System.out.println("Status is" +status );
-			btnOrderConfirm.click();
+			btnRepurchaseConfirm.click();
 		}
 		else
 		{
 			rdbSuspicious.click();
-			btnOrderConfirm.click();
+			btnRepurchaseConfirm.click();
 		}
 
 	} 
 
-	public OrderConfirmationPage clickOnOrderConfirmationButton() {
+	public void clickOnRepurchaseConfirmationButton() {
 		
 		
 		try {
@@ -122,11 +116,13 @@ public class PreviewDetailsPage extends LoadableComponent<PreviewDetailsPage>{
 			
 			
 		} catch (Exception e) {
-			btnOrderConfirm.click();
+			btnRepurchaseConfirm.click();
 			e.printStackTrace();
 		}
-		return new OrderConfirmationPage(driver).get();
+
 
 	}
+
+	
 
 }

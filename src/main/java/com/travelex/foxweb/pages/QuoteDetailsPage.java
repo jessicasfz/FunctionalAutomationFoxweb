@@ -44,18 +44,18 @@ public class QuoteDetailsPage extends LoadableComponent<QuoteDetailsPage>{
 
 	@FindBy(name="forexAmt")
 	WebElement txtForeignAmount;
-	
+
 	@FindBy(css="#orderitem>table>tbody>tr:nth-child(1)>td:nth-child(1)")
 	WebElement labelQuote;
-	
+
 	@FindBy(id = "convert")
 	WebElement btnConvert;
-	
+
 	@FindBy(name="next1")
 	WebElement btnNext;
-	
 
-	
+
+
 
 	public QuoteDetailsPage(WebDriver driver) {
 		this.driver = driver;
@@ -73,7 +73,7 @@ public class QuoteDetailsPage extends LoadableComponent<QuoteDetailsPage>{
 	}
 
 
-	
+
 	public boolean isQuoteDetailsPageLoaded(){
 		boolean isQuoteDetailsPageLoaded = false;
 		if(labelQuote.isDisplayed()){
@@ -84,51 +84,31 @@ public class QuoteDetailsPage extends LoadableComponent<QuoteDetailsPage>{
 
 	public void enterQuoteDetails(String currency, String fgnamount) {
 		// TODO Auto-generated method stub
-		
+
 		Select selFgnCurrency  = new Select(selectForeignCurrency);
 		selFgnCurrency.selectByVisibleText(currency);
-		
+
 		txtForeignAmount.clear();
-		
-		driver.switchTo().alert().accept();
 		txtForeignAmount.sendKeys(fgnamount);
-		
+		driver.switchTo().alert().accept();
+	//	txtForeignAmount.sendKeys(fgnamount);
+
 		txtForeignAmount.sendKeys(Keys.TAB);
 		btnNext.click();
-		
-		
-		
-		 
-		
-		
-		
-		
-		
 	}
 
 	@Override
 	protected void load() {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	public boolean verifyQuoteDetailsisDisplayed() {
-		// TODO Auto-generated method stub
 		boolean verifyQuoteDetailsisDisplayed =false;
-		
-		
 		if(btnConvert.isDisplayed())
 		{
 			verifyQuoteDetailsisDisplayed = true;
 		}	
-			return verifyQuoteDetailsisDisplayed;
-		
-					
-		
-		
-		
-		
-		
+		return verifyQuoteDetailsisDisplayed;
 	}
 
 }

@@ -27,8 +27,6 @@ public class FoxwebHomePage extends LoadableComponent<FoxwebHomePage> {
 	private int timeOutPeriod = 30;
 	private int waitTime=300;
 
-
-
 	@FindBy(linkText = "Sign Out")
 	WebElement lnkLogout;
 
@@ -39,8 +37,22 @@ public class FoxwebHomePage extends LoadableComponent<FoxwebHomePage> {
 	WebElement lnkOrder;
 
 	@FindBy(name= "product")
-	WebElement selProduct;
+	WebElement drpdownselProduct;
+	
+	@FindBy(id="menu_CSCproc_prepareview")
+	WebElement lnkProcessTrans;
+	
+	@FindBy(linkText="Repurchase")
+	WebElement lnkRepurchase;
+	
+	@FindBy(name="currency")
+	WebElement drpdownselCurrency;
+	
+	@FindBy(id="main_next")
+	WebElement btnNext;
 
+	@FindBy(id="next")
+	WebElement btnNext1;
 
 	public FoxwebHomePage(WebDriver driver) {
 		this.driver = driver;
@@ -72,10 +84,10 @@ public class FoxwebHomePage extends LoadableComponent<FoxwebHomePage> {
 		return isHomePageLoaded;
 	}
 
-	public QuoteDetailsPage navigateToGetQuotePAge(String currencytype) {
+	public  QuoteDetailsPage navigateToGetQuotePAge(String currencytype) {
 
 		lnkQuote.click();
-		Select objSelPdct = new Select(selProduct);
+		Select objSelPdct = new Select(drpdownselProduct);
 		objSelPdct.selectByVisibleText(currencytype);
 		return new QuoteDetailsPage(driver).get();
 	}
@@ -83,11 +95,37 @@ public class FoxwebHomePage extends LoadableComponent<FoxwebHomePage> {
 	public OrderDetailsPage navigateToOrderPage(String currencytype) {
 		lnkOrder.click();
 		driver.findElement(By.className("next")).click();
-		Select objSelPdct = new Select(selProduct);
+		Select objSelPdct = new Select(drpdownselProduct);
 		objSelPdct.selectByVisibleText(currencytype);
 
 		return new OrderDetailsPage(driver).get();
 	}
 
+	public ProcessTransactionPage navigateToProcessTransactionPage() {
+		
+		lnkProcessTrans.click();
+		return new ProcessTransactionPage(driver).get();
+		
+	}
 
+	public RepurchaseDetailsPage navigateToRepurchasePage(String product,
+			String currency) {
+		lnkRepurchase.click();
+		
+		btnNext.click();
+		
+		Select selProduct = new Select(drpdownselProduct);
+		selProduct.selectByVisibleText(product);
+		
+		Select selCurrency = new Select(drpdownselCurrency);
+		selCurrency.selectByVisibleText(currency);
+		
+		
+		
+		return new RepurchaseDetailsPage(driver).get();
+	}
+	
+
+
+	
 }
