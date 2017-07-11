@@ -36,10 +36,10 @@ public class PreviewRepurchaseDetailsPage extends LoadableComponent<PreviewRepur
 
 	@FindBy(css="input[type='radio'][value='1']")
 	WebElement rdbSuspicious;
-	
+
 	@FindBy(id= "confirm_buy")
 	WebElement btnRepurchaseConfirm;
-	
+
 	@FindBy(css="input[type='radio']")
 	WebElement spanSuspTrans;
 
@@ -105,24 +105,25 @@ public class PreviewRepurchaseDetailsPage extends LoadableComponent<PreviewRepur
 
 	} 
 
-	public void clickOnRepurchaseConfirmationButton() {
-		
-		
+	public RepurchaseConfirmationPage clickOnRepurchaseConfirmationButton() {
+
+
 		try {
 			if(spanSuspTrans.isDisplayed())
 			{
 				selectSuspiciousTransaction(MasterDataReader.foxwebOrderDetails.get("SuspiciousTransactionType"));
 			}
-			
-			
+
+
 		} catch (Exception e) {
 			btnRepurchaseConfirm.click();
 			e.printStackTrace();
 		}
+		return new RepurchaseConfirmationPage(driver).get();
 
 
 	}
 
-	
+
 
 }

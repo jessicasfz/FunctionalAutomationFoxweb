@@ -12,6 +12,7 @@ import com.travelex.foxweb.pages.PreviewDetailsPage;
 import com.travelex.foxweb.pages.PreviewRepurchaseDetailsPage;
 import com.travelex.foxweb.pages.ProcessTransactionPage;
 import com.travelex.foxweb.pages.QuoteDetailsPage;
+import com.travelex.foxweb.pages.RepurchaseConfirmationPage;
 import com.travelex.foxweb.pages.RepurchaseDetailsPage;
 import com.travelex.framework.common.ConfigurationProperties;
 import com.travelex.framework.common.UpdateDataInExcel;
@@ -53,11 +54,24 @@ public class FoxwebRepurchaseStepDefinition {
 	@Then("^I click on Repurchase Confirmation$")
 	public void i_click_on_Repurchase_Confirmation() throws Throwable {
 		PreviewRepurchaseDetailsPage previewRepurchaseDetailsPage = (PreviewRepurchaseDetailsPage)MasterDataReader.pageDetails.get("PreviewRepurchaseDetailsPage");
-		previewRepurchaseDetailsPage.clickOnRepurchaseConfirmationButton();
+		RepurchaseConfirmationPage repurchaseConfirmPage =previewRepurchaseDetailsPage.clickOnRepurchaseConfirmationButton();
+		MasterDataReader.pageDetails.put("RepurchaseConfirmationPage", repurchaseConfirmPage);
 	}
 
 	@Then("^I get the Repurchase Confirmation Success message$")
 	public void i_get_the_Repurchase_Confirmation_Success_message() throws Throwable {
+		RepurchaseConfirmationPage repurchaseConfirmPage = (RepurchaseConfirmationPage)MasterDataReader.pageDetails.get("RepurchaseConfirmationPage");
+		boolean status = repurchaseConfirmPage.verifyRepurchaseConfirmationSuccessMessageIsDisplayed();
+		Assert.assertTrue(status);
+		boolean statusOrder = repurchaseConfirmPage.verifyRepurchaseNumberIsGenerated();
+
+		UpdateDataInExcel up = new UpdateDataInExcel();
+
+		up.updateDataInExcel("FoxwebOrderDetails", "OrderNo", repurchaseConfirmPage.OrderNo, MasterDataReader.foxwebOrderDetails.get("AutomationID"),connection);
+		up.updateDataInExcel("FoxwebOrderDetails", "OrderStatus", repurchaseConfirmPage.txtOrderStatusSt, MasterDataReader.foxwebOrderDetails.get("AutomationID"),connection);
+		Assert.assertTrue(statusOrder);
+		MasterDataReader.pageDetails.put("RepurchaseConfirmationPage", repurchaseConfirmPage);
+
 	}
 
 

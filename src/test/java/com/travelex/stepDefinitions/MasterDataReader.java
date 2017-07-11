@@ -21,55 +21,66 @@ import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 
 public class MasterDataReader {
-	
+
 	ConfigurationProperties configurationProperties = ConfigurationProperties.getInstance();
 	public static EnvironmentParameter environmentParameter;
 	public static WebDriver driver;
 	public static WebDriver Ddriver;
 	public static Scenario scenario;
-		
+
 	public static Map<String,Object> pageDetails;
 	public static Map<String,String> foxwebOrderDetails;
-	
-	 @Before
-	    public void openBrowser(Scenario scenario) throws MalformedURLException,Throwable {    	
-			String platform = configurationProperties.getProperty(ConfigurationProperties.PLATFORM);
-			String browserName = configurationProperties.getProperty(ConfigurationProperties.BROWSER_NAME);
-			String browserVersion = configurationProperties.getProperty(ConfigurationProperties.BROWSER_VERSION);		
-			environmentParameter = new EnvironmentParameter();
-			environmentParameter.setBrowserName(browserName);
-			environmentParameter.setBrowserVersion(browserVersion);
-			environmentParameter.setPlatform(platform);	
-			WebDriverFactory factory = new WebDriverFactory();
-			driver = factory.get(environmentParameter);
-			Ddriver = driver;
-			MasterDataReader.scenario = scenario;
-			pageDetails = new HashMap<String, Object>();
-	    }
-	   
-	    /**
-	     * Embed a screenshot in test report if test is marked as failed
-	     */
-	    
-	    @After
-	    public void embedScreenshot(Scenario scenario) {
-	        if(scenario.isFailed()) {
-	        try {
-	            byte[] screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.BYTES);
-	            scenario.embed(screenshot, "image/png");
-	        } catch (WebDriverException somePlatformsDontSupportScreenshots) {
-	            System.err.println(somePlatformsDontSupportScreenshots.getMessage());
-	        }        
-	        }
-	        Ddriver.quit();
-	        driver.quit();
-	        pageDetails.clear();
-	    }
-		
-	    @Given("^I read Excel data with AutomationID \"([^\"]*)\"$")
-		public void i_read_Excel_data_with_AutomationID(String automationID) throws IOException{
-	    	foxwebOrderDetails = ExcelFileReader.readDataForAutomationID("FoxwebOrderDetails", automationID);
-			MasterDataReader.scenario.write("Foxweb Details Data "+ MasterDataReader.foxwebOrderDetails);
-			
+	public static Map<String,String> StandardIDDetails;
+
+	@Before
+	public void openBrowser(Scenario scenario) throws MalformedURLException,Throwable {    	
+		String platform = configurationProperties.getProperty(ConfigurationProperties.PLATFORM);
+		String browserName = configurationProperties.getProperty(ConfigurationProperties.BROWSER_NAME);
+		String browserVersion = configurationProperties.getProperty(ConfigurationProperties.BROWSER_VERSION);		
+		environmentParameter = new EnvironmentParameter();
+		environmentParameter.setBrowserName(browserName);
+		environmentParameter.setBrowserVersion(browserVersion);
+		environmentParameter.setPlatform(platform);	
+		WebDriverFactory factory = new WebDriverFactory();
+		driver = factory.get(environmentParameter);
+		Ddriver = driver;
+		MasterDataReader.scenario = scenario;
+		pageDetails = new HashMap<String, Object>();
+	}
+
+	/**
+	 * Embed a screenshot in test report if test is marked as failed
+	 */
+
+	@After
+	public void embedScreenshot(Scenario scenario) {
+		if(scenario.isFailed()) {
+			try {
+				byte[] screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.BYTES);
+				scenario.embed(screenshot, "image/png");
+			} catch (WebDriverException somePlatformsDontSupportScreenshots) {
+				System.err.println(somePlatformsDontSupportScreenshots.getMessage());
+			}        
 		}
+		Ddriver.quit();
+		driver.quit();
+		pageDetails.clear();
+	}
+
+	@Given("^I read Excel data with AutomationID \"([^\"]*)\"$")
+	public void i_read_Excel_data_with_AutomationID(String automationID) throws IOException{
+		foxwebOrderDetails = ExcelFileReader.readDataForAutomationID("FoxwebOrderDetails", automationID);
+		
+		try {
+			StandardIDDetails = ExcelFileReader.readDataForAutomationID("StandardIDDetails", automationID);
+			MasterDataReader.scenario.write("StandardID Details Data "+ MasterDataReader.StandardIDDetails);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		MasterDataReader.scenario.write("Foxweb Details Data "+ MasterDataReader.foxwebOrderDetails);
+		
+		
+		
+	}
 }

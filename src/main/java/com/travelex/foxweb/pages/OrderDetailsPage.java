@@ -69,6 +69,9 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 	@FindBy(linkText= "Confirm  ")
 	WebElement lnkConfirm;
 
+	@FindBy(id= "skipIdCheckBox")
+	WebElement chkboxSkipId;
+	
 	@FindBy(id="id1")
 	WebElement selPrivacyScript;
 
@@ -177,57 +180,53 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 
 	public void enterStandardIDDetails() {
 		btnNext1.click();
+		String skipidcheck = MasterDataReader.foxwebOrderDetails.get("SkipId");
+		if (skipidcheck.equals("Yes"))
+				{
+				chkboxSkipId.click();
+				driver.findElement(By.id("skipIdReasonTextBox")).sendKeys("ID Check Not Required");
+				driver.findElement(By.id("continueLink")).click();
+				}		
+		else
+		{
+		//btnNext1.click();
 		lnkPassport.click();
-		//if(!MasterDataReader.StandardIDDetails.keySet().isEmpty()){
+		//if(!MasterDataReader.StandardIDDetails.isEmpty()){
 		Select objSelPrivacyScript = new Select(selPrivacyScript);
-		//objSelPrivacyScript.selectByValue("Yes");
-
 		objSelPrivacyScript.selectByValue(MasterDataReader.StandardIDDetails.get("PleaseSelect"));
-
-
-		//txtFname.sendKeys("Fname");
 		txtFname.sendKeys(MasterDataReader.StandardIDDetails.get("Fname"));
-		//txtLname.sendKeys("Lname");
 		txtLname.sendKeys(MasterDataReader.StandardIDDetails.get("Lname"));
-		//txtDOB.sendKeys("02/02/2000");
 		txtDOB.sendKeys(MasterDataReader.StandardIDDetails.get("DOB"));
-		//txtIdNo.sendKeys("AutoID01");
 		txtIdNo.sendKeys(MasterDataReader.StandardIDDetails.get("IDNo"));
 		Select objCountryIssue = new Select(selCountryOfIssue);
-		//objCountryIssue.selectByVisibleText("Australia");
 		objCountryIssue.selectByVisibleText(MasterDataReader.StandardIDDetails.get("CountryOfIssue"));
-		//txtExpiryDate.sendKeys("10/08/2020");
 		txtExpiryDate.sendKeys(MasterDataReader.StandardIDDetails.get("ExpiryDate"));
-		//txtStrAddress1.sendKeys("SAL1");
 		txtStrAddress1.sendKeys(MasterDataReader.StandardIDDetails.get("SAL1"));
-		//txtStrAddress2.sendKeys("SAL2");
 		txtStrAddress2.sendKeys(MasterDataReader.StandardIDDetails.get("SAL2"));
-		//txtCity.sendKeys("City");
 		txtCity.sendKeys(MasterDataReader.StandardIDDetails.get("City"));
-		//txtState.sendKeys("State");
 		txtState.sendKeys(MasterDataReader.StandardIDDetails.get("State"));
-		//txtPostCode.sendKeys("909999");
 		txtPostCode.sendKeys(MasterDataReader.StandardIDDetails.get("PostCode"));
 		Select objCountryRefuse = new Select(selAddCountry);
-		//objCountryRefuse.selectByVisibleText("Australia");
 		objCountryRefuse.selectByVisibleText(MasterDataReader.StandardIDDetails.get("CountryOfIssue"));
 		lnkConfirm.click();
 		driver.findElement(By.id("continueLink")).click();
 	}
+		}
+	
 
-@Override
-protected void load() {
-}
+	@Override
+	protected void load() {
+	}
 
-public boolean verifyQuoteDetailsisDisplayed() {
-	boolean verifyQuoteDetailsisDisplayed =false;
-	if(btnConvert.isDisplayed())
-	{
-		verifyQuoteDetailsisDisplayed = true;
-	}	
-	return verifyQuoteDetailsisDisplayed;
+	public boolean verifyQuoteDetailsisDisplayed() {
+		boolean verifyQuoteDetailsisDisplayed =false;
+		if(btnConvert.isDisplayed())
+		{
+			verifyQuoteDetailsisDisplayed = true;
+		}	
+		return verifyQuoteDetailsisDisplayed;
 
-}
+	}
 
 
 

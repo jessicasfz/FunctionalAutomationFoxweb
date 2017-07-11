@@ -87,12 +87,10 @@ public class QuoteDetailsPage extends LoadableComponent<QuoteDetailsPage>{
 
 		Select selFgnCurrency  = new Select(selectForeignCurrency);
 		selFgnCurrency.selectByVisibleText(currency);
-
 		txtForeignAmount.clear();
-		txtForeignAmount.sendKeys(fgnamount);
 		driver.switchTo().alert().accept();
-	//	txtForeignAmount.sendKeys(fgnamount);
-
+		txtForeignAmount.sendKeys(fgnamount);
+		txtForeignAmount.sendKeys(Keys.TAB);
 		txtForeignAmount.sendKeys(Keys.TAB);
 		btnNext.click();
 	}
