@@ -26,8 +26,10 @@ And I get the Order Confirmation Success message
 
 Examples:
 |AutomationId|
-|AutoFoxWebPO_01|
-#|AutoFoxWebPO_02|
+|AutoFoxWebPO_18|
+|AutoFoxWebPO_20|
+|AutoFoxWebPO_12|
+|AutoFoxWebPO_13|
 
 
 @ConfirmOrder @SmokeFW @Regression
