@@ -29,6 +29,7 @@ public class ConfigurationProperties {
 	public final static String MAIL_LIST ="Mail_list";
 	public final static String CIF_Data_Folder_Path = "CIF_File_Path";
 	public final static String FOXWEB_APPLICATION_URL_UAT = "Foxweb_Application_URL_UAT";
+	public final static String FOXWEB_APPLICATION_URL_SIT = "Foxweb_Application_URL_SIT";
 
 	public ConfigurationProperties() {
 		properties = loadProperties();

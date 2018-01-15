@@ -10,7 +10,6 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.LoadableComponent;
 import org.openqa.selenium.support.ui.Select;
 
-
 import com.travelex.framework.common.WebDriverWrapper;
 import com.travelex.stepDefinitions.MasterDataReader;
 
@@ -116,7 +115,7 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 	@FindBy(id="addinfoid9")//Added by Author @jachakN
 	WebElement txtSourceOfFundsExplanation;
 	
-	@FindBy(id= "addinfoid10") //Added by Author @jachakN
+	@FindBy(id= "addinfoid11") //Added by Author @jachakN
 	WebElement txtPurposeOfTransaction;
 		
 	 @FindBy(xpath ="//div[@id='contentDiv']/div[1]") //Added by Author @jachakN
@@ -134,7 +133,14 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 	  @FindBy(name= "forexAmt") //Added by Author @jachakN
 	  WebElement txtAmountStockNull;
 	  
+	  @FindBy(name= "atcountry") //Added by Author @jachakN for TT and draft product
+	  WebElement selSenderCountry;
 	  
+	  @FindBy(name= "bankcountry")//Added by Author @jachakN for TT and draft product
+	  WebElement selBankCountry;
+	  
+	  @FindBy(name= "payeecountry")//Added by Author @jachakN for TT and draft product
+	  WebElement selBeneficiaryCountry;
 	
 
 	public OrderDetailsPage(WebDriver driver) {
@@ -163,20 +169,41 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 	}
 
 	
-
+	
 	public  PreviewDetailsPage enterOrderDetails(String currency, String fgnamount, String custName) {
 		
-
-		Select selFgnCurrency  = new Select(selectForeignCurrency);
-		selFgnCurrency.selectByVisibleText(currency);
-		selectForeignCurrency.sendKeys(Keys.TAB);
-		txtForeignAmount.clear();
-		driver.switchTo().alert().accept();
-		txtForeignAmount.sendKeys(fgnamount);
-		txtForeignAmount.sendKeys(Keys.TAB);
-		txtCustName.clear();
-		txtCustName.sendKeys(custName);
-		btnNext.click();   
+		String productType = MasterDataReader.foxwebOrderDetails.get("ProductType");
+		
+		boolean isProductTypeForeignCash = false;
+	
+		if ("Foreign Cash".equals(productType)){
+			
+			enterOrderDetailsForeignCash(currency, fgnamount, custName);
+			
+				
+		}
+		else if ("Telegraphic Transfer".equals(productType)){
+			isProductTypeForeignCash = true;
+			
+			enterOrderDetailsTelegraphicTransfer(currency, fgnamount);
+		}
+		
+		else if ("Draft".equals(productType)){
+			
+			isProductTypeForeignCash = true;
+			
+			enterOrderDetailsDraft(currency, fgnamount);
+			
+			
+		}
+		
+		btnNext.click(); 
+		
+		/**@author jachakN
+		*Added method for product TT and draft
+		**/
+		
+		 
 		
 		/**
 		 * @author jachakN
@@ -184,18 +211,26 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 		 * Added method for handling pop up for processing via External Till
 		 */
 		
-
-		try{
 			
-			driver.switchTo().alert().accept();
 			
-			}catch(Exception e){
-
+					
+			if (!isProductTypeForeignCash)	{
+				
+				try {
+					driver.switchTo().alert().accept();
+					} 
+				
+				catch (Exception e) {
+					/*// TODO Auto-generated catch block
+					e.printStackTrace();*/
+				}
+								
+				checkForOutOfStockEntity();
+				
+				btnNext.click();  //This is the Denomination Screen
+				
 			}
-		
-		checkForOutOfStockEntity();
-		
-		btnNext.click();  //This is the Denomination Screen 
+				 
 			
 		
 		
@@ -203,24 +238,22 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 			if(msgError.isDisplayed())
 			{
 				
-				enterStandardIDDetails();
+				enterStandardIDDetails(productType);
 			}
 			
 
 		} catch (Exception e) {
 			e.printStackTrace();			
 			btnNext1.click();
-			
-					
+							
 		}
-
 
 		//btnNext1.click();
 		return new PreviewDetailsPage(driver).get();
 
 	}
 
-	public void enterStandardIDDetails() {
+	public void enterStandardIDDetails(String productType) {
 		
 	
 		wrapper.waitForElementToBeDisplayed(btnNext1, 30);
@@ -253,7 +286,7 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 			else
 			{
 				//btnNext1.click();
-			
+				if ("Foreign Cash".equals(productType)){
 				lnkPassport.click();
 				//if(!MasterDataReader.StandardIDDetails.isEmpty()){
 				Select objSelPrivacyScript = new Select(selPrivacyScript);
@@ -288,6 +321,39 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 					txtSourceOfFundsExplanation.sendKeys(MasterDataReader.StandardIDDetails.get("SourceOfFundsExplanation"));
 					txtPurposeOfTransaction.sendKeys(MasterDataReader.StandardIDDetails.get("PurposeOfTransaction"));
 				}
+				}
+				
+				else if ("Telegraphic Transfer".equals(productType) || ("Draft".equals(productType))){
+					lnkPassport.click();
+					driver.findElement(By.id("id1")).sendKeys(MasterDataReader.StandardIDDetails.get("Fname"));
+					driver.findElement(By.id("id3")).sendKeys(MasterDataReader.StandardIDDetails.get("Lname"));
+					driver.findElement(By.id("id4")).sendKeys(MasterDataReader.StandardIDDetails.get("DOB"));
+					driver.findElement(By.id("id5")).sendKeys(MasterDataReader.StandardIDDetails.get("IDNo"));
+					Select objCountryIssueTT = new Select(driver.findElement(By.id("id6")));
+					objCountryIssueTT.selectByVisibleText(MasterDataReader.StandardIDDetails.get("CountryOfIssue"));
+					driver.findElement(By.id("id7")).sendKeys(MasterDataReader.StandardIDDetails.get("ExpiryDate"));
+					driver.findElement(By.id("addinfoid1")).sendKeys(MasterDataReader.StandardIDDetails.get("SAL1"));
+					driver.findElement(By.id("addinfoid2")).sendKeys(MasterDataReader.StandardIDDetails.get("SAL2"));
+					driver.findElement(By.id("addinfoid3")).sendKeys(MasterDataReader.StandardIDDetails.get("City"));
+					driver.findElement(By.id("addinfoid4")).sendKeys(MasterDataReader.StandardIDDetails.get("State"));
+					driver.findElement(By.id("addinfoid5")).sendKeys(MasterDataReader.StandardIDDetails.get("PostCode"));
+					Select objCountryRefuseTT = new Select(driver.findElement(By.id("addinfoid6")));
+					objCountryRefuseTT.selectByVisibleText(MasterDataReader.StandardIDDetails.get("CountryOfIssue"));
+					
+					if(isDisplayAdditionalFields()){
+						
+						Select objAddNationalityTT = new Select(driver.findElement(By.id("addinfoid7")));
+						objAddNationalityTT.selectByVisibleText(MasterDataReader.StandardIDDetails.get("AdditionalNationality"));
+						Select objOccupationTT = new Select(driver.findElement(By.id("addinfoid8")));
+						objOccupationTT.selectByVisibleText(MasterDataReader.StandardIDDetails.get("Occupation"));						
+						driver.findElement(By.id("addinfoid9")).sendKeys(MasterDataReader.StandardIDDetails.get("SourceOfFundsExplanation"));
+						driver.findElement(By.id("addinfoid11")).sendKeys(MasterDataReader.StandardIDDetails.get("PurposeOfTransaction"));
+					}
+				}
+				
+				/**Author @jachakN
+				Added standardID details method for TT and draft
+				*/
 				
 				lnkConfirm.click();
 				driver.findElement(By.id("continueLink")).click();
@@ -387,6 +453,74 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 				throw new RuntimeException("Out of Stock");
 		}
 	}
+	
+	public void enterOrderDetailsForeignCash(String currency, String fgnamount, String custName) {
+		
+		Select selFgnCurrency  = new Select(selectForeignCurrency);
+		selFgnCurrency.selectByVisibleText(currency);
+		selectForeignCurrency.sendKeys(Keys.TAB);
+		txtForeignAmount.clear();
+		driver.switchTo().alert().accept();
+		txtForeignAmount.sendKeys(fgnamount);
+		txtForeignAmount.sendKeys(Keys.TAB);
+		txtCustName.clear();
+		txtCustName.sendKeys(custName);
+		 
+	}
+	
+	public void enterOrderDetailsTelegraphicTransfer(String currency, String fgnamount) {
+		Select selFgnCurrency  = new Select(selectForeignCurrency);
+		selFgnCurrency.selectByVisibleText(currency);
+		selectForeignCurrency.sendKeys(Keys.TAB);
+		//txtForeignAmount.clear();
+		//driver.switchTo().alert().accept();
+		txtForeignAmount.sendKeys(fgnamount);
+		driver.findElement(By.name("customer")).sendKeys(MasterDataReader.foxwebOrderDetails.get("SendingClientFullName"));
+		driver.findElement(By.name("senderaccount")).sendKeys(MasterDataReader.foxwebOrderDetails.get("SendersAccount"));
+		driver.findElement(By.name("ataddr1")).sendKeys(MasterDataReader.foxwebOrderDetails.get("Sender'sStreetAddress"));
+		driver.findElement(By.name("atcity")).sendKeys(MasterDataReader.foxwebOrderDetails.get("Sender'sCity"));
+		driver.findElement(By.name("atstate")).sendKeys(MasterDataReader.foxwebOrderDetails.get("Sender'sState"));
+		driver.findElement(By.name("atpcode")).sendKeys(MasterDataReader.foxwebOrderDetails.get("Sender'sPostcode"));
+		Select selSndrCountry = new Select(selSenderCountry);
+		selSndrCountry.selectByVisibleText(MasterDataReader.foxwebOrderDetails.get("Sender'sCountry"));		
+		driver.findElement(By.name("atphone")).sendKeys(MasterDataReader.foxwebOrderDetails.get("Sender'sPhone"));
+		driver.findElement(By.name("swiftcode")).sendKeys(MasterDataReader.foxwebOrderDetails.get("BeneficiaryBankSwiftCode"));
+		driver.findElement(By.name("bankcode")).sendKeys(MasterDataReader.foxwebOrderDetails.get("BeneficiaryBankCode"));
+		driver.findElement(By.name("bank")).sendKeys(MasterDataReader.foxwebOrderDetails.get("BeneficiaryBankName"));
+		driver.findElement(By.name("address1")).sendKeys(MasterDataReader.foxwebOrderDetails.get("BeneficiaryBankAddress"));
+		driver.findElement(By.name("bankcity")).sendKeys(MasterDataReader.foxwebOrderDetails.get("BeneficiaryBankCity"));
+		Select selBnkCountry = new Select(selBankCountry);
+		selBnkCountry.selectByVisibleText(MasterDataReader.foxwebOrderDetails.get("BeneficiaryBankCountry"));		
+		driver.findElement(By.name("account")).sendKeys(MasterDataReader.foxwebOrderDetails.get("BeneficiaryBankAccountNo/IBAN"));
+		driver.findElement(By.name("payee")).sendKeys(MasterDataReader.foxwebOrderDetails.get("BeneficiaryFullName"));
+		driver.findElement(By.name("altaddress1")).sendKeys(MasterDataReader.foxwebOrderDetails.get("Beneficiary'sStreetAddress"));
+		driver.findElement(By.name("payeecity")).sendKeys(MasterDataReader.foxwebOrderDetails.get("Beneficiary'sSuburb/City/Town"));
+		driver.findElement(By.name("payeestate")).sendKeys(MasterDataReader.foxwebOrderDetails.get("Beneficiary'sState"));
+		driver.findElement(By.name("payeepostcode")).sendKeys(MasterDataReader.foxwebOrderDetails.get("Beneficiary'sPostcode"));
+		Select selBnfciaryCountry = new Select(selBeneficiaryCountry);
+		selBnfciaryCountry.selectByVisibleText(MasterDataReader.foxwebOrderDetails.get("Beneficiary'sCountry"));
+	}
+	
+	public void enterOrderDetailsDraft(String currency, String fgnamount){
+		Select selFgnCurrency  = new Select(selectForeignCurrency);
+		selFgnCurrency.selectByVisibleText(currency);
+		selectForeignCurrency.sendKeys(Keys.TAB);
+		//txtForeignAmount.clear();
+		//driver.switchTo().alert().accept();
+		txtForeignAmount.sendKeys(fgnamount);
+		driver.findElement(By.name("customer")).sendKeys(MasterDataReader.foxwebOrderDetails.get("SendingClientFullName"));
+		driver.findElement(By.name("ataddr1")).sendKeys(MasterDataReader.foxwebOrderDetails.get("Sender'sStreetAddress"));
+		driver.findElement(By.name("atcity")).sendKeys(MasterDataReader.foxwebOrderDetails.get("Sender'sCity"));
+		driver.findElement(By.name("atstate")).sendKeys(MasterDataReader.foxwebOrderDetails.get("Sender'sState"));
+		driver.findElement(By.name("atpcode")).sendKeys(MasterDataReader.foxwebOrderDetails.get("Sender'sPostcode"));
+		Select selSndrCountry = new Select(selSenderCountry);
+		selSndrCountry.selectByVisibleText(MasterDataReader.foxwebOrderDetails.get("Sender'sCountry"));	
+		driver.findElement(By.name("payee")).sendKeys(MasterDataReader.foxwebOrderDetails.get("BeneficiaryFullName"));
+	}
+	
+	/**Author @jachakN
+	Added Enter order details method for TT and draft
+	*/
 	
 	
 	}
