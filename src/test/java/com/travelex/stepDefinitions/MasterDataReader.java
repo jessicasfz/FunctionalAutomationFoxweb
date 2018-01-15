@@ -31,6 +31,7 @@ public class MasterDataReader {
 	public static Map<String,Object> pageDetails;
 	public static Map<String,String> foxwebOrderDetails;
 	public static Map<String,String> StandardIDDetails;
+	public static Map<String,String> UserCreationDetails;//Added by jachakN for user creation
 
 	@Before
 	public void openBrowser(Scenario scenario) throws MalformedURLException,Throwable {    	
@@ -76,8 +77,16 @@ public class MasterDataReader {
 			MasterDataReader.scenario.write("StandardID Details Data "+ MasterDataReader.StandardIDDetails);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+		
+		try {
+			UserCreationDetails = ExcelFileReader.readDataForAutomationID("UserCreationDetails", automationID);
+			MasterDataReader.scenario.write("UserCreationDetails Details Data "+ MasterDataReader.UserCreationDetails);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+		}
+		
+		
 		MasterDataReader.scenario.write("Foxweb Details Data "+ MasterDataReader.foxwebOrderDetails);
 		
 		
