@@ -1,21 +1,14 @@
 package com.travelex.foxweb.pages;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.LoadableComponent;
 import org.openqa.selenium.support.ui.Select;
-import org.testng.Assert;
-import org.testng.Reporter;
 
 import com.travelex.framework.common.WebDriverWrapper;
-import com.travelex.framework.utilities.WebdriverWrapper;
 
 
 @SuppressWarnings("unused")
@@ -53,6 +46,12 @@ public class FoxwebHomePage extends LoadableComponent<FoxwebHomePage> {
 
 	@FindBy(id="next")
 	WebElement btnNext1;
+	
+	@FindBy(linkText = "Administration")
+	WebElement lnkAdministration;
+	
+	@FindBy(className= "button")
+	WebElement btnWorkPlace; //added by jachakN for workplace exception
 
 	public FoxwebHomePage(WebDriver driver) {
 		this.driver = driver;
@@ -92,11 +91,11 @@ public class FoxwebHomePage extends LoadableComponent<FoxwebHomePage> {
 		return new QuoteDetailsPage(driver).get();
 	}
 
-	public OrderDetailsPage navigateToOrderPage(String currencytype) {
+	public OrderDetailsPage navigateToOrderPage(String productType) {
 		lnkOrder.click();
 		driver.findElement(By.className("next")).click();
 		Select objSelPdct = new Select(drpdownselProduct);
-		objSelPdct.selectByVisibleText(currencytype);
+		objSelPdct.selectByVisibleText(productType);
 
 		return new OrderDetailsPage(driver).get();
 	}
@@ -124,8 +123,31 @@ public class FoxwebHomePage extends LoadableComponent<FoxwebHomePage> {
 		
 		return new RepurchaseDetailsPage(driver).get();
 	}
-	
 
+	public UserMaintenanceAdminPage navigateToUserCreationAdminPage() {
+		try {
+			if(btnWorkPlace.isDisplayed()){
+				
+				btnWorkPlace.click();
+				lnkAdministration.click();
+			}
+		} catch (Exception e) {
+			
+			lnkAdministration.click();
+		}
+		
+			
+			
+		
+		
+		
+		return new UserMaintenanceAdminPage(driver).get();
+	}
+	
+	/**
+	 * @author jachakN
+	 * For Creating User
+	 */
 
 	
 }

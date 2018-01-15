@@ -103,7 +103,7 @@ public class RepurchaseDetailsPage extends LoadableComponent<RepurchaseDetailsPa
 			if(msgError.isDisplayed())
 			{
 				OrderDetailsPage obj = new OrderDetailsPage(driver);
-				obj.enterStandardIDDetails();
+			//to be modified--	obj.enterStandardIDDetails();
 			}
 
 		} catch (Exception e) {

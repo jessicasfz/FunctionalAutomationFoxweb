@@ -41,7 +41,9 @@ public class OrderConfirmationPage extends LoadableComponent<OrderConfirmationPa
 	@FindBy(xpath = "//td[contains(.,'Your Order Number is')]")
 	WebElement txtOrderConfirmation;
 	
-	@FindBy(xpath="//table[@class='costingColor']/tbody/tr[2]/td/table[1]/tbody/tr[2]/td[10]")
+	//@FindBy(xpath="//table[@class='costingColor']/tbody/tr[2]/td/table[1]/tbody/tr[2]/td[10]")
+	@FindBy(css=".order-item-list>tbody>tr:nth-child(2)>td:nth-child(10)")
+	
 	WebElement statusOrder;
 
 	public WebDriver getDriver() {
@@ -104,6 +106,8 @@ public class OrderConfirmationPage extends LoadableComponent<OrderConfirmationPa
 		
 		WebElement btnnext = driver.findElement(By.xpath("//a[@class='next']"));
 		btnnext.click();
+		
+		wrapper.waitForElementToBeDisplayed(statusOrder, 30);
 		
 		txtOrderStatusSt = statusOrder.getText();
 		
