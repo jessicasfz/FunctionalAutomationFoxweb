@@ -11,6 +11,7 @@ import com.travelex.foxweb.pages.OrderDetailsPage;
 import com.travelex.foxweb.pages.PreviewDetailsPage;
 import com.travelex.foxweb.pages.ProcessTransactionPage;
 import com.travelex.foxweb.pages.QuoteDetailsPage;
+import com.travelex.foxweb.pages.UserMaintenanceAdminPage;
 import com.travelex.framework.common.ConfigurationProperties;
 import com.travelex.framework.common.UpdateDataInExcel;
 
@@ -18,6 +19,7 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import cucumber.api.java.it.Ma;
 
 public class FoxwebLoginPageStepDefinition {
 
@@ -57,10 +59,6 @@ public class FoxwebLoginPageStepDefinition {
 		Assert.assertTrue(flag);
 	}
 
-	@When("^I click on Convert Button$")
-	public void i_click_on_Convert_Button() throws Throwable {
-		// Write code here that turns the phrase above into concrete actions
-	}
 
 	@When("^I enter the Customer Details$")
 	public void i_enter_the_Customer_Details() throws Throwable {
@@ -91,6 +89,13 @@ public class FoxwebLoginPageStepDefinition {
 		MasterDataReader.pageDetails.put("PreviewDetailsPage", previewDetailsPage);
 	}
 
+	/*@When("^I enter the Order Details with Payment type$")
+	public void i_enter_the_Order_Details_with_Payment_type() throws Throwable {
+		OrderDetailsPage orderDetailsPage = (OrderDetailsPage)MasterDataReader.pageDetails.get("OrderDetailsPage");
+		PreviewDetailsPage previewDetailsPage = orderDetailsPage.enterOrderDetails(MasterDataReader.foxwebOrderDetails.get("ForeignCurrency"),MasterDataReader.foxwebOrderDetails.get("ForeignAmount"),MasterDataReader.foxwebOrderDetails.get("CustomerName"));
+		MasterDataReader.pageDetails.put("PreviewDetailsPage", previewDetailsPage);	   
+	}*/
+	
 	@And("^I select Suspicious Transaction$")
 	public void i_select_Suspicious_Transaction() throws Throwable {
 		PreviewDetailsPage previewDetailsPage = (PreviewDetailsPage)MasterDataReader.pageDetails.get("PreviewDetailsPage");
@@ -150,6 +155,41 @@ public class FoxwebLoginPageStepDefinition {
 		boolean OrderStatus = processTransactionpage.verifyProcessTransactionConfirmationmessage();
 		Assert.assertTrue(OrderStatus);
 	}
+	
+	/**
+	 * @author jachakN
+	 * @throws Throwable
+	 */
+	
+	@When("^I navigate to User Maintenance page$")
+	public void i_navigate_to_User_Maintenance_Page() throws Throwable {
+		FoxwebHomePage fwhomePage = (FoxwebHomePage)MasterDataReader.pageDetails.get("FoxwebHomePage");
+		UserMaintenanceAdminPage userCreationAdminPage= fwhomePage.navigateToUserCreationAdminPage();
+	    MasterDataReader.pageDetails.put("UserCreationAdminPage", userCreationAdminPage);
+	}
 
+	/**
+	 * @author jachakN
+	 * @throws Throwable
+	 */
+	@When("^I enter the user details$")
+	public void i_enter_the_user_details() throws Throwable {
+		UserMaintenanceAdminPage userCreationAdminPage= (UserMaintenanceAdminPage)MasterDataReader.pageDetails.get("UserCreationAdminPage");
+		userCreationAdminPage.navigateToEnterUserDetails(MasterDataReader.UserCreationDetails.get("EntityCode"));
+	    userCreationAdminPage.enterUserCreationDetails(MasterDataReader.UserCreationDetails.get("UserRolesCopy"),MasterDataReader.UserCreationDetails.get("UserCode"),MasterDataReader.UserCreationDetails.get("Password"),MasterDataReader.UserCreationDetails.get("Fname"),MasterDataReader.UserCreationDetails.get("Lname"),MasterDataReader.UserCreationDetails.get("AccessLevel"),MasterDataReader.UserCreationDetails.get("UserRoleAccessLevel"));
+	   // MasterDataReader.pageDetails.put("UserCreationAdminPage", userCreationAdminPage);
+	}
+
+	
+	/**
+	 * @author jachakN
+	 * @throws Throwable
+	 */
+	@Then("^I verify successful message is displayed when user created$")
+	public void i_verify_successful_message_is_displayed_when_user_created() throws Throwable {
+		UserMaintenanceAdminPage userMaintenanceAdminPage= (UserMaintenanceAdminPage)MasterDataReader.pageDetails.get("UserCreationAdminPage");
+		userMaintenanceAdminPage.verifyUserCreatedSuccessfully(MasterDataReader.UserCreationDetails.get("UserCode"));
+	    
+	}
 
 }
