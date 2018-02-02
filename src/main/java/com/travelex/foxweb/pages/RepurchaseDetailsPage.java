@@ -34,8 +34,14 @@ public class RepurchaseDetailsPage extends LoadableComponent<RepurchaseDetailsPa
 	@FindBy(id="next")
 	WebElement btnNext1;
 	
+	@FindBy(name="next1")
+	WebElement btnNext2; //Added by @jachakN for document page
+	
 	@FindBy(css=".message_error")
 	WebElement msgError;
+	
+	@FindBy(id="forexAmt")
+	WebElement txtForeignAmount; //Added by Author @jachakN
 
 	public WebDriver getDriver() {
 		return driver;
@@ -80,9 +86,56 @@ public class RepurchaseDetailsPage extends LoadableComponent<RepurchaseDetailsPa
 	@Override
 	protected void load() {
 	}
+	
+	/**@jachakN
+	 * Change in code for RTN document product as well as capture settlement method
+	 **/
 
-	public PreviewRepurchaseDetailsPage enterRepurchaseDetails(String quantity, String denomination) throws InterruptedException 
-	{
+	public PreviewRepurchaseDetailsPage enterRepurchaseDetails(String quantity, String denomination, String fgnAmount ) throws InterruptedException {
+	
+		String productType = MasterDataReader.foxwebOrderDetails.get("ProductType");
+		
+		boolean isIdCheckRequired = false;
+		
+		
+		if ("Foreign Cash".equals(productType)){
+			
+			enterRepurchaseDetailsForeignCash(quantity, denomination);
+			
+			btnNext1.click();			
+			
+			OrderDetailsPage obj = new OrderDetailsPage(driver);
+			obj.standardIdMessageDisplayPage(productType);
+			
+		}
+		
+		else if ("Documents".equals(productType)){
+			
+				
+			enterRepurchaseDetailsDocument(fgnAmount);
+						
+			btnNext2.click();
+						
+			OrderDetailsPage obj = new OrderDetailsPage(driver);
+			obj.enterStandardIDDetails(productType);
+			
+		}
+		
+			
+		
+		//Thread.sleep(1000);
+		
+				
+		return new PreviewRepurchaseDetailsPage(driver).get();
+	
+	}
+	
+	/**@jachakN
+	 * added separate methods for different product (CCN and Document)
+	 **/
+	
+
+	public void enterRepurchaseDetailsForeignCash(String quantity, String denomination){		
 		txtCustName.sendKeys("AutoCustomer1");
 		String[] denominationlist = denomination.split(",");
 		String[] quantitylist = quantity.split(",");            
@@ -94,29 +147,21 @@ public class RepurchaseDetailsPage extends LoadableComponent<RepurchaseDetailsPa
 			driver.findElement(By.xpath("//*[normalize-space(text())='"+ denominationValue +"']/../td[2]/input")).sendKeys(quantityValue);
 		}
 
-		btnNext1.click();
-
-
-		Thread.sleep(1000);
 		
-		try {
-			if(msgError.isDisplayed())
-			{
-				OrderDetailsPage obj = new OrderDetailsPage(driver);
-			//to be modified--	obj.enterStandardIDDetails();
-			}
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			btnNext1.click();
-			e.printStackTrace();
-		}
-		return new PreviewRepurchaseDetailsPage(driver).get();
-
-
-
 	}
-
+	
+	public void enterRepurchaseDetailsDocument(String fgnAmount){
+		
+		txtForeignAmount.sendKeys(fgnAmount);
+		driver.findElement(By.name("cheqno")).sendKeys(MasterDataReader.foxwebOrderDetails.get("ChequeNumber"));
+		driver.findElement(By.name("bank")).sendKeys(MasterDataReader.foxwebOrderDetails.get("BankDrawnOn"));
+		driver.findElement(By.name("account")).sendKeys(MasterDataReader.foxwebOrderDetails.get("BeneficiaryBankAccountNo/IBAN"));
+		driver.findElement(By.name("beneficiary")).sendKeys(MasterDataReader.foxwebOrderDetails.get("BeneficiaryFullName"));
+		driver.findElement(By.name("drawer")).sendKeys(MasterDataReader.foxwebOrderDetails.get("SendingClientFullName"));
+		driver.findElement(By.name("customer")).sendKeys(MasterDataReader.foxwebOrderDetails.get("CustomerName"));
+		
+		
+	}
 
 
 

@@ -1,5 +1,7 @@
 package com.travelex.foxweb.pages;
 
+import org.junit.Assert;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
@@ -11,13 +13,14 @@ import org.openqa.selenium.support.ui.LoadableComponent;
 import org.openqa.selenium.support.ui.Select;
 
 import com.travelex.framework.common.WebDriverWrapper;
+import com.travelex.framework.exception.FoxwebAutoException;
 import com.travelex.stepDefinitions.MasterDataReader;
 
 @SuppressWarnings("unused")
 public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{	
 
 	private WebDriver driver;
-
+	
 	private WebDriverWrapper wrapper ;
 	private int timeOutPeriod = 3000;
 	private int waitTime=300;
@@ -115,7 +118,7 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 	@FindBy(id="addinfoid9")//Added by Author @jachakN
 	WebElement txtSourceOfFundsExplanation;
 	
-	@FindBy(id= "addinfoid11") //Added by Author @jachakN
+	@FindBy(xpath="//form[@id='identification']/table[2]/tbody/tr/td/table/tbody/tr[12]/td[2]/input") //Added by Author @jachakN
 	WebElement txtPurposeOfTransaction;
 		
 	 @FindBy(xpath ="//div[@id='contentDiv']/div[1]") //Added by Author @jachakN
@@ -141,8 +144,8 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 	  
 	  @FindBy(name= "payeecountry")//Added by Author @jachakN for TT and draft product
 	  WebElement selBeneficiaryCountry;
-	
-
+	  
+	  
 	public OrderDetailsPage(WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
@@ -170,7 +173,7 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 
 	
 	
-	public  PreviewDetailsPage enterOrderDetails(String currency, String fgnamount, String custName) {
+	public  PreviewDetailsPage enterOrderDetails(String currency, String fgnAmount, String custName) {
 		
 		String productType = MasterDataReader.foxwebOrderDetails.get("ProductType");
 		
@@ -178,21 +181,21 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 	
 		if ("Foreign Cash".equals(productType)){
 			
-			enterOrderDetailsForeignCash(currency, fgnamount, custName);
+			enterOrderDetailsForeignCash(currency, fgnAmount, custName);
 			
 				
 		}
 		else if ("Telegraphic Transfer".equals(productType)){
 			isProductTypeForeignCash = true;
 			
-			enterOrderDetailsTelegraphicTransfer(currency, fgnamount);
+			enterOrderDetailsTelegraphicTransfer(currency, fgnAmount);
 		}
 		
 		else if ("Draft".equals(productType)){
 			
 			isProductTypeForeignCash = true;
 			
-			enterOrderDetailsDraft(currency, fgnamount);
+			enterOrderDetailsDraft(currency, fgnAmount);
 			
 			
 		}
@@ -232,21 +235,8 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 			}
 				 
 			
-		
-		
-		try {
-			if(msgError.isDisplayed())
-			{
-				
-				enterStandardIDDetails(productType);
-			}
-			
-
-		} catch (Exception e) {
-			e.printStackTrace();			
-			btnNext1.click();
-							
-		}
+			standardIdMessageDisplayPage(productType);
+	
 
 		//btnNext1.click();
 		return new PreviewDetailsPage(driver).get();
@@ -320,10 +310,15 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 					objOccupation.selectByVisibleText(MasterDataReader.StandardIDDetails.get("Occupation"));
 					txtSourceOfFundsExplanation.sendKeys(MasterDataReader.StandardIDDetails.get("SourceOfFundsExplanation"));
 					txtPurposeOfTransaction.sendKeys(MasterDataReader.StandardIDDetails.get("PurposeOfTransaction"));
+										
 				}
 				}
 				
-				else if ("Telegraphic Transfer".equals(productType) || ("Draft".equals(productType))){
+				/**Author @jachakN
+				*Added standardID details method for TT and draft
+				*/
+				
+				else if ("Telegraphic Transfer".equals(productType) || ("Draft".equals(productType)) || ("Documents".equals(productType))){
 					lnkPassport.click();
 					driver.findElement(By.id("id1")).sendKeys(MasterDataReader.StandardIDDetails.get("Fname"));
 					driver.findElement(By.id("id3")).sendKeys(MasterDataReader.StandardIDDetails.get("Lname"));
@@ -347,17 +342,19 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 						Select objOccupationTT = new Select(driver.findElement(By.id("addinfoid8")));
 						objOccupationTT.selectByVisibleText(MasterDataReader.StandardIDDetails.get("Occupation"));						
 						driver.findElement(By.id("addinfoid9")).sendKeys(MasterDataReader.StandardIDDetails.get("SourceOfFundsExplanation"));
-						driver.findElement(By.id("addinfoid11")).sendKeys(MasterDataReader.StandardIDDetails.get("PurposeOfTransaction"));
+						txtPurposeOfTransaction.sendKeys(MasterDataReader.StandardIDDetails.get("PurposeOfTransaction"));
+												
 					}
+					
 				}
 				
-				/**Author @jachakN
-				Added standardID details method for TT and draft
-				*/
+				
 				
 				lnkConfirm.click();
 				driver.findElement(By.id("continueLink")).click();
-			}
+				
+				isPEPCheckAlertDisplayed();
+				}
 	}
 	
 	/**
@@ -365,7 +362,7 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 	 * For Checking the Settlement Method 
 	 * Added method for handling additional info when order amount is greater than 10k
 	 */
-	private void processCaptureSettlemnt() {
+	public void processCaptureSettlemnt() {
 			
 			  /*String txtCaptureSettlement = lblCaptureSettlement.getText();*/
 		
@@ -397,7 +394,36 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 		
 		
 	}
+	
+	
+	
+	/**
+	 * @author jachakN 
+	 * Added method for handling when standard ID Message is displayed
+	 */
 
+	public void standardIdMessageDisplayPage(String productType)	{
+		
+		try {
+			if(msgError.isDisplayed())
+			{
+				
+				enterStandardIDDetails(productType);
+			}
+			
+
+		}
+		
+		catch(FoxwebAutoException e){
+		throw e ;
+		}
+		catch (Exception e) {
+			//e.printStackTrace();			
+			btnNext1.click();
+			
+										
+		}
+}
 	@Override
 	protected void load() {
 	}
@@ -450,10 +476,53 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 		}
 		finally{					
 			if (isEntityOutOfStock)
-				throw new RuntimeException("Out of Stock");
+				throw new FoxwebAutoException("Out of Stock");
 		}
 	}
+
+	/**
+	 * @author jachakN 
+	 * Added method for handling PEP/SanctionCheck Hit
+	 */
 	
+	public void isPEPCheckAlertDisplayed(){		
+		
+		boolean alertPresent = wrapper.isAlertPresent();
+		
+		Assert.assertTrue(alertPresent);
+		
+		boolean isPrimeHitAlertPresent = false;
+				
+		try {
+			String popUpTransactionDeclineMessage = driver.switchTo().alert().getText();
+			
+			//Alert alert = driver.switchTo().alert();
+			//String popUpTransactionDeclineMessage = alert.getText();
+								
+			if (popUpTransactionDeclineMessage.contains("The transaction could not be completed at this time.")){
+				isPrimeHitAlertPresent = true;
+			}
+			driver.switchTo().alert().accept();
+			
+		} catch (Exception e) {
+			
+		}
+		
+		finally {
+			if(isPrimeHitAlertPresent){
+				
+				throw new FoxwebAutoException("PEP/Sanction Check Hit");
+			}
+			
+			
+		}
+				
+	}
+
+
+	/**Author @jachakN
+	Added Enter order details method for CCN, TT and draft
+	*/
 	public void enterOrderDetailsForeignCash(String currency, String fgnamount, String custName) {
 		
 		Select selFgnCurrency  = new Select(selectForeignCurrency);
@@ -501,13 +570,13 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 		selBnfciaryCountry.selectByVisibleText(MasterDataReader.foxwebOrderDetails.get("Beneficiary'sCountry"));
 	}
 	
-	public void enterOrderDetailsDraft(String currency, String fgnamount){
+	public void enterOrderDetailsDraft(String currency, String fgnAmount){
 		Select selFgnCurrency  = new Select(selectForeignCurrency);
 		selFgnCurrency.selectByVisibleText(currency);
 		selectForeignCurrency.sendKeys(Keys.TAB);
 		//txtForeignAmount.clear();
 		//driver.switchTo().alert().accept();
-		txtForeignAmount.sendKeys(fgnamount);
+		txtForeignAmount.sendKeys(fgnAmount);
 		driver.findElement(By.name("customer")).sendKeys(MasterDataReader.foxwebOrderDetails.get("SendingClientFullName"));
 		driver.findElement(By.name("ataddr1")).sendKeys(MasterDataReader.foxwebOrderDetails.get("Sender'sStreetAddress"));
 		driver.findElement(By.name("atcity")).sendKeys(MasterDataReader.foxwebOrderDetails.get("Sender'sCity"));
@@ -518,9 +587,5 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 		driver.findElement(By.name("payee")).sendKeys(MasterDataReader.foxwebOrderDetails.get("BeneficiaryFullName"));
 	}
 	
-	/**Author @jachakN
-	Added Enter order details method for TT and draft
-	*/
-	
-	
+		
 	}

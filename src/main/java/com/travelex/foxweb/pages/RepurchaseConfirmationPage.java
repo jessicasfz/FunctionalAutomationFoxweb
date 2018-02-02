@@ -41,7 +41,7 @@ public class RepurchaseConfirmationPage extends LoadableComponent<RepurchaseConf
 	@FindBy(css = "div.text4")
 	WebElement txtOrderConfirmation;
 	
-	@FindBy(xpath="//table[@class='costingColor']/tbody/tr[2]/td/table[1]/tbody/tr[2]/td[10]")
+	@FindBy(xpath="//table[@class='order-item-list']/tbody/tr[2]/td[10]")
 	WebElement statusOrder;
 
 	public WebDriver getDriver() {

@@ -82,7 +82,7 @@ public class FoxwebLoginPageStepDefinition {
 		MasterDataReader.pageDetails.put("OrderDetailsPage", orderDetailsPage);
 	}
 
-	@When("^I enter the Order Details$")
+	@And("^I enter the Order Details$")
 	public void i_enter_the_Order_Details() throws Throwable {
 		OrderDetailsPage orderDetailsPage = (OrderDetailsPage)MasterDataReader.pageDetails.get("OrderDetailsPage");
 		PreviewDetailsPage previewDetailsPage = orderDetailsPage.enterOrderDetails(MasterDataReader.foxwebOrderDetails.get("ForeignCurrency"),MasterDataReader.foxwebOrderDetails.get("ForeignAmount"),MasterDataReader.foxwebOrderDetails.get("CustomerName"));
@@ -126,6 +126,18 @@ public class FoxwebLoginPageStepDefinition {
 		MasterDataReader.pageDetails.put("OrderConfirmationPage", orderConfirmationPage);
 	}
 
+	
+	/*@Then("^I get PEP/Sanction hit error response for the above order$")
+	public void i_get_PEP_Sanction_hit_error_response_for_the_above_order() throws Throwable {
+	   OrderDetailsPage orderDetailsPage = (OrderDetailsPage)MasterDataReader.pageDetails.get("OrderDetailsPage");
+	   orderDetailsPage.isPEPCheckAlertDisplayed();
+	   String PEPorSanctionHit = orderDetailsPage.PEPSanctionHitMessage;
+	   
+	   UpdateDataInExcel up = new UpdateDataInExcel();
+	   
+	   up.updateDataInExcel("FoxwebOrderDetails", "OrderStatus", OrderDetailsPage.PEPSanctionHitMessage, MasterDataReader.foxwebOrderDetails.get("AutomationID"),connection);
+	   Assert.assertEquals(PEPorSanctionHit, "The transaction could not be completed at this time. Please contact Travelex Customer Service on Toll Free 1800 224 440 to have the transaction completed manually.");
+	}*/
 
 	@When("^I navigate to Process Transactions Page$")
 	public void i_navigate_to_Process_Transactions_Page()  {
@@ -192,4 +204,5 @@ public class FoxwebLoginPageStepDefinition {
 	    
 	}
 
+	
 }

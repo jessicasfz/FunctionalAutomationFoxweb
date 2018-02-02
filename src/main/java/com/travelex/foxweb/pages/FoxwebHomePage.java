@@ -107,8 +107,7 @@ public class FoxwebHomePage extends LoadableComponent<FoxwebHomePage> {
 		
 	}
 
-	public RepurchaseDetailsPage navigateToRepurchasePage(String product,
-			String currency) {
+	public RepurchaseDetailsPage navigateToRepurchasePage(String product,String currency) {
 		lnkRepurchase.click();
 		
 		btnNext.click();
@@ -118,8 +117,7 @@ public class FoxwebHomePage extends LoadableComponent<FoxwebHomePage> {
 		
 		Select selCurrency = new Select(drpdownselCurrency);
 		selCurrency.selectByVisibleText(currency);
-		
-		
+				
 		
 		return new RepurchaseDetailsPage(driver).get();
 	}

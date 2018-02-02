@@ -38,7 +38,7 @@ public class FoxwebRepurchaseStepDefinition {
 	@When("^I enter the Repurchase Details$")
 	public void i_enter_the_Repurchase_Details() throws Throwable {
 		RepurchaseDetailsPage fwRepurchaseDetailsPage = (RepurchaseDetailsPage)MasterDataReader.pageDetails.get("RepurchasePage");
-		PreviewRepurchaseDetailsPage previewRepurchaseDetailsPage =	fwRepurchaseDetailsPage.enterRepurchaseDetails(MasterDataReader.foxwebOrderDetails.get("Quantity"), MasterDataReader.foxwebOrderDetails.get("Denomination"));
+		PreviewRepurchaseDetailsPage previewRepurchaseDetailsPage =	fwRepurchaseDetailsPage.enterRepurchaseDetails(MasterDataReader.foxwebOrderDetails.get("Quantity"), MasterDataReader.foxwebOrderDetails.get("Denomination"), MasterDataReader.foxwebOrderDetails.get("ForeignAmount"));
 		MasterDataReader.pageDetails.put("PreviewRepurchaseDetailsPage", previewRepurchaseDetailsPage);
 	}
 
