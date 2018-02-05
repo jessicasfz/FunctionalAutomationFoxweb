@@ -353,7 +353,15 @@ public class OrderDetailsPage extends LoadableComponent<OrderDetailsPage>{
 				lnkConfirm.click();
 				driver.findElement(By.id("continueLink")).click();
 				
-				isPEPCheckAlertDisplayed();
+				String PEPOrSanctioncheck = MasterDataReader.foxwebOrderDetails.get("PEP/SanctionCheck");
+				
+				if(PEPOrSanctioncheck.equals("Yes")){
+					
+					isPEPCheckAlertDisplayed();
+					
+				}
+				
+				
 				}
 	}
 	
